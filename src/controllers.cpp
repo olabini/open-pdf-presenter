@@ -18,7 +18,8 @@
 
 ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount) {
     this->bus = bus;
-    this->bus->subscribe(&SlideChangedEvent::TYPE, this);
+    this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
+    this->bus->subscribe(&TimeChangedEvent::TYPE, (ITimeChangedEventHandler*)this);
     this->view = view;
     this->view->setController(this);
     this->view->setTotalSlideCount(totalSlideCount);
@@ -35,9 +36,25 @@ void ControlBarController::onPrevSlideButton() {
 void ControlBarController::fireSlideEvent(int delta) {
     RelativeSlideEvent * event = new RelativeSlideEvent(delta);
     this->bus->fire(event);
-    delete event;
 }
 
 void ControlBarController::onSlideChanged(SlideChangedEvent * evt) {
     this->view->setCurrentSlideNumber(evt->getCurrentSlide());
+}
+
+void ControlBarController::onTimeChanged(TimeChangedEvent * evt) {
+    int time = evt->getElapsedTime();
+    int hours =  time / 3600;
+    time %= 3600;
+    int minutes = time / 60;
+    time %= 60;
+    int seconds = time;
+    this->view->setElapsedTime(hours, minutes, seconds);
+    time = evt->getRemainingTime();
+    hours =  time / 3600;
+    time %= 3600;
+    minutes = time / 60;
+    time %= 60;
+    seconds = time;
+    this->view->setRemainingTime(hours, minutes, seconds);
 }

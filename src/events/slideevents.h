@@ -19,7 +19,7 @@
 
 #include "event.h"
 
-class SlideEvent : public IEvent {
+class SlideEvent : public Event {
 	public:
 		virtual Type * getAssociatedType() = 0;
 		virtual void dispatch(IEventHandler * handler) = 0;
@@ -45,6 +45,7 @@ class RelativeSlideEvent : public SlideEvent {
 		virtual Type * getAssociatedType();
 		virtual void dispatch(IEventHandler * handler);
 		static Type TYPE;
+        int getDelta();
 	private:
 		int delta;
 };

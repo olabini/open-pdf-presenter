@@ -23,6 +23,7 @@ CONFIG += qt debug
 # Input
 HEADERS += src/events/event.h \
            src/events/slideevents.h \
+           src/events/timer.h \
            src/views/controlbar.h \
            src/views/console.h \
            src/views/view.h \
@@ -33,6 +34,7 @@ FORMS += \
 SOURCES += src/main.cpp \
            src/events/event.cpp \
            src/events/slideevents.cpp \
+           src/events/timer.cpp \
            src/views/controlbar.cpp \
            src/views/console.cpp \
            src/controllers.cpp \

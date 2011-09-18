@@ -17,6 +17,7 @@
 #include <QApplication>
 
 #include "events/event.h"
+#include "events/timer.h"
 #include "views/view.h"
 #include "views/controlbar.h"
 #include "views/console.h"
@@ -29,9 +30,10 @@ int main(int argc, char ** argv) {
 	//Parse arguments
 
 	//Set up the presenter
-	SimpleEventBus * bus = new SimpleEventBus();
 
-    OpenPdfPresenter * presenter = new OpenPdfPresenter(22,bus);
+	ConcurrentEventBus * bus = new ConcurrentEventBus();
+
+    OpenPdfPresenter * presenter = new OpenPdfPresenter(1500,22,bus);
 
 	QApplication app(argc, argv);
 	ControlBarViewImpl * controlBarView = new ControlBarViewImpl();
@@ -40,11 +42,14 @@ int main(int argc, char ** argv) {
 	PresenterConsoleViewImpl * console = new PresenterConsoleViewImpl();
 	console->setControlBarView(controlBarView);
 
+    Timer * timer = new Timer(bus);
+
 	//Start presentation
 	console->show();
 	ret = app.exec();
 
 	//Clean up
+    delete timer;
     delete controlBarController;
     delete controlBarView;
     delete console;

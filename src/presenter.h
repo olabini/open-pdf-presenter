@@ -19,18 +19,22 @@
 
 #include "events/event.h"
 #include "events/slideevents.h"
+#include "events/timer.h"
 
-class OpenPdfPresenter : SlideEventHandler {
+class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
     public:
-        OpenPdfPresenter(int totalSlides, IEventBus * bus);
+        OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * bus);
         int getCurrentSlide();
         int getTotalSlides();
 		virtual void onNextSlide(RelativeSlideEvent * evt);
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
 		virtual void onGotoSlide(AbsoluteSlideEvent * evt);
+        virtual void onTimeout(TimerEvent * evt);
     private:
         int currentSlide;
         int totalSlides;
+        int elapsedTime;
+        int totalTime;
         IEventBus * bus;
 };
 

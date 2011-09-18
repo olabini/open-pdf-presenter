@@ -20,13 +20,15 @@
 #include "views/view.h"
 #include "events/event.h"
 #include "events/slideevents.h"
+#include "events/timer.h"
 
-class ControlBarController : public ControlBarViewController, public SlideChangedEventHandler {
+class ControlBarController : public ControlBarViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
 	public:
         ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount);
 		virtual void onNextSlideButton();
 		virtual void onPrevSlideButton();
 		virtual void onSlideChanged(SlideChangedEvent * evt);
+        virtual void onTimeChanged(TimeChangedEvent * evt);
     private:
         void fireSlideEvent(int delta);
         ControlBarView * view;

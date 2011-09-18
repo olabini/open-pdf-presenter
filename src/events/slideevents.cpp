@@ -37,6 +37,10 @@ void RelativeSlideEvent::dispatch(IEventHandler * h) {
 		handler->onPrevSlide(this);
 }
 
+int RelativeSlideEvent::getDelta() {
+    return this->delta;
+}
+
 AbsoluteSlideEvent::AbsoluteSlideEvent(int slideNumber) {
 	this->slideNumber = slideNumber;
 }

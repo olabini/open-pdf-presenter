@@ -18,6 +18,10 @@
 #define _EVENT_H_
 
 #include <QMultiMap>
+#include <QList>
+#include <QMutex>
+#include <QWaitCondition>
+#include <QThread>
 
 class Type {
 };
@@ -27,31 +31,71 @@ class IEventHandler {
 		~IEventHandler() { }
 };
 
-class IEvent {
+class Event {
 	public:
 		virtual Type * getAssociatedType() = 0;
 		virtual void dispatch(IEventHandler * handler) = 0;
-	protected:
-		~IEvent() { }
 };
 
 class IEventBus {
 	public:
 		virtual void subscribe(Type * type,IEventHandler * handler) = 0;
-		virtual void fire(IEvent * event) = 0;
+		virtual void fire(Event * event) = 0;
 
 	protected:
 		virtual ~IEventBus() {};
 };
 
+/* If an event B is fired while processing another event A,
+ * this bus fires B instantly and then finishes firing A */
 class SimpleEventBus : public IEventBus {
 	public:
 		SimpleEventBus();
 		~SimpleEventBus();
 		virtual void subscribe(Type * type,IEventHandler * handler);
-		virtual void fire(IEvent * event);
-	private:
+		virtual void fire(Event * event);
+	protected:
 		QMultiMap<Type*, IEventHandler*> * map;
+};
+
+class OrderedEvent {
+    public:
+        OrderedEvent(Event * event, QList<IEventHandler*> * handlers);
+        void notifyNextHandler();
+        bool hasHandlersNotNotified();
+    private:
+        Event * realEvent;
+        QList<IEventHandler*> * handlers;
+        int lastNotifiedHandler;
+};
+
+/* If an event B is fired while processing another event A,
+ * this bus first finishes firing event A before firing event B */
+class OrderedEventBus : public SimpleEventBus {
+	public:
+        OrderedEventBus();
+        ~OrderedEventBus();
+		virtual void fire(Event * event);
+	private:
+        void resumeFiring();
+        OrderedEvent * currentEvent;
+        QList<Event*> * subEvents;
+};
+
+/* EventBus that supports firing concurrent events */
+class ConcurrentEventBus : public SimpleEventBus, public QThread {
+	public:
+		ConcurrentEventBus();
+		~ConcurrentEventBus();
+		virtual void fire(Event * event);
+        void run();
+        void stop();
+	private:
+        QList<Event*> * pendingEvents;
+        QMutex * mutex;
+        QWaitCondition * pendingEventsNotEmpty;
+        bool mustStop;
+        QThread * eventBusThread;
 };
 
 #endif

@@ -16,12 +16,15 @@
 */
 #include "presenter.h"
 
-OpenPdfPresenter::OpenPdfPresenter(int totalSlides, IEventBus * bus) {
+OpenPdfPresenter::OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * bus) {
     this->totalSlides = totalSlides;
+    this->totalTime = totalTime;
+    this->elapsedTime = 0;
     this->currentSlide = 0;
     this->bus = bus;
-    this->bus->subscribe(&RelativeSlideEvent::TYPE,this);
-    this->bus->subscribe(&AbsoluteSlideEvent::TYPE,this);
+    this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
+    this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
+    this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
 }
 
 int OpenPdfPresenter::getCurrentSlide() {
@@ -37,7 +40,6 @@ void OpenPdfPresenter::onNextSlide(RelativeSlideEvent * evt) {
         this->currentSlide += 1;
         SlideChangedEvent * event = new SlideChangedEvent(this->getCurrentSlide());
         this->bus->fire(event);
-        delete event;
     }
 }
 
@@ -46,7 +48,6 @@ void OpenPdfPresenter::onPrevSlide(RelativeSlideEvent * evt) {
         this->currentSlide -= 1;
         SlideChangedEvent * event = new SlideChangedEvent(this->getCurrentSlide());
         this->bus->fire(event);
-        delete event;
     }
 }
 
@@ -57,6 +58,10 @@ void OpenPdfPresenter::onGotoSlide(AbsoluteSlideEvent * evt) {
         this->currentSlide = evt->getSlideNumber();
         SlideChangedEvent * event = new SlideChangedEvent(this->getCurrentSlide());
         this->bus->fire(event);
-        delete event;
     }
+}
+
+void OpenPdfPresenter::onTimeout(TimerEvent * evt) {
+    this->elapsedTime++;
+    this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->totalTime - this->elapsedTime));
 }

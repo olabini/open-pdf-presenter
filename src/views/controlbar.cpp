@@ -34,12 +34,14 @@ void ControlBarViewImpl::onPrevButtonClick() {
 }
 
 void ControlBarViewImpl::setElapsedTime(int hours, int minutes, int seconds) {
+    this->ui.elapsedTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
 }
 
 void ControlBarViewImpl::setElapsedPercentage(int percentage) {
 }
 
 void ControlBarViewImpl::setRemainingTime(int hours, int minutes, int seconds) {
+    this->ui.remainingTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
 }
 
 void ControlBarViewImpl::setRemainingPercentage(int percentage) {
