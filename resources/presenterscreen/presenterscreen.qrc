@@ -8,5 +8,6 @@
         <file>BorderActiveTop.png</file>
         <file>BorderActiveTopLeft.png</file>
         <file>BorderActiveTopRight.png</file>
+        <file>loadingslide.svg</file>
     </qresource>
 </RCC>
