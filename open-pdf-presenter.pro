@@ -26,6 +26,7 @@ HEADERS += src/events/event.h \
            src/events/timer.h \
            src/views/controlbar.h \
            src/views/console.h \
+           src/views/mainwindow.h \
            src/views/view.h \
            src/controllers.h \
            src/presenter.h
@@ -37,6 +38,7 @@ SOURCES += src/main.cpp \
            src/events/timer.cpp \
            src/views/controlbar.cpp \
            src/views/console.cpp \
+           src/views/mainwindow.cpp \
            src/controllers.cpp \
            src/presenter.cpp
 

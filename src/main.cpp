@@ -21,6 +21,7 @@
 #include "views/view.h"
 #include "views/controlbar.h"
 #include "views/console.h"
+#include "views/mainwindow.h"
 #include "controllers.h"
 #include "presenter.h"
 
@@ -42,10 +43,13 @@ int main(int argc, char ** argv) {
 	PresenterConsoleViewImpl * console = new PresenterConsoleViewImpl();
 	console->setControlBarView(controlBarView);
 
+	MainWindowViewImpl * mainConsoleWindow = new MainWindowViewImpl();
+	mainConsoleWindow->setContent(console->asWidget());
+
     Timer * timer = new Timer(bus);
 
 	//Start presentation
-	console->show();
+	mainConsoleWindow->show();
 	ret = app.exec();
 
 	//Clean up

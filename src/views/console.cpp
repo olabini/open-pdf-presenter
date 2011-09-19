@@ -21,7 +21,7 @@
 #include <QPushButton>
 
 PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(parent) {
-  //this->setStyleSheet(QString("background-image: url(:/controlbar/Background.png); background-repeat: repeat-xy;"));
+	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	this->layout = new QVBoxLayout(this);
   this->layout->setSpacing(0);
   this->layout->setMargin(0);

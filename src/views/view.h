@@ -41,8 +41,7 @@ class PresenterConsoleView;
 
 class MainWindowView : public View<MainWindowViewController> {
 	public:
-		virtual void setScreen(int screen) = 0;
-		virtual void show() = 0;
+		virtual void setContent(QWidget * content) = 0;
 	protected:
 		~MainWindowView() {}
 };
