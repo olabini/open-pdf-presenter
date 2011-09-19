@@ -65,3 +65,11 @@ void ControlBarController::onTimeChanged(TimeChangedEvent * evt) {
     seconds = time;
     this->view->setRemainingTime(hours, minutes, seconds);
 }
+
+CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view) {
+	this->bus = bus;
+	this->view = view;
+}
+
+void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
+}

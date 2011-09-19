@@ -37,4 +37,13 @@ class ControlBarController : public ControlBarViewController, public SlideChange
 				int duration;
 };
 
+class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler {
+	public:
+		CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view);
+		virtual void onSlideChanged(SlideChangedEvent * evt);
+	private:
+		CurrentNextSlideConsoleView * view;
+		IEventBus * bus;
+};
+
 #endif

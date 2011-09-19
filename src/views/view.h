@@ -55,7 +55,8 @@ class PresenterConsoleViewController : public Controller {
 
 class PresenterConsoleView : public View<PresenterConsoleViewController> {
 	public:
-		void setControlBarView(ControlBarView * view);
+		virtual void setContent(QWidget * view) = 0;
+		virtual void setControlBarView(ControlBarView * view) = 0;
 	protected:
 		~PresenterConsoleView() {}
 };
@@ -78,6 +79,19 @@ class ControlBarView : public View<ControlBarViewController> {
 		virtual void setCurrentSlideNumber(int currentSlide) = 0;
 	protected:
 		~ControlBarView() {}
+};
+
+class CurrentNextSlideConsoleViewController : public Controller {
+};
+
+class CurrentNextSlideConsoleView : public View<CurrentNextSlideConsoleViewController> {
+
+	public:
+		virtual void setCurrentSlide(QPixmap * slide) = 0;
+		virtual void setNextSlide(QPixmap * slide) = 0;
+
+	protected:
+		~CurrentNextSlideConsoleView() { }
 };
 
 #endif

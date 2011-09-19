@@ -27,29 +27,44 @@ PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(p
   this->layout->setMargin(0);
 	this->setLayout(this->layout);
 
-  this->mainWidget = new QWidget();
-  this->layout->addWidget(this->mainWidget);
-
-  this->barWidget= new QWidget();
-  this->layout->addWidget(this->barWidget);
+	this->content = NULL;
+  this->barWidget = NULL;
+	this->refresh();
 
 }
 
 void PresenterConsoleViewImpl::setController(PresenterConsoleViewController * controller) {
+	this->content = content;
+	this->refresh();
+}
+
+void PresenterConsoleViewImpl::refresh() {
+	if (this->content != NULL)
+	  this->layout->removeWidget(this->content);
+
+	if (this->barWidget != NULL)
+	  this->layout->removeWidget(this->barWidget);
+
+
+	if (this->content != NULL)
+		this->layout->addWidget(this->content);
+
+	if (this->barWidget != NULL) {
+	  this->layout->addWidget(this->barWidget);
+		this->layout->setAlignment(this->barWidget,Qt::AlignHCenter | Qt::AlignBottom);
+	}
 }
 
 void PresenterConsoleViewImpl::setControlBarView(ControlBarView * view) {
-
-  this->layout->removeWidget(this->mainWidget);
-  this->layout->removeWidget(this->barWidget);
-
-
 	view->asWidget()->setParent(this);
   this->barWidget = view->asWidget();
 
-  this->layout->addWidget(this->mainWidget);
-  this->layout->addWidget(this->barWidget);
-	this->layout->setAlignment(this->barWidget,Qt::AlignHCenter | Qt::AlignBottom);
+	this->refresh();
+}
+
+void PresenterConsoleViewImpl::setContent(QWidget * view) {
+	this->content = view;
+	this->refresh();
 }
 
 QWidget * PresenterConsoleViewImpl::asWidget() {
@@ -60,6 +75,37 @@ SlideFrame::SlideFrame(QWidget * parent) : QWidget(parent) {
 	ui.setupUi(this);
 }
 
-void SlideFrame::setContent(QWidget * content) {
-	this->ui.contentLayout->addWidget(content);
+void SlideFrame::setContent(QPixmap * content) {
+	this->ui.slideLabel->setPixmap(*content);
+}
+
+CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * parent) : QWidget(parent) {
+	this->layout = new QHBoxLayout(this);
+  this->layout->setSpacing(0);
+  this->layout->setMargin(0);
+	this->setLayout(this->layout);
+	this->currentSlideFrame = new SlideFrame(this);
+	this->nextSlideFrame = new SlideFrame(this);
+
+	this->layout->addWidget(this->currentSlideFrame);
+	this->layout->addWidget(this->nextSlideFrame);
+}
+
+CurrentNextSlideConsoleViewImpl::~CurrentNextSlideConsoleViewImpl() {
+	delete this->currentSlideFrame;
+	delete this->nextSlideFrame;
+	delete this->layout;
+}
+
+void CurrentNextSlideConsoleViewImpl::setCurrentSlide(QPixmap * slide) {
+}
+
+void CurrentNextSlideConsoleViewImpl::setNextSlide(QPixmap * slide) {
+}
+
+void CurrentNextSlideConsoleViewImpl::setController(CurrentNextSlideConsoleViewController * slide) {
+}
+
+QWidget * CurrentNextSlideConsoleViewImpl::asWidget() {
+	return this;
 }

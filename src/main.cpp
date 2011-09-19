@@ -42,6 +42,7 @@ int main(int argc, char ** argv) {
 
 	PresenterConsoleViewImpl * console = new PresenterConsoleViewImpl();
 	console->setControlBarView(controlBarView);
+	console->setContent((new CurrentNextSlideConsoleViewImpl())->asWidget());
 
 	MainWindowViewImpl * mainConsoleWindow = new MainWindowViewImpl();
 	mainConsoleWindow->setContent(console->asWidget());

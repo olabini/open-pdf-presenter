@@ -19,6 +19,7 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QPixmap>
 #include "ui_slideframe.h"
 #include "view.h"
 
@@ -31,10 +32,12 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 		virtual void setControlBarView(ControlBarView * view);
 		virtual void setController(PresenterConsoleViewController * controller);
 		virtual QWidget * asWidget();
+		virtual void setContent(QWidget * view);
 
 	private:
+		void refresh();
 		QVBoxLayout * layout;
-    QWidget * mainWidget;
+    QWidget * content;
     QWidget * barWidget;
 };
 
@@ -43,10 +46,27 @@ class SlideFrame : public QWidget {
 
 	public:
 		SlideFrame(QWidget * parent = 0);
-		void setContent(QWidget * content);
+		void setContent(QPixmap * content);
 
 	private:
 		Ui::SlideFrame ui;
+};
+
+class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideConsoleView {
+	Q_OBJECT
+
+	public:
+		CurrentNextSlideConsoleViewImpl(QWidget * parent = 0);
+		~CurrentNextSlideConsoleViewImpl();
+		virtual void setCurrentSlide(QPixmap * slide);
+		virtual void setNextSlide(QPixmap * slide);
+		virtual void setController(CurrentNextSlideConsoleViewController * controller);
+		virtual QWidget * asWidget();
+
+	private:
+		SlideFrame * currentSlideFrame;
+		SlideFrame * nextSlideFrame;
+		QHBoxLayout * layout;
 };
 
 #endif
