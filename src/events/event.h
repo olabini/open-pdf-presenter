@@ -98,4 +98,16 @@ class ConcurrentEventBus : public SimpleEventBus, public QThread {
         QThread * eventBusThread;
 };
 
+class QEventBus : public QObject, public SimpleEventBus {
+  Q_OBJECT
+
+	public:
+    QEventBus();
+		virtual void fire(Event * event);
+  private slots:
+    void eventFired(Event * event);
+  signals:
+    void fireEvent(Event * event);
+};
+
 #endif

@@ -32,7 +32,7 @@ int main(int argc, char ** argv) {
 
 	//Set up the presenter
 
-	ConcurrentEventBus * bus = new ConcurrentEventBus();
+	QEventBus * bus = new QEventBus();
 
     OpenPdfPresenter * presenter = new OpenPdfPresenter(120,22,bus);
 
@@ -48,6 +48,7 @@ int main(int argc, char ** argv) {
 	mainConsoleWindow->setContent(console->asWidget());
 
     Timer * timer = new Timer(bus);
+
 
 	//Start presentation
 	mainConsoleWindow->show();

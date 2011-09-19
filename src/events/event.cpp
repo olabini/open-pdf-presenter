@@ -133,3 +133,15 @@ void ConcurrentEventBus::stop() {
     this->pendingEventsNotEmpty->wakeAll();
     this->mutex->unlock();
 }
+
+QEventBus::QEventBus() {
+  connect(this,SIGNAL(fireEvent(Event*)),this,SLOT(eventFired(Event*)));
+}
+
+void QEventBus::fire(Event * event) {
+  emit fireEvent(event);
+}
+
+void QEventBus::eventFired(Event * event) {
+  SimpleEventBus::fire(event);
+}
