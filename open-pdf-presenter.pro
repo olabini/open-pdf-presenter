@@ -17,13 +17,18 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += . src ui src/events src/views
 INCLUDEPATH += . src/events src/views
+OBJECTS_DIR = build
+MOC_DIR = $$OBJECTS_DIR
+UI_DIR = $$OBJECTS_DIR
+RCC_DIR = $$OBJECTS_DIR
 
 CONFIG += qt debug
 
 # Input
 HEADERS += src/events/event.h \
-           src/events/slideevents.h \
+           src/events/slide.h \
            src/events/timer.h \
+           src/events/lifecycle.h \
            src/views/controlbar.h \
            src/views/console.h \
            src/views/mainwindow.h \
@@ -35,8 +40,9 @@ FORMS += \
     ui/slideframe.ui
 SOURCES += src/main.cpp \
            src/events/event.cpp \
-           src/events/slideevents.cpp \
+           src/events/slide.cpp \
            src/events/timer.cpp \
+           src/events/lifecycle.cpp \
            src/views/controlbar.cpp \
            src/views/console.cpp \
            src/views/mainwindow.cpp \
