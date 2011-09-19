@@ -26,6 +26,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
         OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * bus);
         int getCurrentSlide();
         int getTotalSlides();
+				int getTotalTimeSeconds();
 		virtual void onNextSlide(RelativeSlideEvent * evt);
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
 		virtual void onGotoSlide(AbsoluteSlideEvent * evt);

@@ -33,11 +33,11 @@ int main(int argc, char ** argv) {
 
 	ConcurrentEventBus * bus = new ConcurrentEventBus();
 
-    OpenPdfPresenter * presenter = new OpenPdfPresenter(1500,22,bus);
+    OpenPdfPresenter * presenter = new OpenPdfPresenter(120,22,bus);
 
 	QApplication app(argc, argv);
 	ControlBarViewImpl * controlBarView = new ControlBarViewImpl();
-    ControlBarController * controlBarController = new ControlBarController(bus, controlBarView, presenter->getTotalSlides());
+    ControlBarController * controlBarController = new ControlBarController(bus, controlBarView, presenter->getTotalSlides(), presenter->getTotalTimeSeconds());
 
 	PresenterConsoleViewImpl * console = new PresenterConsoleViewImpl();
 	console->setControlBarView(controlBarView);

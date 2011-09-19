@@ -65,3 +65,7 @@ void OpenPdfPresenter::onTimeout(TimerEvent * evt) {
     this->elapsedTime++;
     this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->totalTime - this->elapsedTime));
 }
+
+int OpenPdfPresenter::getTotalTimeSeconds() {
+	return this->totalTime;
+}

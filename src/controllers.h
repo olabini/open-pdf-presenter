@@ -24,7 +24,7 @@
 
 class ControlBarController : public ControlBarViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
 	public:
-        ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount);
+        ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount, int durationSeconds);
 		virtual void onNextSlideButton();
 		virtual void onPrevSlideButton();
 		virtual void onSlideChanged(SlideChangedEvent * evt);
@@ -33,6 +33,8 @@ class ControlBarController : public ControlBarViewController, public SlideChange
         void fireSlideEvent(int delta);
         ControlBarView * view;
         IEventBus * bus;
+				int totalSlideCount;
+				int duration;
 };
 
 #endif

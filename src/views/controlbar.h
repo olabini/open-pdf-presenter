@@ -28,12 +28,12 @@ class ControlBarViewImpl : public QWidget, public ControlBarView {
 	public:
 		ControlBarViewImpl(QWidget * parent = 0);
 		virtual void setElapsedTime(int hours, int minutes, int seconds);
-		virtual void setElapsedPercentage(int percentage);
 		virtual void setRemainingTime(int hours, int minutes, int seconds);
-		virtual void setRemainingPercentage(int percentage);
+		virtual void setSlidePercentage (int percentage);
 		virtual void setTotalSlideCount(int count);
-		virtual void setCurrentSlideNumber(int currentSlide);
+		virtual void setTimePercentage (int currentSlide);
 		virtual void setController(ControlBarViewController * controller);
+		virtual void setCurrentSlideNumber(int currentSlide);
 		virtual QWidget * asWidget();
     
     private:

@@ -72,9 +72,9 @@ class ControlBarViewController: public Controller {
 class ControlBarView : public View<ControlBarViewController> {
 	public:
 		virtual void setElapsedTime(int hours, int minutes, int seconds) = 0;
-		virtual void setElapsedPercentage(int percentage) = 0;
+		virtual void setSlidePercentage (int percentage) = 0;
 		virtual void setRemainingTime(int hours, int minutes, int seconds) = 0;
-		virtual void setRemainingPercentage(int percentage) = 0;
+		virtual void setTimePercentage (int percentage) = 0;
 		virtual void setTotalSlideCount(int count) = 0;
 		virtual void setCurrentSlideNumber(int currentSlide) = 0;
 	protected:

@@ -16,13 +16,15 @@
 */
 #include "controllers.h"
 
-ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount) {
+ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount, int durationSeconds) {
+		this->duration = durationSeconds;
     this->bus = bus;
     this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
     this->bus->subscribe(&TimeChangedEvent::TYPE, (ITimeChangedEventHandler*)this);
     this->view = view;
     this->view->setController(this);
     this->view->setTotalSlideCount(totalSlideCount);
+		this->totalSlideCount = totalSlideCount;
 }
 
 void ControlBarController::onNextSlideButton() {
@@ -40,10 +42,15 @@ void ControlBarController::fireSlideEvent(int delta) {
 
 void ControlBarController::onSlideChanged(SlideChangedEvent * evt) {
     this->view->setCurrentSlideNumber(evt->getCurrentSlide());
+		if (evt->getCurrentSlide() == 1)
+			this->view->setSlidePercentage(0);
+		else
+			this->view->setSlidePercentage(evt->getCurrentSlide()*100 / this->totalSlideCount);
 }
 
 void ControlBarController::onTimeChanged(TimeChangedEvent * evt) {
     int time = evt->getElapsedTime();
+		this->view->setTimePercentage(time * 100 / this->duration);
     int hours =  time / 3600;
     time %= 3600;
     int minutes = time / 60;
