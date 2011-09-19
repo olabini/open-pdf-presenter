@@ -19,11 +19,12 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include "ui_slideframe.h"
 #include "view.h"
 
 class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 
-	Q_OBJECT;
+	Q_OBJECT
 
 	public:
 		PresenterConsoleViewImpl(QWidget * parent = 0);
@@ -37,6 +38,15 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
     QWidget * barWidget;
 };
 
+class SlideFrame : public QWidget {
+	Q_OBJECT
 
+	public:
+		SlideFrame(QWidget * parent = 0);
+		void setContent(QWidget * content);
+
+	private:
+		Ui::SlideFrame ui;
+};
 
 #endif

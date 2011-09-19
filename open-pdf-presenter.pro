@@ -31,7 +31,8 @@ HEADERS += src/events/event.h \
            src/controllers.h \
            src/presenter.h
 FORMS += \
-    ui/controlbar.ui
+    ui/controlbar.ui \
+    ui/slideframe.ui
 SOURCES += src/main.cpp \
            src/events/event.cpp \
            src/events/slideevents.cpp \
@@ -43,4 +44,5 @@ SOURCES += src/main.cpp \
            src/presenter.cpp
 
 RESOURCES += \
-    resources/controlbar/controlbar.qrc
+    resources/controlbar/controlbar.qrc \
+    resources/presenterscreen/presenterscreen.qrc

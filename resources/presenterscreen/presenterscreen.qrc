@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/presenter">
+        <file>BorderActiveBottom.png</file>
+        <file>BorderActiveBottomLeft.png</file>
+        <file>BorderActiveBottomRight.png</file>
+        <file>BorderActiveLeft.png</file>
+        <file>BorderActiveRight.png</file>
+        <file>BorderActiveTop.png</file>
+        <file>BorderActiveTopLeft.png</file>
+        <file>BorderActiveTopRight.png</file>
+    </qresource>
+</RCC>

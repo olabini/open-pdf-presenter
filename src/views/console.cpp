@@ -55,3 +55,11 @@ void PresenterConsoleViewImpl::setControlBarView(ControlBarView * view) {
 QWidget * PresenterConsoleViewImpl::asWidget() {
 	return this;
 }
+
+SlideFrame::SlideFrame(QWidget * parent) : QWidget(parent) {
+	ui.setupUi(this);
+}
+
+void SlideFrame::setContent(QWidget * content) {
+	this->ui.contentLayout->addWidget(content);
+}
