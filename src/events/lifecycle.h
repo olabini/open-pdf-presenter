@@ -14,52 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _SLIDEENVETS_H_
-#define _SLIDEENVETS_H_
+#ifndef _LIFECICLE_H_
+#define _LIFECICLE_H_
 
-#include "event.h"
-
-class SlideEvent : public Event {
-	public:
-		virtual Type * getAssociatedType() = 0;
-		virtual void dispatch(IEventHandler * handler) = 0;
-	protected:
-		~SlideEvent() {}
-};
-
-class RelativeSlideEvent;
-class AbsoluteSlideEvent;
-
-class SlideEventHandler : public IEventHandler {
-	public:
-		virtual void onNextSlide(RelativeSlideEvent * evt) = 0;
-		virtual void onPrevSlide(RelativeSlideEvent * evt) = 0;
-		virtual void onGotoSlide(AbsoluteSlideEvent * evt) = 0;
-	protected:
-		~SlideEventHandler() {}
-};
-
-class RelativeSlideEvent : public SlideEvent {
-	public:
-		RelativeSlideEvent(int delta);
-		virtual Type * getAssociatedType();
-		virtual void dispatch(IEventHandler * handler);
-		static Type TYPE;
-        int getDelta();
-	private:
-		int delta;
-};
-
-class AbsoluteSlideEvent : public SlideEvent {
-	public:
-		AbsoluteSlideEvent(int slideNumber);
-		virtual Type * getAssociatedType();
-		virtual void dispatch(IEventHandler * handler);
-		int getSlideNumber();
-		static Type TYPE;
-	private:
-		int slideNumber;
-};
+#include "timer.h"
+#include "slide.h"
 
 class SlideChangedEvent : public SlideEvent {
 	public:
@@ -77,6 +36,27 @@ class SlideChangedEventHandler : public IEventHandler {
 		virtual void onSlideChanged(SlideChangedEvent * evt) = 0;
 	protected:
 		~SlideChangedEventHandler() {}
+};
+
+
+class TimeChangedEvent : public Event {
+	public:
+		TimeChangedEvent(int elapsedTime, int remainingTime);
+		virtual Type * getAssociatedType();
+		virtual void dispatch(IEventHandler * handler);
+    int getElapsedTime();
+    int getRemainingTime();
+    static Type TYPE;
+	private:
+		int elapsedTime;
+		int remainingTime;
+};
+
+class ITimeChangedEventHandler : public IEventHandler {
+	public:
+		virtual void onTimeChanged(TimeChangedEvent * evt) = 0;
+	protected:
+		~ITimeChangedEventHandler() { }
 };
 
 #endif

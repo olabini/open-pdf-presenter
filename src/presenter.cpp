@@ -16,6 +16,8 @@
 */
 #include "presenter.h"
 
+#include "events/lifecycle.h"
+
 OpenPdfPresenter::OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * bus) {
     this->totalSlides = totalSlides;
     this->totalTime = totalTime;

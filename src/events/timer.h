@@ -50,27 +50,7 @@ class Timer : public QWidget {
         IEventBus * bus;
 
     private slots:
-        void lol();
-};
-
-class TimeChangedEvent : public Event {
-	public:
-        TimeChangedEvent(int elapsedTime, int remainingTime);
-		virtual Type * getAssociatedType();
-		virtual void dispatch(IEventHandler * handler);
-        int getElapsedTime();
-        int getRemainingTime();
-        static Type TYPE;
-    private:
-        int elapsedTime;
-        int remainingTime;
-};
-
-class ITimeChangedEventHandler : public IEventHandler {
-    public:
-        virtual void onTimeChanged(TimeChangedEvent * evt) = 0;
-    protected:
-        ~ITimeChangedEventHandler() { }
+        void onTimeout();
 };
 
 #endif

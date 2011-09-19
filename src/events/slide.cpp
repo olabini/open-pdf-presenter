@@ -14,11 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "slideevents.h"
+#include "slide.h"
 
 Type AbsoluteSlideEvent::TYPE;
 Type RelativeSlideEvent::TYPE;
-Type SlideChangedEvent::TYPE;
 
 RelativeSlideEvent::RelativeSlideEvent(int delta) {
 	this->delta = delta;
@@ -57,18 +56,3 @@ int AbsoluteSlideEvent::getSlideNumber() {
 	return this->slideNumber;
 }
 
-SlideChangedEvent::SlideChangedEvent(int currentSlide) {
-    this->currentSlide = currentSlide;
-}
-
-int SlideChangedEvent::getCurrentSlide() {
-    return this->currentSlide;
-}
-
-Type * SlideChangedEvent::getAssociatedType() {
-    return &SlideChangedEvent::TYPE;
-}
-
-void SlideChangedEvent::dispatch(IEventHandler * handler) {
-	((SlideChangedEventHandler*)handler)->onSlideChanged(this);
-}

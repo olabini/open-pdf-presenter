@@ -18,7 +18,7 @@
 #define _PRESENTER_H_
 
 #include "events/event.h"
-#include "events/slideevents.h"
+#include "events/slide.h"
 #include "events/timer.h"
 
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {

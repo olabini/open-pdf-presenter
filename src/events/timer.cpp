@@ -17,33 +17,19 @@
 #include "timer.h"
 
 Type TimerEvent::TYPE;
-Type TimeChangedEvent::TYPE;
 
 Type * TimerEvent::getAssociatedType() {
     return &(TimerEvent::TYPE);
-}
-
-TimeChangedEvent::TimeChangedEvent(int elapsedTime, int remainingTime) {
-    this->elapsedTime = elapsedTime;
-    this->remainingTime = remainingTime;
 }
 
 void TimerEvent::dispatch(IEventHandler * handler) {
     ((ITimerEventHandler*)handler)->onTimeout(this);
 }
 
-Type * TimeChangedEvent::getAssociatedType() {
-    return &(TimeChangedEvent::TYPE);
-}
-
-void TimeChangedEvent::dispatch(IEventHandler * handler) {
-    ((ITimeChangedEventHandler*)handler)->onTimeChanged(this);
-}
-
 Timer::Timer(IEventBus * bus, QWidget * parent) : QWidget(parent) {
     this->timer = new QTimer(this);
     this->bus = bus;
-    connect(timer, SIGNAL(timeout()), this, SLOT(lol()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     this->timer->start(1000);
 }
 
@@ -51,14 +37,6 @@ Timer::~Timer() {
     delete timer;
 }
 
-void Timer::lol() {
+void Timer::onTimeout() {
     this->bus->fire(new TimerEvent());
-}
-
-int TimeChangedEvent::getElapsedTime() {
-    return this->elapsedTime;
-}
-
-int TimeChangedEvent::getRemainingTime() {
-    return this->remainingTime;
 }

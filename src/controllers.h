@@ -18,9 +18,7 @@
 #define _CONTROLLERS_H_
 
 #include "views/view.h"
-#include "events/event.h"
-#include "events/slideevents.h"
-#include "events/timer.h"
+#include "events/lifecycle.h"
 
 class ControlBarController : public ControlBarViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
 	public:
