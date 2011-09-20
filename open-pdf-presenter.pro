@@ -31,19 +31,22 @@ HEADERS += src/events/event.h \
            src/events/lifecycle.h \
            src/views/controlbar.h \
            src/views/console.h \
+           src/views/utils.h \
            src/views/mainwindow.h \
            src/views/view.h \
            src/controllers.h \
            src/presenter.h
 FORMS += \
     ui/controlbar.ui \
-    ui/slideframe.ui
+    ui/slideframe.ui \
+    ui/currentnextslide.ui
 SOURCES += src/main.cpp \
            src/events/event.cpp \
            src/events/slide.cpp \
            src/events/timer.cpp \
            src/events/lifecycle.cpp \
            src/views/controlbar.cpp \
+           src/views/utils.cpp \
            src/views/console.cpp \
            src/views/mainwindow.cpp \
            src/controllers.cpp \

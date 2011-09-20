@@ -71,34 +71,12 @@ QWidget * PresenterConsoleViewImpl::asWidget() {
 	return this;
 }
 
-SlideFrame::SlideFrame(QWidget * parent) : QWidget(parent) {
+CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * parent) : QWidget(parent) {
 	ui.setupUi(this);
 }
 
-void SlideFrame::setContent(QPixmap * content) {
-	this->ui.slideLabel->setPixmap(*content);
-}
-
-CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * parent) : QWidget(parent) {
-	this->layout = new QHBoxLayout(this);
-  this->layout->setSpacing(0);
-  this->layout->setMargin(0);
-	this->setLayout(this->layout);
-	this->currentSlideFrame = new SlideFrame(this);
-	this->nextSlideFrame = new SlideFrame(this);
-
-	this->layout->addWidget(this->currentSlideFrame);
-	this->layout->addWidget(this->nextSlideFrame);
-}
-
-CurrentNextSlideConsoleViewImpl::~CurrentNextSlideConsoleViewImpl() {
-	delete this->currentSlideFrame;
-	delete this->nextSlideFrame;
-	delete this->layout;
-}
-
 void CurrentNextSlideConsoleViewImpl::setCurrentSlide(QPixmap * slide) {
-	this->currentSlideFrame->setContent(slide);
+	this->ui.leftSlideFrame->setContent(slide);
 }
 
 void CurrentNextSlideConsoleViewImpl::setNextSlide(QPixmap * slide) {
