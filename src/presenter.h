@@ -39,12 +39,14 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
         int totalSlides;
         int elapsedTime;
         int totalTime;
+				int xScaleFactor, yScaleFactor;
 				QString pdfFileName;
         IEventBus * bus;
 				QPixmap * loadingSlide;
 				Poppler::Document * document;
 
 				void parseArguments(int argc, char ** argv);
+				void computeScaleFactors();
 				void fireSlideChangedEvent();
 };
 
