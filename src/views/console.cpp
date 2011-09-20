@@ -98,6 +98,7 @@ CurrentNextSlideConsoleViewImpl::~CurrentNextSlideConsoleViewImpl() {
 }
 
 void CurrentNextSlideConsoleViewImpl::setCurrentSlide(QPixmap * slide) {
+	this->currentSlideFrame->setContent(slide);
 }
 
 void CurrentNextSlideConsoleViewImpl::setNextSlide(QPixmap * slide) {

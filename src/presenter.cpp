@@ -22,7 +22,8 @@ OpenPdfPresenter::OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * b
     this->totalSlides = totalSlides;
     this->totalTime = totalTime;
     this->elapsedTime = 0;
-    this->currentSlide = 0;
+    this->currentSlideNumber = 0;
+		this->loadingSlide = new QPixmap(QString(":/presenter/loadingslide.svg"));
     this->bus = bus;
     this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
@@ -30,7 +31,7 @@ OpenPdfPresenter::OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * b
 }
 
 int OpenPdfPresenter::getCurrentSlide() {
-    return this->currentSlide + 1;
+    return this->currentSlideNumber + 1;
 }
 
 int OpenPdfPresenter::getTotalSlides() {
@@ -38,17 +39,17 @@ int OpenPdfPresenter::getTotalSlides() {
 }
 
 void OpenPdfPresenter::onNextSlide(RelativeSlideEvent * evt) {
-    if (this->currentSlide < this->totalSlides) {
-        this->currentSlide += 1;
-        SlideChangedEvent * event = new SlideChangedEvent(this->getCurrentSlide());
+    if (this->currentSlideNumber < this->totalSlides) {
+        this->currentSlideNumber += 1;
+        SlideChangedEvent * event = new SlideChangedEvent(this->loadingSlide, this->getCurrentSlide());
         this->bus->fire(event);
     }
 }
 
 void OpenPdfPresenter::onPrevSlide(RelativeSlideEvent * evt) {
-    if (this->currentSlide > 0) {
-        this->currentSlide -= 1;
-        SlideChangedEvent * event = new SlideChangedEvent(this->getCurrentSlide());
+    if (this->currentSlideNumber > 0) {
+        this->currentSlideNumber -= 1;
+        SlideChangedEvent * event = new SlideChangedEvent(this->loadingSlide, this->getCurrentSlide());
         this->bus->fire(event);
     }
 }
@@ -57,8 +58,8 @@ void OpenPdfPresenter::onGotoSlide(AbsoluteSlideEvent * evt) {
     int toSlide = evt->getSlideNumber();
 
     if (toSlide >= 0 && toSlide < this->totalSlides) {
-        this->currentSlide = evt->getSlideNumber();
-        SlideChangedEvent * event = new SlideChangedEvent(this->getCurrentSlide());
+        this->currentSlideNumber = evt->getSlideNumber();
+        SlideChangedEvent * event = new SlideChangedEvent(this->loadingSlide, this->getCurrentSlide());
         this->bus->fire(event);
     }
 }

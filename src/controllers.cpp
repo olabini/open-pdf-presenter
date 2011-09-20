@@ -16,6 +16,8 @@
 */
 #include "controllers.h"
 
+#include <iostream>
+
 ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount, int durationSeconds) {
 		this->duration = durationSeconds;
     this->bus = bus;
@@ -41,11 +43,11 @@ void ControlBarController::fireSlideEvent(int delta) {
 }
 
 void ControlBarController::onSlideChanged(SlideChangedEvent * evt) {
-    this->view->setCurrentSlideNumber(evt->getCurrentSlide());
-		if (evt->getCurrentSlide() == 1)
+    this->view->setCurrentSlideNumber(evt->getCurrentSlideNumber());
+		if (evt->getCurrentSlideNumber() == 1)
 			this->view->setSlidePercentage(0);
 		else
-			this->view->setSlidePercentage(evt->getCurrentSlide()*100 / this->totalSlideCount);
+			this->view->setSlidePercentage(evt->getCurrentSlideNumber()*100 / this->totalSlideCount);
 }
 
 void ControlBarController::onTimeChanged(TimeChangedEvent * evt) {
@@ -68,8 +70,10 @@ void ControlBarController::onTimeChanged(TimeChangedEvent * evt) {
 
 CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view) {
 	this->bus = bus;
+	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->view = view;
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
+	this->view->setCurrentSlide(evt->getCurrentSlide());
 }

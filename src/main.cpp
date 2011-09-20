@@ -31,18 +31,20 @@ int main(int argc, char ** argv) {
 	//Parse arguments
 
 	//Set up the presenter
+	QApplication app(argc, argv);
 
 	QEventBus * bus = new QEventBus();
 
     OpenPdfPresenter * presenter = new OpenPdfPresenter(120,22,bus);
 
-	QApplication app(argc, argv);
 	ControlBarViewImpl * controlBarView = new ControlBarViewImpl();
     ControlBarController * controlBarController = new ControlBarController(bus, controlBarView, presenter->getTotalSlides(), presenter->getTotalTimeSeconds());
 
 	PresenterConsoleViewImpl * console = new PresenterConsoleViewImpl();
 	console->setControlBarView(controlBarView);
-	console->setContent((new CurrentNextSlideConsoleViewImpl())->asWidget());
+	CurrentNextSlideConsoleViewImpl * currentNextView = new CurrentNextSlideConsoleViewImpl();
+	CurrentNextSlideConsoleViewControllerImpl * currentNextControl = new CurrentNextSlideConsoleViewControllerImpl(bus,currentNextView);
+	console->setContent(currentNextView->asWidget());
 
 	MainWindowViewImpl * mainConsoleWindow = new MainWindowViewImpl();
 	mainConsoleWindow->setContent(console->asWidget());

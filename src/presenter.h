@@ -32,11 +32,12 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
 		virtual void onGotoSlide(AbsoluteSlideEvent * evt);
         virtual void onTimeout(TimerEvent * evt);
     private:
-        int currentSlide;
+        int currentSlideNumber;
         int totalSlides;
         int elapsedTime;
         int totalTime;
         IEventBus * bus;
+				QPixmap * loadingSlide;
 };
 
 #endif

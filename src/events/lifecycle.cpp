@@ -20,11 +20,16 @@
 Type SlideChangedEvent::TYPE;
 Type TimeChangedEvent::TYPE;
 
-SlideChangedEvent::SlideChangedEvent(int currentSlide) {
-    this->currentSlide = currentSlide;
+SlideChangedEvent::SlideChangedEvent(QPixmap * currentSlide, int currentSlideNumber) {
+	this->currentSlideNumber = currentSlideNumber;
+	this->currentSlide = currentSlide;
 }
 
-int SlideChangedEvent::getCurrentSlide() {
+int SlideChangedEvent::getCurrentSlideNumber() {
+    return this->currentSlideNumber;
+}
+
+QPixmap * SlideChangedEvent::getCurrentSlide() {
     return this->currentSlide;
 }
 
