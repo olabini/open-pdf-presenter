@@ -76,4 +76,5 @@ CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewController
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 	this->view->setCurrentSlide(evt->getCurrentSlide());
+	this->view->setNextSlide(evt->getCurrentSlide());
 }
