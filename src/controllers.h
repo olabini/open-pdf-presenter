@@ -19,10 +19,11 @@
 
 #include "views/view.h"
 #include "events/lifecycle.h"
+#include "presenter.h"
 
 class ControlBarController : public ControlBarViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
 	public:
-        ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount, int durationSeconds);
+        ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
 		virtual void onNextSlideButton();
 		virtual void onPrevSlideButton();
 		virtual void onSlideChanged(SlideChangedEvent * evt);
@@ -33,13 +34,15 @@ class ControlBarController : public ControlBarViewController, public SlideChange
         IEventBus * bus;
 				int totalSlideCount;
 				int duration;
+        OpenPdfPresenter * presenter;
 };
 
 class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler {
 	public:
-		CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view);
+		CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 	private:
+        OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;
 		IEventBus * bus;
 };

@@ -38,12 +38,12 @@ int main(int argc, char ** argv) {
 	OpenPdfPresenter * presenter = new OpenPdfPresenter(argc,argv,bus);
 
 	ControlBarViewImpl * controlBarView = new ControlBarViewImpl();
-    ControlBarController * controlBarController = new ControlBarController(bus, controlBarView, presenter->getTotalSlides(), presenter->getTotalTimeSeconds());
+    ControlBarController * controlBarController = new ControlBarController(bus, controlBarView, presenter, presenter->getTotalSlides(), presenter->getTotalTimeSeconds());
 
 	PresenterConsoleViewImpl * console = new PresenterConsoleViewImpl();
 	console->setControlBarView(controlBarView);
 	CurrentNextSlideConsoleViewImpl * currentNextView = new CurrentNextSlideConsoleViewImpl();
-	CurrentNextSlideConsoleViewControllerImpl * currentNextControl = new CurrentNextSlideConsoleViewControllerImpl(bus,currentNextView);
+	CurrentNextSlideConsoleViewControllerImpl * currentNextControl = new CurrentNextSlideConsoleViewControllerImpl(bus,currentNextView, presenter);
 	console->setContent(currentNextView->asWidget());
 
 	MainWindowViewImpl * mainConsoleWindow = new MainWindowViewImpl();

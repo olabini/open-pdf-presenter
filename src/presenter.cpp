@@ -119,23 +119,16 @@ void OpenPdfPresenter::computeScaleFactors() {
 }
 
 int OpenPdfPresenter::getCurrentSlide() {
-    return this->currentSlideNumber + 1;
+    return this->currentSlideNumber;
 }
 
 int OpenPdfPresenter::getTotalSlides() {
-    return this->totalSlides + 1;
+    return this->totalSlides;
 }
 
 void OpenPdfPresenter::fireSlideChangedEvent() {
-	Poppler::Page * pdfPage = this->document->page(this->currentSlideNumber);
-
-	QPixmap pixmap = QPixmap::fromImage(pdfPage->renderToImage(this->xScaleFactor,this->yScaleFactor));
-
 	SlideChangedEvent * event = new SlideChangedEvent(
-		pixmap,
 		this->getCurrentSlide());
-
-	delete pdfPage;
 
 	this->bus->fire(event);
 }
@@ -170,4 +163,13 @@ void OpenPdfPresenter::onTimeout(TimerEvent * evt) {
 
 int OpenPdfPresenter::getTotalTimeSeconds() {
 	return this->totalTime;
+}
+
+QPixmap OpenPdfPresenter::getSlide(int slideNumber) {
+	Poppler::Page * pdfPage = this->document->page(slideNumber);
+
+	QPixmap pixmap = QPixmap::fromImage(pdfPage->renderToImage(this->xScaleFactor,this->yScaleFactor));
+
+	delete pdfPage;
+    return pixmap;
 }

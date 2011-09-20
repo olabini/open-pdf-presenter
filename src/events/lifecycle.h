@@ -20,19 +20,15 @@
 #include "timer.h"
 #include "slide.h"
 
-#include <QPixmap>
-
 class SlideChangedEvent : public SlideEvent {
 	public:
-        SlideChangedEvent(QPixmap currentSlide, int currentSlideNumber);
+        SlideChangedEvent(int currentSlideNumber);
 		virtual Type * getAssociatedType();
 		virtual void dispatch(IEventHandler * handler);
 		static Type TYPE;
         int getCurrentSlideNumber();
-				QPixmap getCurrentSlide();
     private:
         int currentSlideNumber;
-				QPixmap currentSlide;
 };
 
 class SlideChangedEventHandler : public IEventHandler {

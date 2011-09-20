@@ -18,8 +18,9 @@
 
 #include <iostream>
 
-ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, int totalSlideCount, int durationSeconds) {
+ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
 		this->duration = durationSeconds;
+    this->presenter = presenter;
     this->bus = bus;
     this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
     this->bus->subscribe(&TimeChangedEvent::TYPE, (ITimeChangedEventHandler*)this);
@@ -68,13 +69,16 @@ void ControlBarController::onTimeChanged(TimeChangedEvent * evt) {
     this->view->setRemainingTime(hours, minutes, seconds);
 }
 
-CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view) {
+CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter) {
+    this->presenter = presenter;
 	this->bus = bus;
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->view = view;
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-	this->view->setCurrentSlide(evt->getCurrentSlide());
-	this->view->setNextSlide(evt->getCurrentSlide());
+	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
+
+    if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides())
+        this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
 }
