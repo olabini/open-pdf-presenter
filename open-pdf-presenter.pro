@@ -24,6 +24,11 @@ RCC_DIR = $$OBJECTS_DIR
 
 CONFIG += qt debug
 
+# POPPLER
+INCLUDEPATH += /usr/include/poppler/qt4
+LIBS += -lpoppler-qt4
+
+
 # Input
 HEADERS += src/events/event.h \
            src/events/slide.h \

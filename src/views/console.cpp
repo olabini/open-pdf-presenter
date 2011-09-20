@@ -75,11 +75,11 @@ CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * paren
 	ui.setupUi(this);
 }
 
-void CurrentNextSlideConsoleViewImpl::setCurrentSlide(QPixmap * slide) {
+void CurrentNextSlideConsoleViewImpl::setCurrentSlide(QPixmap slide) {
 	this->ui.leftSlideFrame->setContent(slide, this->geometry().width() * 0.6);
 }
 
-void CurrentNextSlideConsoleViewImpl::setNextSlide(QPixmap * slide) {
+void CurrentNextSlideConsoleViewImpl::setNextSlide(QPixmap slide) {
 	this->ui.rightSlideFrame->setContent(slide, this->geometry().width() * 0.25);
 }
 

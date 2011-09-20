@@ -87,8 +87,8 @@ class CurrentNextSlideConsoleViewController : public Controller {
 class CurrentNextSlideConsoleView : public View<CurrentNextSlideConsoleViewController> {
 
 	public:
-		virtual void setCurrentSlide(QPixmap * slide) = 0;
-		virtual void setNextSlide(QPixmap * slide) = 0;
+		virtual void setCurrentSlide(QPixmap slide) = 0;
+		virtual void setNextSlide(QPixmap slide) = 0;
 
 	protected:
 		~CurrentNextSlideConsoleView() { }

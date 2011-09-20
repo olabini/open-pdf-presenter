@@ -24,15 +24,15 @@
 
 class SlideChangedEvent : public SlideEvent {
 	public:
-        SlideChangedEvent(QPixmap * currentSlide, int currentSlideNumber);
+        SlideChangedEvent(QPixmap currentSlide, int currentSlideNumber);
 		virtual Type * getAssociatedType();
 		virtual void dispatch(IEventHandler * handler);
 		static Type TYPE;
         int getCurrentSlideNumber();
-				QPixmap * getCurrentSlide();
+				QPixmap getCurrentSlide();
     private:
         int currentSlideNumber;
-				QPixmap * currentSlide;
+				QPixmap currentSlide;
 };
 
 class SlideChangedEventHandler : public IEventHandler {

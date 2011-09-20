@@ -48,8 +48,8 @@ class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideC
 
 	public:
 		CurrentNextSlideConsoleViewImpl(QWidget * parent = 0);
-		virtual void setCurrentSlide(QPixmap * slide);
-		virtual void setNextSlide(QPixmap * slide);
+		virtual void setCurrentSlide(QPixmap slide);
+		virtual void setNextSlide(QPixmap slide);
 		virtual void setController(CurrentNextSlideConsoleViewController * controller);
 		virtual QWidget * asWidget();
 

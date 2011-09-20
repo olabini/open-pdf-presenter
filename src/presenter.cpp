@@ -18,9 +18,10 @@
 
 #include "events/lifecycle.h"
 
-OpenPdfPresenter::OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * bus) {
-    this->totalSlides = totalSlides;
-    this->totalTime = totalTime;
+#include <QCoreApplication>
+
+OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv, IEventBus * bus) {
+		this->parseArguments(argc, argv);
     this->elapsedTime = 0;
     this->currentSlideNumber = 0;
 		this->loadingSlide = new QPixmap(QString(":/presenter/loadingslide.svg"));
@@ -28,6 +29,32 @@ OpenPdfPresenter::OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * b
     this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
+}
+
+OpenPdfPresenter::~OpenPdfPresenter() {
+	delete this->document;
+}
+
+void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
+    this->totalTime = 120;
+
+		QStringList args = QCoreApplication::arguments();
+		if (args.size() < 3)
+			// TODO: print error
+			exit(1);
+
+		bool ok;
+		this->totalTime = args.at(1).toInt(&ok);
+		if (!ok)
+			// TODO: print error
+			exit(1);
+
+		this->document = Poppler::Document::load(args.at(2));
+		if (!this->document)
+			// TODO: print error
+			exit(1);
+
+		this->totalSlides = this->document->numPages() - 1;
 }
 
 int OpenPdfPresenter::getCurrentSlide() {
@@ -38,19 +65,27 @@ int OpenPdfPresenter::getTotalSlides() {
     return this->totalSlides + 1;
 }
 
+void OpenPdfPresenter::fireSlideChangedEvent() {
+	Poppler::Page * pdfPage = this->document->page(this->currentSlideNumber);
+	SlideChangedEvent * event = new SlideChangedEvent(
+		QPixmap::fromImage(pdfPage->renderToImage(500,500)),
+		this->getCurrentSlide());
+	delete pdfPage;
+
+	this->bus->fire(event);
+}
+
 void OpenPdfPresenter::onNextSlide(RelativeSlideEvent * evt) {
     if (this->currentSlideNumber < this->totalSlides) {
-        this->currentSlideNumber += 1;
-        SlideChangedEvent * event = new SlideChangedEvent(this->loadingSlide, this->getCurrentSlide());
-        this->bus->fire(event);
+			this->currentSlideNumber += 1;
+			this->fireSlideChangedEvent();
     }
 }
 
 void OpenPdfPresenter::onPrevSlide(RelativeSlideEvent * evt) {
     if (this->currentSlideNumber > 0) {
-        this->currentSlideNumber -= 1;
-        SlideChangedEvent * event = new SlideChangedEvent(this->loadingSlide, this->getCurrentSlide());
-        this->bus->fire(event);
+      this->currentSlideNumber -= 1;
+			this->fireSlideChangedEvent();
     }
 }
 
@@ -59,8 +94,7 @@ void OpenPdfPresenter::onGotoSlide(AbsoluteSlideEvent * evt) {
 
     if (toSlide >= 0 && toSlide < this->totalSlides) {
         this->currentSlideNumber = evt->getSlideNumber();
-        SlideChangedEvent * event = new SlideChangedEvent(this->loadingSlide, this->getCurrentSlide());
-        this->bus->fire(event);
+				this->fireSlideChangedEvent();
     }
 }
 

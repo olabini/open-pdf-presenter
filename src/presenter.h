@@ -21,9 +21,12 @@
 #include "events/slide.h"
 #include "events/timer.h"
 
+#include <poppler-qt4.h>
+
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
     public:
-        OpenPdfPresenter(int totalTime, int totalSlides, IEventBus * bus);
+        OpenPdfPresenter(int argc, char ** argv, IEventBus * bus);
+        ~OpenPdfPresenter();
         int getCurrentSlide();
         int getTotalSlides();
 				int getTotalTimeSeconds();
@@ -36,8 +39,13 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
         int totalSlides;
         int elapsedTime;
         int totalTime;
+				QString pdfFileName;
         IEventBus * bus;
 				QPixmap * loadingSlide;
+				Poppler::Document * document;
+
+				void parseArguments(int argc, char ** argv);
+				void fireSlideChangedEvent();
 };
 
 #endif

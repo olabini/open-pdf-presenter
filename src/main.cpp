@@ -35,7 +35,7 @@ int main(int argc, char ** argv) {
 
 	QEventBus * bus = new QEventBus();
 
-    OpenPdfPresenter * presenter = new OpenPdfPresenter(120,22,bus);
+	OpenPdfPresenter * presenter = new OpenPdfPresenter(argc,argv,bus);
 
 	ControlBarViewImpl * controlBarView = new ControlBarViewImpl();
     ControlBarController * controlBarController = new ControlBarController(bus, controlBarView, presenter->getTotalSlides(), presenter->getTotalTimeSeconds());
