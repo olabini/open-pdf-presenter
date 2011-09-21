@@ -38,6 +38,7 @@ HEADERS += src/events/event.h \
            src/views/console.h \
            src/views/utils.h \
            src/views/mainwindow.h \
+           src/views/mainslide.h \
            src/views/view.h \
            src/controllers.h \
            src/presenter.h
@@ -54,6 +55,7 @@ SOURCES += src/main.cpp \
            src/views/utils.cpp \
            src/views/console.cpp \
            src/views/mainwindow.cpp \
+           src/views/mainslide.cpp \
            src/controllers.cpp \
            src/presenter.cpp
 

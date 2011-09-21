@@ -23,7 +23,7 @@
 #include <QDesktopWidget>
 #include <iostream>
 
-#define TEST_DPI 96
+#define TEST_DPI 96.0
 
 OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv, IEventBus * bus) {
 		this->parseArguments(argc, argv);
@@ -91,40 +91,38 @@ QList<ScaleFactor*> * OpenPdfPresenter::computeScaleFactors() {
 		Poppler::Page * page = this->document->page(0);
 		QImage image = page->renderToImage(TEST_DPI, TEST_DPI);
 		delete page;
-
+			
 		double ratio = ((double) image.width()) / ((double)image.height());
 
 		QDesktopWidget * desktopWidget = QApplication::desktop();
 
 		QList<ScaleFactor*> * ret = new QList<ScaleFactor*>();
 
-		for (int i = 0 ; i < desktopWidget->screenCount(); i++) {
+                for (int i = 0 ; i < desktopWidget->screenCount(); i++) {
 
 			ScaleFactor * scaleFactor = new ScaleFactor();
 
 			scaleFactor->screen = i;
 
-			QRect screen = desktopWidget->screenGeometry(i);
-			double screenRatio = ((double) screen.width()) / ((double) screen.height());
+                        QRect screen = desktopWidget->screenGeometry(i);
+                        double screenRatio = ((double) screen.width()) / ((double) screen.height());
+                        if (screenRatio < ratio) {
+                                scaleFactor->usableWidth = screen.width();
+                                scaleFactor->usableHeight = ((double) screen.width()) / ratio;
+                        }
+                        else  if (screenRatio > ratio) {
+                                scaleFactor->usableHeight = screen.height();
+                                scaleFactor->usableWidth = ((double) screen.height()) * ratio;
+                        }
+                        else {
+                                scaleFactor->usableWidth = screen.width();
+                                scaleFactor->usableHeight = screen.height();
+                        }
 
-			double usableHeight, usableWidth;
+			scaleFactor->usableArea = scaleFactor->usableWidth * scaleFactor->usableHeight;
+                        scaleFactor->xScaleFactor = ((double) scaleFactor->usableWidth / ((double) image.width())) * TEST_DPI;
+                        scaleFactor->yScaleFactor = ((double) scaleFactor->usableHeight / ((double) image.height())) * TEST_DPI;
 
-			if (screenRatio < ratio) {
-				usableWidth = screen.width();
-				usableHeight = ((double) screen.height()) / ratio;
-			}
-			else if (screenRatio > ratio) {
-				usableHeight = screen.height();
-				usableWidth = ((double) screen.width()) / ratio;
-			}
-			else {
-				usableWidth = screen.width();
-				usableHeight = screen.height();
-			}
-
-			scaleFactor->usableArea = usableWidth * usableHeight;
-			scaleFactor->xScaleFactor = TEST_DPI * (usableWidth / image.width());
-			scaleFactor->yScaleFactor = TEST_DPI * (usableHeight / image.height());
 
 			ret->append(scaleFactor);
 		}
@@ -186,4 +184,8 @@ QPixmap OpenPdfPresenter::getSlide(int slideNumber) {
 
 	delete pdfPage;
     return pixmap;
+}
+
+ScaleFactor * OpenPdfPresenter::getScaleFactor() {
+	return this->scaleFactor;
 }

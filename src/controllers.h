@@ -47,4 +47,14 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 		IEventBus * bus;
 };
 
+class MainSlideViewControllerImpl : public MainSlideViewController, public SlideChangedEventHandler {
+	public:
+		MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter);
+		virtual void onSlideChanged(SlideChangedEvent * evt);
+	private:
+		OpenPdfPresenter * presenter;
+		MainSlideView * view;
+		IEventBus * bus;
+};
+
 #endif

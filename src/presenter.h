@@ -29,6 +29,8 @@ class ScaleFactor {
 	public:
 		int screen;
 		int usableArea;
+		int usableWidth;
+		int usableHeight;
 		int xScaleFactor;
 		int yScaleFactor;
 };
@@ -45,6 +47,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
 		virtual void onGotoSlide(AbsoluteSlideEvent * evt);
         virtual void onTimeout(TimerEvent * evt);
+				ScaleFactor * getScaleFactor();
     private:
         int currentSlideNumber;
         int totalSlides;

@@ -94,4 +94,15 @@ class CurrentNextSlideConsoleView : public View<CurrentNextSlideConsoleViewContr
 		~CurrentNextSlideConsoleView() { }
 };
 
+
+class MainSlideViewController : public Controller {
+};
+
+class MainSlideView : public View<MainSlideViewController> {
+	public:
+		virtual void setCurrentSlide(QPixmap slide, bool scale = false) = 0;
+	protected:
+		~MainSlideView() { }
+};
+
 #endif

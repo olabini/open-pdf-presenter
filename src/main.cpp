@@ -22,6 +22,7 @@
 #include "views/controlbar.h"
 #include "views/console.h"
 #include "views/mainwindow.h"
+#include "views/mainslide.h"
 #include "controllers.h"
 #include "presenter.h"
 
@@ -49,11 +50,18 @@ int main(int argc, char ** argv) {
 	MainWindowViewImpl * mainConsoleWindow = new MainWindowViewImpl();
 	mainConsoleWindow->setContent(console->asWidget());
 
+	MainSlideViewImpl * mainSlide = new MainSlideViewImpl(presenter->getScaleFactor()->usableWidth);
+	MainSlideViewControllerImpl * mainSlideController = new MainSlideViewControllerImpl(bus, mainSlide, presenter);
+
+	MainWindowViewImpl * mainSlideWindow = new MainWindowViewImpl();
+	mainSlideWindow->setContent(mainSlide->asWidget());
+
     Timer * timer = new Timer(bus);
 
 
 	//Start presentation
 	mainConsoleWindow->show();
+	mainSlideWindow->show();
 	ret = app.exec();
 
 	//Clean up

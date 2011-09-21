@@ -82,3 +82,14 @@ void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent
     if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides())
         this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
 }
+
+MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter) {
+  this->presenter = presenter;
+	this->bus = bus;
+	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
+	this->view = view;
+}
+
+void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
+	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
+}
