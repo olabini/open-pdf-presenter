@@ -20,6 +20,7 @@
 #include "events/event.h"
 #include "events/slide.h"
 #include "events/timer.h"
+#include "events/lifecycle.h"
 #include "renderer.h"
 #include "utils.h"
 
@@ -28,7 +29,7 @@
 
 class Renderer;
 
-class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
+class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler {
         public:
                 OpenPdfPresenter(int argc, char ** argv, IEventBus * bus);
                 ~OpenPdfPresenter();
@@ -40,6 +41,8 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
                 virtual void onGotoSlide(AbsoluteSlideEvent * evt);
                 virtual void onTimeout(TimerEvent * evt);
+                virtual void onStartPresentation(StartPresentationEvent * evt);
+                virtual void onStopPresentation(StopPresentationEvent * evt);
                 ScaleFactor * getScaleFactor();
         private:
                 int currentSlideNumber;

@@ -48,12 +48,16 @@ int main(int argc, char ** argv) {
 	console->setContent(currentNextView->asWidget());
 
 	MainWindowViewImpl * mainConsoleWindow = new MainWindowViewImpl();
+    MainWindowViewControllerImpl * mainConsoleWindowController = new MainWindowViewControllerImpl(bus,mainConsoleWindow);
+    mainConsoleWindow->setController(mainConsoleWindowController);
 	mainConsoleWindow->setContent(console->asWidget());
 
 	MainSlideViewImpl * mainSlide = new MainSlideViewImpl(presenter->getScaleFactor()->usableWidth);
 	MainSlideViewControllerImpl * mainSlideController = new MainSlideViewControllerImpl(bus, mainSlide, presenter);
 
 	MainWindowViewImpl * mainSlideWindow = new MainWindowViewImpl();
+    MainWindowViewControllerImpl * mainSlideWindowController = new MainWindowViewControllerImpl(bus,mainSlideWindow);
+    mainSlideWindow->setController(mainSlideWindowController);
 	mainSlideWindow->setContent(mainSlide->asWidget());
 
     Timer * timer = new Timer(bus);

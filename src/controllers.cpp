@@ -16,6 +16,8 @@
 */
 #include "controllers.h"
 
+#include "events/slide.h"
+
 #include <iostream>
 
 ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
@@ -89,4 +91,21 @@ MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSl
 
 void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
         this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap());
+}
+
+MainWindowViewControllerImpl::MainWindowViewControllerImpl(IEventBus * bus, MainWindowView * view) {
+    this->bus = bus;
+    this->view = view;
+}
+
+void MainWindowViewControllerImpl::onKeyExit() {
+    this->bus->fire(new StopPresentationEvent());
+}
+
+void MainWindowViewControllerImpl::onKeyPrev() {
+    this->bus->fire(new RelativeSlideEvent(-1));
+}
+
+void MainWindowViewControllerImpl::onKeyNext() {
+    this->bus->fire(new RelativeSlideEvent(1));
 }

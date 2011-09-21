@@ -59,4 +59,26 @@ class ITimeChangedEventHandler : public IEventHandler {
 		~ITimeChangedEventHandler() { }
 };
 
+class StartPresentationEvent : public Event {
+	public:
+		virtual Type * getAssociatedType();
+		virtual void dispatch(IEventHandler * handler);
+		static Type TYPE;
+};
+
+class StopPresentationEvent : public Event {
+	public:
+		virtual Type * getAssociatedType();
+		virtual void dispatch(IEventHandler * handler);
+		static Type TYPE;
+};
+
+class StartStopPresentationEventHandler : public IEventHandler {
+    public:
+        virtual void onStartPresentation(StartPresentationEvent * event) = 0;
+        virtual void onStopPresentation(StopPresentationEvent * event) = 0;
+    protected:
+        ~StartStopPresentationEventHandler() { }
+};
+
 #endif

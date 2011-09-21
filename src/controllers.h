@@ -57,4 +57,15 @@ class MainSlideViewControllerImpl : public MainSlideViewController, public Slide
 		IEventBus * bus;
 };
 
+class MainWindowViewControllerImpl : public MainWindowViewController {
+    public:
+        MainWindowViewControllerImpl(IEventBus * bus, MainWindowView * view);
+        virtual void onKeyExit();
+        virtual void onKeyPrev();
+        virtual void onKeyNext();
+    private:
+        MainWindowView * view;
+        IEventBus * bus;
+};
+
 #endif

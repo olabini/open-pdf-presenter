@@ -56,3 +56,22 @@ int TimeChangedEvent::getElapsedTime() {
 int TimeChangedEvent::getRemainingTime() {
     return this->remainingTime;
 }
+
+Type StartPresentationEvent::TYPE = Type();
+Type StopPresentationEvent::TYPE = Type();
+
+Type * StartPresentationEvent::getAssociatedType() {
+    return &StartPresentationEvent::TYPE;
+}
+
+Type * StopPresentationEvent::getAssociatedType() {
+    return &StopPresentationEvent::TYPE;
+}
+
+void StartPresentationEvent::dispatch(IEventHandler * handler) {
+    ((StartStopPresentationEventHandler*)handler)->onStartPresentation(this);
+}
+
+void StopPresentationEvent::dispatch(IEventHandler * handler) {
+    ((StartStopPresentationEventHandler*)handler)->onStopPresentation(this);
+}

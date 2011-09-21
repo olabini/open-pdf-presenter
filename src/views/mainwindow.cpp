@@ -16,6 +16,7 @@
 */
 #include "mainwindow.h"
 
+#include <QKeyEvent>
 #include <iostream>
 
 MainWindowViewImpl::MainWindowViewImpl(QWidget * parent)  : QWidget(parent) {
@@ -46,4 +47,16 @@ QWidget * MainWindowViewImpl::asWidget() {
 }
 
 void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
+    switch(event->key()) {
+        case Qt::Key_Escape:
+        case Qt::Key_Q:
+            this->controller->onKeyExit();
+            break;
+        case Qt::Key_Left:
+            this->controller->onKeyPrev();
+            break;
+        case Qt::Key_Right:
+            this->controller->onKeyNext();
+            break;
+    }
 }

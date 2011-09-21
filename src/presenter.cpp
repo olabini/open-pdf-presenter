@@ -52,6 +52,7 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv, IEventBus * bus) {
     this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
+    this->bus->subscribe(&StopPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
 
         this->renderer = new Renderer(this->bus,this->document,this->scaleFactor);
 }
@@ -186,4 +187,11 @@ Slide OpenPdfPresenter::getSlide(int slideNumber) {
 
 ScaleFactor * OpenPdfPresenter::getScaleFactor() {
 	return this->scaleFactor;
+}
+
+void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
+}
+
+void OpenPdfPresenter::onStopPresentation(StopPresentationEvent * evt) {
+    QCoreApplication::instance()->exit(0);
 }
