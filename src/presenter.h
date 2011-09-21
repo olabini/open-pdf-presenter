@@ -22,7 +22,16 @@
 #include "events/timer.h"
 
 #include <QPixmap>
+#include <QList>
 #include <poppler-qt4.h>
+
+class ScaleFactor {
+	public:
+		int screen;
+		int usableArea;
+		int xScaleFactor;
+		int yScaleFactor;
+};
 
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
     public:
@@ -41,14 +50,15 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
         int totalSlides;
         int elapsedTime;
         int totalTime;
-				int xScaleFactor, yScaleFactor;
+				
+				ScaleFactor * scaleFactor;
 				QString pdfFileName;
         IEventBus * bus;
 				QPixmap * loadingSlide;
 				Poppler::Document * document;
 
 				void parseArguments(int argc, char ** argv);
-				void computeScaleFactors();
+				QList<ScaleFactor*> * computeScaleFactors();
 				void fireSlideChangedEvent();
 };
 

@@ -27,7 +27,25 @@
 
 OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv, IEventBus * bus) {
 		this->parseArguments(argc, argv);
-		this->computeScaleFactors();
+
+		QList<ScaleFactor*> * factors = this->computeScaleFactors();
+
+		this->scaleFactor = NULL;
+
+		for(int i = 0 ; i < factors->size() ; i++) {
+			ScaleFactor * factor = factors->at(i);
+			if (this->scaleFactor == NULL || factor->usableArea < this->scaleFactor->usableArea)
+				this->scaleFactor = factor;
+		}
+
+		for(int i = 0 ; i < factors->size() ; i++) {
+			ScaleFactor * factor = factors->at(i);
+			if (this->scaleFactor != factor)
+				delete factor;
+		}
+
+		delete factors;
+
     this->elapsedTime = 0;
     this->currentSlideNumber = 0;
 		this->loadingSlide = new QPixmap(QString(":/presenter/loadingslide.svg"));
@@ -68,25 +86,24 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 }
 
 
-void OpenPdfPresenter::computeScaleFactors() {
-
-		this->xScaleFactor = TEST_DPI;
-		this->yScaleFactor = TEST_DPI;
+QList<ScaleFactor*> * OpenPdfPresenter::computeScaleFactors() {
 
 		Poppler::Page * page = this->document->page(0);
-		QImage image = page->renderToImage(this->xScaleFactor,this->yScaleFactor);
+		QImage image = page->renderToImage(TEST_DPI, TEST_DPI);
 		delete page;
 
 		double ratio = ((double) image.width()) / ((double)image.height());
-		double area = ((double) image.width()) * ((double)image.height());
 
 		QDesktopWidget * desktopWidget = QApplication::desktop();
 
-		double maxUsableArea = 0, maxUsableWidth, maxUsableHeight;
+		QList<ScaleFactor*> * ret = new QList<ScaleFactor*>();
 
 		for (int i = 0 ; i < desktopWidget->screenCount(); i++) {
 
-			double usableArea;
+			ScaleFactor * scaleFactor = new ScaleFactor();
+
+			scaleFactor->screen = i;
+
 			QRect screen = desktopWidget->screenGeometry(i);
 			double screenRatio = ((double) screen.width()) / ((double) screen.height());
 
@@ -105,17 +122,14 @@ void OpenPdfPresenter::computeScaleFactors() {
 				usableHeight = screen.height();
 			}
 
-			usableArea = usableWidth * usableHeight;
+			scaleFactor->usableArea = usableWidth * usableHeight;
+			scaleFactor->xScaleFactor = TEST_DPI * (usableWidth / image.width());
+			scaleFactor->yScaleFactor = TEST_DPI * (usableHeight / image.height());
 
-			if (usableArea > maxUsableArea) {
-				maxUsableWidth = usableWidth;
-				maxUsableHeight = usableHeight;
-				maxUsableArea = usableArea;
-			}
+			ret->append(scaleFactor);
 		}
 
-		this->xScaleFactor *= (maxUsableWidth / image.width());
-		this->yScaleFactor *= (maxUsableHeight / image.height());
+		return ret;
 }
 
 int OpenPdfPresenter::getCurrentSlide() {
@@ -168,7 +182,7 @@ int OpenPdfPresenter::getTotalTimeSeconds() {
 QPixmap OpenPdfPresenter::getSlide(int slideNumber) {
 	Poppler::Page * pdfPage = this->document->page(slideNumber);
 
-	QPixmap pixmap = QPixmap::fromImage(pdfPage->renderToImage(this->xScaleFactor,this->yScaleFactor));
+	QPixmap pixmap = QPixmap::fromImage(pdfPage->renderToImage(this->scaleFactor->xScaleFactor,this->scaleFactor->yScaleFactor));
 
 	delete pdfPage;
     return pixmap;
