@@ -20,10 +20,10 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPixmap>
-#include "utils.h"
+#include "view.h"
+#include "viewutils.h"
 #include "ui_slideframe.h"
 #include "ui_currentnextslide.h"
-#include "view.h"
 
 class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 
@@ -48,8 +48,8 @@ class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideC
 
 	public:
 		CurrentNextSlideConsoleViewImpl(QWidget * parent = 0);
-		virtual void setCurrentSlide(QPixmap slide);
-		virtual void setNextSlide(QPixmap slide);
+                virtual void setCurrentSlide(QPixmap slide);
+                virtual void setNextSlide(QPixmap slide);
 		virtual void setController(CurrentNextSlideConsoleViewController * controller);
 		virtual QWidget * asWidget();
 

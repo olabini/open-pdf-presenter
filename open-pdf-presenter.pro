@@ -36,12 +36,12 @@ HEADERS += src/events/event.h \
            src/events/lifecycle.h \
            src/views/controlbar.h \
            src/views/console.h \
-           src/views/utils.h \
            src/views/mainwindow.h \
            src/views/mainslide.h \
            src/views/view.h \
            src/controllers.h \
-           src/presenter.h
+           src/presenter.h \
+    src/views/viewutils.h
 FORMS += \
     ui/controlbar.ui \
     ui/slideframe.ui \
@@ -52,12 +52,12 @@ SOURCES += src/main.cpp \
            src/events/timer.cpp \
            src/events/lifecycle.cpp \
            src/views/controlbar.cpp \
-           src/views/utils.cpp \
            src/views/console.cpp \
            src/views/mainwindow.cpp \
            src/views/mainslide.cpp \
            src/controllers.cpp \
-           src/presenter.cpp
+           src/presenter.cpp \
+    src/views/viewutils.cpp
 
 RESOURCES += \
     resources/controlbar/controlbar.qrc \

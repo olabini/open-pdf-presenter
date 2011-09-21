@@ -48,7 +48,9 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv, IEventBus * bus) {
 
     this->elapsedTime = 0;
     this->currentSlideNumber = 0;
-		this->loadingSlide = new QPixmap(QString(":/presenter/loadingslide.svg"));
+        QImage image = QImage();
+        image.load(QString(":/presenter/loadingslide.svg"));
+        this->loadingSlide = new Slide(image);
     this->bus = bus;
     this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
@@ -177,13 +179,13 @@ int OpenPdfPresenter::getTotalTimeSeconds() {
 	return this->totalTime;
 }
 
-QPixmap OpenPdfPresenter::getSlide(int slideNumber) {
+Slide * OpenPdfPresenter::getSlide(int slideNumber) {
 	Poppler::Page * pdfPage = this->document->page(slideNumber);
 
-	QPixmap pixmap = QPixmap::fromImage(pdfPage->renderToImage(this->scaleFactor->xScaleFactor,this->scaleFactor->yScaleFactor));
+        Slide * slide = new Slide(pdfPage->renderToImage(this->scaleFactor->xScaleFactor,this->scaleFactor->yScaleFactor));
 
 	delete pdfPage;
-    return pixmap;
+    return slide;
 }
 
 ScaleFactor * OpenPdfPresenter::getScaleFactor() {

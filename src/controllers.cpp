@@ -77,10 +77,10 @@ CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewController
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
+        this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber())->asPixmap());
 
     if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides())
-        this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
+        this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1)->asPixmap());
 }
 
 MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter) {
@@ -91,5 +91,5 @@ MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSl
 }
 
 void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
+        this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber())->asPixmap());
 }

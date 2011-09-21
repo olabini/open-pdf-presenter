@@ -20,19 +20,19 @@
 #include "events/event.h"
 #include "events/slide.h"
 #include "events/timer.h"
+#include "utils.h"
 
-#include <QPixmap>
 #include <QList>
 #include <poppler-qt4.h>
 
 class ScaleFactor {
-	public:
-		int screen;
-		int usableArea;
-		int usableWidth;
-		int usableHeight;
-		int xScaleFactor;
-		int yScaleFactor;
+        public:
+                int screen;
+                int usableArea;
+                int usableWidth;
+                int usableHeight;
+                int xScaleFactor;
+                int yScaleFactor;
 };
 
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
@@ -42,7 +42,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
         int getCurrentSlide();
         int getTotalSlides();
 				int getTotalTimeSeconds();
-        QPixmap getSlide(int slideNumber);
+        Slide * getSlide(int slideNumber);
 		virtual void onNextSlide(RelativeSlideEvent * evt);
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
 		virtual void onGotoSlide(AbsoluteSlideEvent * evt);
@@ -57,9 +57,8 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
 				ScaleFactor * scaleFactor;
 				QString pdfFileName;
         IEventBus * bus;
-				QPixmap * loadingSlide;
-				Poppler::Document * document;
-
+                                Poppler::Document * document;
+                                Slide * loadingSlide;
 				void parseArguments(int argc, char ** argv);
 				QList<ScaleFactor*> * computeScaleFactors();
 				void fireSlideChangedEvent();

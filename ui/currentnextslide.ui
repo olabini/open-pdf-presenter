@@ -59,7 +59,7 @@
   <customwidget>
    <class>SlideFrame</class>
    <extends>QWidget</extends>
-   <header>utils.h</header>
+   <header>viewutils.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

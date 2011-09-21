@@ -14,12 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "utils.h"
+#ifndef _VIEWUTILS_H_
+#define _VIEWUTILS_H_
 
-SlideFrame::SlideFrame(QWidget * parent) : QWidget(parent) {
-	ui.setupUi(this);
-}
+#include <QWidget>
+#include "ui_slideframe.h"
 
-void SlideFrame::setContent(QPixmap content, int width) {
-	this->ui.slideLabel->setPixmap(content.scaledToWidth(width, Qt::SmoothTransformation));
-}
+class SlideFrame : public QWidget {
+	Q_OBJECT
+
+	public:
+		SlideFrame(QWidget * parent = 0);
+		void setContent(QPixmap content, int width);
+
+	private:
+		Ui::SlideFrame ui;
+};
+
+#endif // _VIEWUTILS_H_
