@@ -185,14 +185,14 @@
           <height>50</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="styleSheet">
          <string notr="true">background: none</string>
         </property>
         <property name="text">
          <string/>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
         </property>
         <property name="iconSize">
          <size>
@@ -202,6 +202,9 @@
         </property>
         <property name="icon">
          <pixmap resource="../resources/controlbar/controlbar.qrc">:/controlbar/ButtonSlidePreviousNormal.png</pixmap>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -219,20 +222,23 @@
           <height>50</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="styleSheet">
          <string notr="true">background: none</string>
         </property>
         <property name="text">
          <string/>
         </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
         <property name="iconSize">
          <size>
           <width>50</width>
           <height>50</height>
          </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
         <property name="icon">
          <pixmap resource="../resources/controlbar/controlbar.qrc">:/controlbar/ButtonSlideNextNormal.png</pixmap>
@@ -250,9 +256,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
             <property name="minimumSize">
              <size>
@@ -274,6 +277,9 @@
             <property name="text">
              <string>1</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item row="0" column="3">
@@ -292,6 +298,9 @@
               <width>200</width>
               <height>0</height>
              </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="styleSheet">
              <string notr="true">background: none</string>
@@ -376,6 +385,9 @@
               <width>200</width>
               <height>0</height>
              </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="styleSheet">
              <string notr="true">background: none</string>

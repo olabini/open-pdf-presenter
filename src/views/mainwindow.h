@@ -29,7 +29,10 @@ class MainWindowViewImpl : public QWidget, public MainWindowView {
 		MainWindowViewImpl(QWidget * parent = 0);
 		virtual void setContent(QWidget * content);
 		virtual void setController(MainWindowViewController * controller);
-		virtual QWidget * asWidget();
+                virtual QWidget * asWidget();
+
+        protected:
+                void keyPressEvent(QKeyEvent * event);
 	
 	private:
 		QWidget * content;

@@ -44,3 +44,6 @@ void MainWindowViewImpl::setController(MainWindowViewController * controller) {
 QWidget * MainWindowViewImpl::asWidget() {
 	return this;
 }
+
+void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
+}
