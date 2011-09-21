@@ -14,19 +14,35 @@
     You should have received a copy of the GNU General Public License
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _UTILS_H_
-#define _UTILS_H_
+#ifndef _OPEN_PDF_PRESENTER_UTILS_H_
+#define _OPEN_PDF_PRESENTER_UTILS_H_
 
 #include <QPixmap>
 #include <QImage>
 
+class ScaleFactor {
+        public:
+                ScaleFactor();
+                ScaleFactor(int screen, int usableWidth, int usableHeight, int xScaleFactor, int yScaleFactor);
+                int screen;
+                int usableArea;
+                int usableWidth;
+                int usableHeight;
+                int xScaleFactor;
+                int yScaleFactor;
+                static ScaleFactor DUMMY;
+};
+
+
 class Slide {
         public:
-                Slide(QImage image);
+                Slide(ScaleFactor * factor, QImage image);
                 QPixmap asPixmap();
                 QImage asImage();
+                ScaleFactor * getFactor();
         private:
                 QImage image;
+                ScaleFactor * factor;
 };
 
 #endif // _UTILS_H_

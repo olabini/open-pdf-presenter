@@ -1,10 +1,9 @@
 #include "renderer.h"
 
-Type SlideRenderedEvent::TYPE;
+Type SlideRenderedEvent::TYPE = Type();
 
-SlideRenderedEvent::SlideRenderedEvent(int slideNumber, Slide * slide) {
+SlideRenderedEvent::SlideRenderedEvent(int slideNumber, Slide slide) : slide(slide) {
         this->slideNumber = slideNumber;
-        this->slide = slide;
 }
 
 Type * SlideRenderedEvent::getAssociatedType() {
@@ -19,21 +18,17 @@ int SlideRenderedEvent::getSlideNumber() {
         return this->slideNumber;
 }
 
-Slide * SlideRenderedEvent::getSlide() {
+Slide SlideRenderedEvent::getSlide() {
         return this->slide;
 }
 
-Renderer::Renderer(IEventBus * bus, Poppler::Document * document, ScaleFactor * currentFactor) {
+Renderer::Renderer(IEventBus * bus, Poppler::Document * document, ScaleFactor * currentFactor) :
+    loadingSlide(&ScaleFactor::DUMMY, QImage(QString(":/presenter/loadingslide.svg")).scaledToWidth(currentFactor->usableWidth,Qt::SmoothTransformation)) {
         this->bus = bus;
         this->document = document;
         this->currentFactor = currentFactor;
 
-        this->loadingSlide = new RenderedSlide(
-                    this->currentFactor,
-                    new Slide(QImage(
-                                      QString(":/presenter/loadingslide.svg")).scaledToWidth(this->currentFactor->usableWidth,Qt::SmoothTransformation)));
-
-        this->slides = new QList<RenderedSlide*>();
+        this->slides = new QList<Slide>();
         for (int i = 0 ; i < this->document->numPages() ; i++)
                 this->slides->append(this->loadingSlide);
 
@@ -56,11 +51,6 @@ Renderer::~Renderer() {
         delete this->mutex;
         delete this->factorChanged;
 
-        delete this->loadingSlide;
-
-        for (int i = 0 ; i < this->document->numPages() ; i++)
-                delete this->slides->takeFirst();
-
         delete this->slides;
 }
 
@@ -71,10 +61,9 @@ void Renderer::setScaleFactor(ScaleFactor * factor) {
         this->mutex->unlock();
 }
 
-Slide * Renderer::getSlide(int slideNumber) {
-        Slide * ret;
+Slide Renderer::getSlide(int slideNumber) {
         this->mutex->lock();
-        ret = this->slides->at(slideNumber)->getSlide();
+        Slide ret = this->slides->at(slideNumber);
         this->mutex->unlock();
 
         return ret;
@@ -89,17 +78,15 @@ void Renderer::run() {
                                 this->mutex->unlock();
                                 return;
                         }
-                        RenderedSlide * renderedSlide = this->slides->at(i);
-                        if (renderedSlide == this->loadingSlide || renderedSlide->getFactor() != this->currentFactor) {
+                        Slide slide = this->slides->at(i);
+                        if (slide.getFactor() == &ScaleFactor::DUMMY || slide.getFactor() != this->currentFactor) {
                                 ScaleFactor * factor = this->currentFactor;
                                 this->mutex->unlock();
                                 renderedAny = true;
-                                RenderedSlide * newRenderedSlide = this->renderSlide(i,factor);
+                                Slide  newSlide = this->renderSlide(i,factor);
                                 this->mutex->lock();
-                                this->slides->replace(i,newRenderedSlide);
-                                if (renderedSlide != this->loadingSlide)
-                                        delete renderedSlide;
-                                this->bus->fire(new SlideRenderedEvent(i,newRenderedSlide->getSlide()));
+                                this->slides->replace(i,newSlide);
+                                this->bus->fire(new SlideRenderedEvent(i,newSlide));
                         }
                 }
                 if (!renderedAny)
@@ -107,16 +94,14 @@ void Renderer::run() {
         }
 }
 
-RenderedSlide * Renderer::renderSlide(int slideNumber, ScaleFactor * factor) {
+Slide Renderer::renderSlide(int slideNumber, ScaleFactor * factor) {
         Poppler::Page * pdfPage = this->document->page(slideNumber);
 
         QImage image = pdfPage->renderToImage(factor->xScaleFactor,factor->yScaleFactor);
 
-        RenderedSlide * ret = new RenderedSlide(factor, new Slide(image));
-
         delete pdfPage;
 
-        return ret;
+        return Slide(factor, image);
 }
 
 RendererThread::RendererThread(Renderer *renderer) {
@@ -125,21 +110,4 @@ RendererThread::RendererThread(Renderer *renderer) {
 
 void RendererThread::run() {
         this->renderer->run();
-}
-
-RenderedSlide::RenderedSlide(ScaleFactor *factor, Slide *slide) {
-        this->factor = factor;
-        this->slide = slide;
-}
-
-RenderedSlide::~RenderedSlide() {
-        delete this->slide;
-}
-
-ScaleFactor * RenderedSlide::getFactor() {
-        return this->factor;
-}
-
-Slide * RenderedSlide::getSlide() {
-        return this->slide;
 }

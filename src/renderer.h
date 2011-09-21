@@ -14,15 +14,15 @@ class SlideRenderedEventHandler;
 
 class SlideRenderedEvent : public Event {
         public:
-                SlideRenderedEvent(int slideNumber, Slide * slide);
+                SlideRenderedEvent(int slideNumber, Slide slide);
                 virtual Type * getAssociatedType();
                 virtual void dispatch(IEventHandler * handler);
                 static Type TYPE;
                 int getSlideNumber();
-                Slide * getSlide();
+                Slide getSlide();
         private:
                 int slideNumber;
-                Slide * slide;
+                Slide slide;
 };
 
 class SlideRenderedEventHandler : public IEventHandler {
@@ -32,19 +32,6 @@ class SlideRenderedEventHandler : public IEventHandler {
                 ~SlideRenderedEventHandler() {}
 };
 
-class ScaleFactor;
-
-class RenderedSlide {
-        public:
-                RenderedSlide(ScaleFactor * factor, Slide * slide);
-                ~RenderedSlide();
-                ScaleFactor * getFactor();
-                Slide * getSlide();
-        private:
-                ScaleFactor * factor;
-                Slide * slide;
-};
-
 class RendererThread;
 
 class Renderer {
@@ -52,21 +39,21 @@ class Renderer {
                 Renderer(IEventBus * bus, Poppler::Document * document, ScaleFactor * currentFactor);
                 ~Renderer();
                 void setScaleFactor(ScaleFactor * factor);
-                Slide * getSlide(int slideNumber);
+                Slide getSlide(int slideNumber);
                 void run();
         private:
-                RenderedSlide * loadingSlide;
+                Slide loadingSlide;
                 IEventBus * bus;
                 Poppler::Document * document;
                 ScaleFactor * currentFactor;
-                QList<RenderedSlide*> * slides;
+                QList<Slide> * slides;
                 RendererThread * thread;
 
                 QMutex * mutex;
                 QWaitCondition * factorChanged;
                 bool stopThread;
 
-                RenderedSlide * renderSlide(int slideNumber, ScaleFactor * factor);
+                Slide renderSlide(int slideNumber, ScaleFactor * factor);
 };
 
 class RendererThread : public QThread {

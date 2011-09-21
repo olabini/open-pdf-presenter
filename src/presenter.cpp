@@ -180,7 +180,7 @@ int OpenPdfPresenter::getTotalTimeSeconds() {
 	return this->totalTime;
 }
 
-Slide * OpenPdfPresenter::getSlide(int slideNumber) {
+Slide OpenPdfPresenter::getSlide(int slideNumber) {
         return this->renderer->getSlide(slideNumber);
 }
 
