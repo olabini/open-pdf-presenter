@@ -43,7 +43,7 @@ class IEventBus {
 		virtual void fire(Event * event) = 0;
 
 	protected:
-		virtual ~IEventBus() {};
+                ~IEventBus() {};
 };
 
 /* If an event B is fired while processing another event A,

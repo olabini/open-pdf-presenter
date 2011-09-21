@@ -27,8 +27,6 @@ class Slide {
                 QImage asImage();
         private:
                 QImage image;
-                QPixmap pixmap;
-                bool hasPixmap;
 };
 
 #endif // _UTILS_H_

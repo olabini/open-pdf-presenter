@@ -18,7 +18,6 @@
 
 Slide::Slide(QImage image) {
         this->image = image;
-        this->hasPixmap = false;
 }
 
 QImage Slide::asImage() {
@@ -26,10 +25,5 @@ QImage Slide::asImage() {
 }
 
 QPixmap Slide::asPixmap() {
-        if (!hasPixmap) {
-                this->pixmap = QPixmap::fromImage(this->image);
-                hasPixmap = true;
-        }
-
-        return this->pixmap;
+                return QPixmap::fromImage(this->image);
 }

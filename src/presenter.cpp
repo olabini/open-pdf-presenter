@@ -48,17 +48,17 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv, IEventBus * bus) {
 
     this->elapsedTime = 0;
     this->currentSlideNumber = 0;
-        QImage image = QImage();
-        image.load(QString(":/presenter/loadingslide.svg"));
-        this->loadingSlide = new Slide(image);
     this->bus = bus;
     this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
+
+        this->renderer = new Renderer(this->bus,this->document,this->scaleFactor);
 }
 
 OpenPdfPresenter::~OpenPdfPresenter() {
-	delete this->document;
+        delete this->renderer;
+        delete this->document;
 }
 
 void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
@@ -83,7 +83,8 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 		this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
     //this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 
-		this->totalSlides = this->document->numPages() - 1;
+                this->totalSlides = this->document->numPages() - 1;
+
 
 }
 
@@ -180,12 +181,7 @@ int OpenPdfPresenter::getTotalTimeSeconds() {
 }
 
 Slide * OpenPdfPresenter::getSlide(int slideNumber) {
-	Poppler::Page * pdfPage = this->document->page(slideNumber);
-
-        Slide * slide = new Slide(pdfPage->renderToImage(this->scaleFactor->xScaleFactor,this->scaleFactor->yScaleFactor));
-
-	delete pdfPage;
-    return slide;
+        return this->renderer->getSlide(slideNumber);
 }
 
 ScaleFactor * OpenPdfPresenter::getScaleFactor() {

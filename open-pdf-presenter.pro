@@ -41,7 +41,9 @@ HEADERS += src/events/event.h \
            src/views/view.h \
            src/controllers.h \
            src/presenter.h \
-    src/views/viewutils.h
+    src/views/viewutils.h \
+    src/utils.h \
+    src/renderer.h
 FORMS += \
     ui/controlbar.ui \
     ui/slideframe.ui \
@@ -57,7 +59,9 @@ SOURCES += src/main.cpp \
            src/views/mainslide.cpp \
            src/controllers.cpp \
            src/presenter.cpp \
-    src/views/viewutils.cpp
+    src/utils.cpp \
+    src/views/viewutils.cpp \
+    src/renderer.cpp
 
 RESOURCES += \
     resources/controlbar/controlbar.qrc \

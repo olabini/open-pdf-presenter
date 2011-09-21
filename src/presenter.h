@@ -20,6 +20,7 @@
 #include "events/event.h"
 #include "events/slide.h"
 #include "events/timer.h"
+#include "renderer.h"
 #include "utils.h"
 
 #include <QList>
@@ -35,33 +36,37 @@ class ScaleFactor {
                 int yScaleFactor;
 };
 
+class Renderer;
+
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler {
-    public:
-        OpenPdfPresenter(int argc, char ** argv, IEventBus * bus);
-        ~OpenPdfPresenter();
-        int getCurrentSlide();
-        int getTotalSlides();
-				int getTotalTimeSeconds();
-        Slide * getSlide(int slideNumber);
-		virtual void onNextSlide(RelativeSlideEvent * evt);
+        public:
+                OpenPdfPresenter(int argc, char ** argv, IEventBus * bus);
+                ~OpenPdfPresenter();
+                int getCurrentSlide();
+                int getTotalSlides();
+                int getTotalTimeSeconds();
+								Slide * getSlide(int slideNumber);
+                virtual void onNextSlide(RelativeSlideEvent * evt);
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
-		virtual void onGotoSlide(AbsoluteSlideEvent * evt);
-        virtual void onTimeout(TimerEvent * evt);
-				ScaleFactor * getScaleFactor();
-    private:
-        int currentSlideNumber;
-        int totalSlides;
-        int elapsedTime;
-        int totalTime;
+                virtual void onGotoSlide(AbsoluteSlideEvent * evt);
+                virtual void onTimeout(TimerEvent * evt);
+                ScaleFactor * getScaleFactor();
+        private:
+                int currentSlideNumber;
+                int totalSlides;
+                int elapsedTime;
+                int totalTime;
 				
-				ScaleFactor * scaleFactor;
-				QString pdfFileName;
-        IEventBus * bus;
-                                Poppler::Document * document;
-                                Slide * loadingSlide;
-				void parseArguments(int argc, char ** argv);
-				QList<ScaleFactor*> * computeScaleFactors();
-				void fireSlideChangedEvent();
+                ScaleFactor * scaleFactor;
+                QString pdfFileName;
+                IEventBus * bus;
+                Poppler::Document * document;
+
+                Renderer * renderer;
+
+                void parseArguments(int argc, char ** argv);
+                QList<ScaleFactor*> * computeScaleFactors();
+                void fireSlideChangedEvent();
 };
 
 #endif
