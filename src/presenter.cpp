@@ -92,8 +92,11 @@ void OpenPdfPresenter::setUpViews() {
 }
 
 int OpenPdfPresenter::start() {
-        this->mainConsoleWindow->show();
-        this->mainSlideWindow->show();
+        QDesktopWidget * desktopWidget = QApplication::desktop();
+        this->mainSlideWindow->move(desktopWidget->screenGeometry(this->scaleFactor->screen).topLeft());
+        this->mainSlideWindow->showFullScreen();
+        this->mainConsoleWindow->move(desktopWidget->screenGeometry(((this->scaleFactor->screen + 1) % 2)).topLeft());
+        this->mainConsoleWindow->showFullScreen();
         return QApplication::instance()->exec();
 }
 
