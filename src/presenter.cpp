@@ -108,8 +108,8 @@ OpenPdfPresenter::~OpenPdfPresenter() {
 
         // Views
         delete this->controlBarView;
-        delete this->presenterConsoleView;
         delete this->currentNextView;
+        delete this->presenterConsoleView;
         delete this->mainSlideView;
         delete this->mainConsoleWindow;
 
