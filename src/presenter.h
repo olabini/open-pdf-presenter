@@ -21,17 +21,28 @@
 #include "events/slide.h"
 #include "events/timer.h"
 #include "events/lifecycle.h"
+#include "views/view.h"
+#include "views/controlbar.h"
+#include "views/console.h"
+#include "views/mainwindow.h"
+#include "views/mainslide.h"
 #include "renderer.h"
 #include "utils.h"
+#include "controllers.h"
 
 #include <QList>
 #include <poppler-qt4.h>
 
 class Renderer;
 
+class ControlBarController;
+class CurrentNextSlideConsoleViewControllerImpl;
+class MainWindowViewControllerImpl;
+class MainSlideViewControllerImpl;
+
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler {
         public:
-                OpenPdfPresenter(int argc, char ** argv, IEventBus * bus);
+                OpenPdfPresenter(int argc, char ** argv);
                 ~OpenPdfPresenter();
                 int getCurrentSlide();
                 int getTotalSlides();
@@ -44,6 +55,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
                 virtual void onStartPresentation(StartPresentationEvent * evt);
                 virtual void onStopPresentation(StopPresentationEvent * evt);
                 ScaleFactor * getScaleFactor();
+                int start();
         private:
                 int currentSlideNumber;
                 int totalSlides;
@@ -52,7 +64,8 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 				
                 ScaleFactor * scaleFactor;
                 QString pdfFileName;
-                IEventBus * bus;
+                QEventBus * bus;
+                Timer * timer;
                 Poppler::Document * document;
 
                 Renderer * renderer;
@@ -60,6 +73,23 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
                 void parseArguments(int argc, char ** argv);
                 QList<ScaleFactor*> * computeScaleFactors();
                 void fireSlideChangedEvent();
+                void buildViews();
+                void buildControllers();
+                void setUpViews();
+
+        private: // views
+                ControlBarViewImpl * controlBarView;
+                PresenterConsoleViewImpl * presenterConsoleView;
+                CurrentNextSlideConsoleViewImpl * currentNextView;
+                MainSlideViewImpl * mainSlideView;
+                MainWindowViewImpl * mainConsoleWindow, * mainSlideWindow;
+
+        private: // controllers
+                ControlBarController * controlBarController;
+                CurrentNextSlideConsoleViewControllerImpl * currentNextController;
+                MainSlideViewControllerImpl * mainSlideController;
+                MainWindowViewControllerImpl * mainConsoleWindowController, * mainSlideWindowController;
+
 };
 
 #endif

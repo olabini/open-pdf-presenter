@@ -21,6 +21,8 @@
 #include "events/lifecycle.h"
 #include "presenter.h"
 
+class OpenPdfPresenter;
+
 class ControlBarController : public ControlBarViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
 	public:
         ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);

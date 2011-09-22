@@ -25,7 +25,7 @@
 
 #define TEST_DPI 96.0
 
-OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv, IEventBus * bus) {
+OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 		this->parseArguments(argc, argv);
 
 		QList<ScaleFactor*> * factors = this->computeScaleFactors();
@@ -48,18 +48,76 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv, IEventBus * bus) {
 
     this->elapsedTime = 0;
     this->currentSlideNumber = 0;
-    this->bus = bus;
+    this->bus = new QEventBus();
     this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
     this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
     this->bus->subscribe(&StopPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
 
-        this->renderer = new Renderer(this->bus,this->document,this->scaleFactor);
+                this->renderer = new Renderer(this->bus,this->document,this->scaleFactor);
+                this->buildViews();
+                this->buildControllers();
+                this->setUpViews();
+                this->timer = new Timer(this->bus);
+}
+
+void OpenPdfPresenter::buildViews() {
+        this->controlBarView = new ControlBarViewImpl();
+        this->currentNextView = new CurrentNextSlideConsoleViewImpl();
+        this->presenterConsoleView = new PresenterConsoleViewImpl();
+        this->mainConsoleWindow = new MainWindowViewImpl();
+        this->mainSlideWindow = new MainWindowViewImpl();
+        this->mainSlideView = new MainSlideViewImpl(this->scaleFactor->usableWidth);
+}
+
+void OpenPdfPresenter::buildControllers() {
+        this->controlBarController = new ControlBarController(this->bus, this->controlBarView, this, this->totalSlides, this->totalTime);
+        this->currentNextController = new CurrentNextSlideConsoleViewControllerImpl(this->bus,this->currentNextView,this);
+        this->mainConsoleWindowController = new MainWindowViewControllerImpl(this->bus,this->mainConsoleWindow);
+        this->mainSlideWindowController = new MainWindowViewControllerImpl(this->bus,this->mainSlideWindow);
+        this->mainSlideController = new MainSlideViewControllerImpl(this->bus, this->mainSlideView, this);
+}
+
+void OpenPdfPresenter::setUpViews() {
+        this->controlBarView->setController(this->controlBarController);
+        this->currentNextView->setController(this->currentNextController);
+        this->presenterConsoleView->setControlBarView(this->controlBarView);
+        this->presenterConsoleView->setContent(this->currentNextView);
+
+        this->mainConsoleWindow->setController(this->mainConsoleWindowController);
+        this->mainSlideWindow->setController(this->mainSlideWindowController);
+
+        this->mainConsoleWindow->setContent(this->presenterConsoleView->asWidget());
+        this->mainSlideWindow->setContent(this->mainSlideView->asWidget());
+}
+
+int OpenPdfPresenter::start() {
+        this->mainConsoleWindow->show();
+        this->mainSlideWindow->show();
+        return QApplication::instance()->exec();
 }
 
 OpenPdfPresenter::~OpenPdfPresenter() {
         delete this->renderer;
+        delete this->scaleFactor;
+        delete this->timer;
         delete this->document;
+
+        // Views
+        delete this->controlBarView;
+        delete this->presenterConsoleView;
+        delete this->currentNextView;
+        delete this->mainSlideView;
+        delete this->mainConsoleWindow;
+
+        // Controllers
+        delete this->controlBarController;
+        delete this->currentNextController;
+        delete this->mainConsoleWindowController;
+        delete this->mainSlideWindowController;
+        delete this->mainSlideController;
+
+        delete this->bus;
 }
 
 void OpenPdfPresenter::parseArguments(int argc, char ** argv) {

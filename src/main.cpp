@@ -27,54 +27,15 @@
 #include "presenter.h"
 
 int main(int argc, char ** argv) {
-    int ret = 0;
+        int ret = 0;
 
-	//Parse arguments
+        QApplication app(argc, argv);
 
-	//Set up the presenter
-	QApplication app(argc, argv);
+        OpenPdfPresenter * presenter = new OpenPdfPresenter(argc,argv);
 
-	QEventBus * bus = new QEventBus();
+        ret = presenter->start();
 
-	OpenPdfPresenter * presenter = new OpenPdfPresenter(argc,argv,bus);
+        delete presenter;
 
-	ControlBarViewImpl * controlBarView = new ControlBarViewImpl();
-    ControlBarController * controlBarController = new ControlBarController(bus, controlBarView, presenter, presenter->getTotalSlides(), presenter->getTotalTimeSeconds());
-
-	PresenterConsoleViewImpl * console = new PresenterConsoleViewImpl();
-	console->setControlBarView(controlBarView);
-	CurrentNextSlideConsoleViewImpl * currentNextView = new CurrentNextSlideConsoleViewImpl();
-	CurrentNextSlideConsoleViewControllerImpl * currentNextControl = new CurrentNextSlideConsoleViewControllerImpl(bus,currentNextView, presenter);
-	console->setContent(currentNextView->asWidget());
-
-	MainWindowViewImpl * mainConsoleWindow = new MainWindowViewImpl();
-    MainWindowViewControllerImpl * mainConsoleWindowController = new MainWindowViewControllerImpl(bus,mainConsoleWindow);
-    mainConsoleWindow->setController(mainConsoleWindowController);
-	mainConsoleWindow->setContent(console->asWidget());
-
-	MainSlideViewImpl * mainSlide = new MainSlideViewImpl(presenter->getScaleFactor()->usableWidth);
-	MainSlideViewControllerImpl * mainSlideController = new MainSlideViewControllerImpl(bus, mainSlide, presenter);
-
-	MainWindowViewImpl * mainSlideWindow = new MainWindowViewImpl();
-    MainWindowViewControllerImpl * mainSlideWindowController = new MainWindowViewControllerImpl(bus,mainSlideWindow);
-    mainSlideWindow->setController(mainSlideWindowController);
-	mainSlideWindow->setContent(mainSlide->asWidget());
-
-    Timer * timer = new Timer(bus);
-
-
-	//Start presentation
-	mainConsoleWindow->show();
-	mainSlideWindow->show();
-	ret = app.exec();
-
-	//Clean up
-    delete timer;
-    delete controlBarController;
-    delete controlBarView;
-    delete console;
-    delete presenter;
-	delete bus;
-
-	return ret;
+        return ret;
 }
