@@ -33,14 +33,7 @@
 #include <QList>
 #include <poppler-qt4.h>
 
-class Renderer;
-
-class ControlBarController;
-class CurrentNextSlideConsoleViewControllerImpl;
-class MainWindowViewControllerImpl;
-class MainSlideViewControllerImpl;
-
-class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler {
+class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler, public SlideRenderedEventHandler {
 	public:
 		OpenPdfPresenter(int argc, char ** argv);
 		~OpenPdfPresenter();
@@ -54,6 +47,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		virtual void onTimeout(TimerEvent * evt);
 		virtual void onStartPresentation(StartPresentationEvent * evt);
 		virtual void onStopPresentation(StopPresentationEvent * evt);
+		virtual void onSlideRendered(SlideRenderedEvent * evt);
 		ScaleFactor * getScaleFactor();
 		int start();
 	private:

@@ -45,7 +45,7 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	}
 	
 	delete factors;
-	
+
 	this->elapsedTime = 0;
 	this->currentSlideNumber = 0;
 	this->bus = new QEventBus();
@@ -53,11 +53,12 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
 	this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
 	this->bus->subscribe(&StopPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
-	
-	this->renderer = new Renderer(this->bus,this->document,this->scaleFactor);
+	this->bus->subscribe(&SlideRenderedEvent::TYPE,(SlideRenderedEventHandler*)this);
+
 	this->buildViews();
 	this->buildControllers();
 	this->setUpViews();
+	this->renderer = new Renderer(this->bus,this->document,this->scaleFactor);
 	this->timer = new Timer(this->bus);
 }
 
@@ -97,6 +98,10 @@ int OpenPdfPresenter::start() {
 	this->mainSlideWindow->showFullScreen();
 	this->mainConsoleWindow->move(desktopWidget->screenGeometry(((this->scaleFactor->screen + 1) % 2)).topLeft());
 	this->mainConsoleWindow->showFullScreen();
+
+	this->bus->fire(new SlideChangedEvent(0));
+	this->renderer->start();
+
 	return QApplication::instance()->exec();
 }
 
@@ -253,4 +258,9 @@ void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
 
 void OpenPdfPresenter::onStopPresentation(StopPresentationEvent * evt) {
 	QCoreApplication::instance()->exit(0);
+}
+
+void OpenPdfPresenter::onSlideRendered(SlideRenderedEvent * evt) {
+	if (evt->getSlideNumber() == this->currentSlideNumber)
+		this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
 }

@@ -53,6 +53,9 @@ Renderer::Renderer(IEventBus * bus, Poppler::Document * document, ScaleFactor * 
 
 	this->thread = new RendererThread(this);
 	this->stopThread = false;
+}
+
+void Renderer::start() {
 	this->thread->start();
 }
 
@@ -99,7 +102,7 @@ void Renderer::run() {
 				ScaleFactor * factor = this->currentFactor;
 				this->mutex->unlock();
 				renderedAny = true;
-				Slide  newSlide = this->renderSlide(i,factor);
+				Slide newSlide = this->renderSlide(i,factor);
 				this->mutex->lock();
 				this->slides->replace(i,newSlide);
 				this->bus->fire(new SlideRenderedEvent(i,newSlide));

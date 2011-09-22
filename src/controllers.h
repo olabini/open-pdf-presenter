@@ -14,12 +14,12 @@
     You should have received a copy of the GNU General Public License
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _CONTROLLERS_H_
-#define _CONTROLLERS_H_
+#ifndef _OPEN_PDF_PRESENTER_CONTROLLERS_H_
+#define _OPEN_PDF_PRESENTER_CONTROLLERS_H_
 
+#include "renderer.h"
 #include "views/view.h"
 #include "events/lifecycle.h"
-#include "presenter.h"
 
 class OpenPdfPresenter;
 
@@ -39,10 +39,11 @@ class ControlBarController : public ControlBarViewController, public SlideChange
 		OpenPdfPresenter * presenter;
 };
 
-class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler {
+class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
 	public:
 		CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
+		virtual void onSlideRendered(SlideRenderedEvent *evt);
 	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;

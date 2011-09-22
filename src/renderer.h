@@ -14,8 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _RENDERER_H_
-#define _RENDERER_H_
+#ifndef _OPEN_PDF_PRESENTER_RENDERER_H_
+#define _OPEN_PDF_PRESENTER_RENDERER_H_
 
 #include <QString>
 #include <QMutex>
@@ -23,7 +23,6 @@
 #include <poppler-qt4.h>
 
 #include "events/event.h"
-#include "presenter.h"
 #include "utils.h"
 
 class SlideRenderedEventHandler;
@@ -56,6 +55,7 @@ class Renderer {
 				~Renderer();
 				void setScaleFactor(ScaleFactor * factor);
 				Slide getSlide(int slideNumber);
+				void start();
 				void run();
 		private:
 				Slide loadingSlide;
