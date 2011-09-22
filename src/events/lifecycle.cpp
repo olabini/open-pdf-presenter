@@ -25,11 +25,11 @@ SlideChangedEvent::SlideChangedEvent(int currentSlideNumber) {
 }
 
 int SlideChangedEvent::getCurrentSlideNumber() {
-    return this->currentSlideNumber;
+	return this->currentSlideNumber;
 }
 
 Type * SlideChangedEvent::getAssociatedType() {
-    return &SlideChangedEvent::TYPE;
+	return &SlideChangedEvent::TYPE;
 }
 
 void SlideChangedEvent::dispatch(IEventHandler * handler) {
@@ -37,41 +37,41 @@ void SlideChangedEvent::dispatch(IEventHandler * handler) {
 }
 
 TimeChangedEvent::TimeChangedEvent(int elapsedTime, int remainingTime) {
-    this->elapsedTime = elapsedTime;
-    this->remainingTime = remainingTime;
+	this->elapsedTime = elapsedTime;
+	this->remainingTime = remainingTime;
 }
 
 Type * TimeChangedEvent::getAssociatedType() {
-    return &(TimeChangedEvent::TYPE);
+	return &(TimeChangedEvent::TYPE);
 }
 
 void TimeChangedEvent::dispatch(IEventHandler * handler) {
-    ((ITimeChangedEventHandler*)handler)->onTimeChanged(this);
+	((ITimeChangedEventHandler*)handler)->onTimeChanged(this);
 }
 
 int TimeChangedEvent::getElapsedTime() {
-    return this->elapsedTime;
+	return this->elapsedTime;
 }
 
 int TimeChangedEvent::getRemainingTime() {
-    return this->remainingTime;
+	return this->remainingTime;
 }
 
 Type StartPresentationEvent::TYPE = Type();
 Type StopPresentationEvent::TYPE = Type();
 
 Type * StartPresentationEvent::getAssociatedType() {
-    return &StartPresentationEvent::TYPE;
+	return &StartPresentationEvent::TYPE;
 }
 
 Type * StopPresentationEvent::getAssociatedType() {
-    return &StopPresentationEvent::TYPE;
+	return &StopPresentationEvent::TYPE;
 }
 
 void StartPresentationEvent::dispatch(IEventHandler * handler) {
-    ((StartStopPresentationEventHandler*)handler)->onStartPresentation(this);
+	((StartStopPresentationEventHandler*)handler)->onStartPresentation(this);
 }
 
 void StopPresentationEvent::dispatch(IEventHandler * handler) {
-    ((StartStopPresentationEventHandler*)handler)->onStopPresentation(this);
+	((StartStopPresentationEventHandler*)handler)->onStopPresentation(this);
 }

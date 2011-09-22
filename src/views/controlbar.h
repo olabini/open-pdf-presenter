@@ -23,7 +23,7 @@
 
 class ControlBarViewImpl : public QWidget, public ControlBarView {
 
-    Q_OBJECT
+	Q_OBJECT
 
 	public:
 		ControlBarViewImpl(QWidget * parent = 0);
@@ -36,13 +36,13 @@ class ControlBarViewImpl : public QWidget, public ControlBarView {
 		virtual void setCurrentSlideNumber(int currentSlide);
 		virtual QWidget * asWidget();
     
-    private:
+	private:
 		Ui::ControlBar ui;
-        ControlBarViewController * controller;
-        
-    private slots:
-        void onNextButtonClick();
-        void onPrevButtonClick();
+		ControlBarViewController * controller;
+	
+	private slots:
+		void onNextButtonClick();
+		void onPrevButtonClick();
     
 };
 

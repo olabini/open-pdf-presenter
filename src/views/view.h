@@ -32,9 +32,9 @@ template<class C> class View {
 
 class MainWindowViewController : public Controller {
 	public:
-        virtual void onKeyExit() = 0;
-        virtual void onKeyNext() = 0;
-        virtual void onKeyPrev() = 0;
+		virtual void onKeyExit() = 0;
+		virtual void onKeyNext() = 0;
+		virtual void onKeyPrev() = 0;
 	protected:
 		~MainWindowViewController() {}
 };

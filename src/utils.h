@@ -21,28 +21,28 @@
 #include <QImage>
 
 class ScaleFactor {
-        public:
-                ScaleFactor();
-                ScaleFactor(int screen, int usableWidth, int usableHeight, int xScaleFactor, int yScaleFactor);
-                int screen;
-                int usableArea;
-                int usableWidth;
-                int usableHeight;
-                int xScaleFactor;
-                int yScaleFactor;
-                static ScaleFactor DUMMY;
+		public:
+				ScaleFactor();
+				ScaleFactor(int screen, int usableWidth, int usableHeight, int xScaleFactor, int yScaleFactor);
+				int screen;
+				int usableArea;
+				int usableWidth;
+				int usableHeight;
+				int xScaleFactor;
+				int yScaleFactor;
+				static ScaleFactor DUMMY;
 };
 
 
 class Slide {
-        public:
-                Slide(ScaleFactor * factor, QImage image);
-                QPixmap asPixmap();
-                QImage asImage();
-                ScaleFactor * getFactor();
-        private:
-                QImage image;
-                ScaleFactor * factor;
+		public:
+				Slide(ScaleFactor * factor, QImage image);
+				QPixmap asPixmap();
+				QImage asImage();
+				ScaleFactor * getFactor();
+		private:
+				QImage image;
+				ScaleFactor * factor;
 };
 
 #endif // _UTILS_H_

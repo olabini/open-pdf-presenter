@@ -19,24 +19,24 @@
 Type TimerEvent::TYPE;
 
 Type * TimerEvent::getAssociatedType() {
-    return &(TimerEvent::TYPE);
+	return &(TimerEvent::TYPE);
 }
 
 void TimerEvent::dispatch(IEventHandler * handler) {
-    ((ITimerEventHandler*)handler)->onTimeout(this);
+	((ITimerEventHandler*)handler)->onTimeout(this);
 }
 
 Timer::Timer(IEventBus * bus, QWidget * parent) : QWidget(parent) {
-    this->timer = new QTimer(this);
-    this->bus = bus;
-    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
-    this->timer->start(1000);
+	this->timer = new QTimer(this);
+	this->bus = bus;
+	connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+	this->timer->start(1000);
 }
 
 Timer::~Timer() {
-    delete timer;
+	delete timer;
 }
 
 void Timer::onTimeout() {
-    this->bus->fire(new TimerEvent());
+	this->bus->fire(new TimerEvent());
 }

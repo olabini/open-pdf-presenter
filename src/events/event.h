@@ -43,7 +43,7 @@ class IEventBus {
 		virtual void fire(Event * event) = 0;
 
 	protected:
-                ~IEventBus() {};
+				~IEventBus() {};
 };
 
 /* If an event B is fired while processing another event A,
@@ -59,27 +59,27 @@ class SimpleEventBus : public IEventBus {
 };
 
 class OrderedEvent {
-    public:
-        OrderedEvent(Event * event, QList<IEventHandler*> * handlers);
-        void notifyNextHandler();
-        bool hasHandlersNotNotified();
-    private:
-        Event * realEvent;
-        QList<IEventHandler*> * handlers;
-        int lastNotifiedHandler;
+	public:
+		OrderedEvent(Event * event, QList<IEventHandler*> * handlers);
+		void notifyNextHandler();
+		bool hasHandlersNotNotified();
+	private:
+		Event * realEvent;
+		QList<IEventHandler*> * handlers;
+		int lastNotifiedHandler;
 };
 
 /* If an event B is fired while processing another event A,
  * this bus first finishes firing event A before firing event B */
 class OrderedEventBus : public SimpleEventBus {
 	public:
-        OrderedEventBus();
-        ~OrderedEventBus();
+		OrderedEventBus();
+		~OrderedEventBus();
 		virtual void fire(Event * event);
 	private:
-        void resumeFiring();
-        OrderedEvent * currentEvent;
-        QList<Event*> * subEvents;
+		void resumeFiring();
+		OrderedEvent * currentEvent;
+		QList<Event*> * subEvents;
 };
 
 /* EventBus that supports firing concurrent events */
@@ -88,26 +88,26 @@ class ConcurrentEventBus : public SimpleEventBus, public QThread {
 		ConcurrentEventBus();
 		~ConcurrentEventBus();
 		virtual void fire(Event * event);
-        void run();
-        void stop();
+		void run();
+		void stop();
 	private:
-        QList<Event*> * pendingEvents;
-        QMutex * mutex;
-        QWaitCondition * pendingEventsNotEmpty;
-        bool mustStop;
-        QThread * eventBusThread;
+		QList<Event*> * pendingEvents;
+		QMutex * mutex;
+		QWaitCondition * pendingEventsNotEmpty;
+		bool mustStop;
+		QThread * eventBusThread;
 };
 
 class QEventBus : public QObject, public SimpleEventBus {
   Q_OBJECT
-
+	
 	public:
-    QEventBus();
+		QEventBus();
 		virtual void fire(Event * event);
   private slots:
-    void eventFired(Event * event);
+		void eventFired(Event * event);
   signals:
-    void fireEvent(Event * event);
+		void fireEvent(Event * event);
 };
 
 #endif

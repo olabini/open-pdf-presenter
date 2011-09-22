@@ -22,13 +22,13 @@
 
 class SlideChangedEvent : public SlideEvent {
 	public:
-        SlideChangedEvent(int currentSlideNumber);
+		SlideChangedEvent(int currentSlideNumber);
 		virtual Type * getAssociatedType();
 		virtual void dispatch(IEventHandler * handler);
 		static Type TYPE;
-        int getCurrentSlideNumber();
-    private:
-        int currentSlideNumber;
+		int getCurrentSlideNumber();
+	private:
+		int currentSlideNumber;
 };
 
 class SlideChangedEventHandler : public IEventHandler {
@@ -44,9 +44,9 @@ class TimeChangedEvent : public Event {
 		TimeChangedEvent(int elapsedTime, int remainingTime);
 		virtual Type * getAssociatedType();
 		virtual void dispatch(IEventHandler * handler);
-    int getElapsedTime();
-    int getRemainingTime();
-    static Type TYPE;
+		int getElapsedTime();
+		int getRemainingTime();
+		static Type TYPE;
 	private:
 		int elapsedTime;
 		int remainingTime;
@@ -74,11 +74,11 @@ class StopPresentationEvent : public Event {
 };
 
 class StartStopPresentationEventHandler : public IEventHandler {
-    public:
-        virtual void onStartPresentation(StartPresentationEvent * event) = 0;
-        virtual void onStopPresentation(StopPresentationEvent * event) = 0;
-    protected:
-        ~StartStopPresentationEventHandler() { }
+	public:
+		virtual void onStartPresentation(StartPresentationEvent * event) = 0;
+		virtual void onStopPresentation(StopPresentationEvent * event) = 0;
+	protected:
+		~StartStopPresentationEventHandler() { }
 };
 
 #endif

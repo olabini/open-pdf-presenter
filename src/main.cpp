@@ -27,15 +27,15 @@
 #include "presenter.h"
 
 int main(int argc, char ** argv) {
-        int ret = 0;
+	int ret = 0;
 
-        QApplication app(argc, argv);
+	QApplication app(argc, argv);
 
-        OpenPdfPresenter * presenter = new OpenPdfPresenter(argc,argv);
+	OpenPdfPresenter * presenter = new OpenPdfPresenter(argc,argv);
 
-        ret = presenter->start();
+	ret = presenter->start();
 
-        delete presenter;
+	delete presenter;
 
-        return ret;
+	return ret;
 }

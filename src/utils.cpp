@@ -17,20 +17,20 @@
 #include "utils.h"
 
 Slide::Slide(ScaleFactor * factor, QImage image) {
-        this->factor = factor;
-        this->image = image;
+	this->factor = factor;
+	this->image = image;
 }
 
 QImage Slide::asImage() {
-        return this->image;
+	return this->image;
 }
 
 QPixmap Slide::asPixmap() {
-                return QPixmap::fromImage(this->image);
+	return QPixmap::fromImage(this->image);
 }
 
 ScaleFactor * Slide::getFactor() {
-        return this->factor;
+	return this->factor;
 }
 
 ScaleFactor ScaleFactor::DUMMY = ScaleFactor(-1,-1,-1,-1,-1);
@@ -38,10 +38,10 @@ ScaleFactor ScaleFactor::DUMMY = ScaleFactor(-1,-1,-1,-1,-1);
 ScaleFactor::ScaleFactor() { }
 
 ScaleFactor::ScaleFactor(int screen, int usableWidth, int usableHeight, int xScaleFactor, int yScaleFactor) {
-        this->screen = screen;
-        this->usableArea = usableWidth * usableHeight;
-        this->usableWidth = usableWidth;
-        this->usableHeight = usableHeight;
-        this->xScaleFactor = xScaleFactor;
-        this->yScaleFactor = yScaleFactor;
+	this->screen = screen;
+	this->usableArea = usableWidth * usableHeight;
+	this->usableWidth = usableWidth;
+	this->usableHeight = usableHeight;
+	this->xScaleFactor = xScaleFactor;
+	this->yScaleFactor = yScaleFactor;
 }

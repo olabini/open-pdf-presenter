@@ -29,7 +29,8 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 		MainSlideViewImpl(int usableWidth, QWidget * parent = NULL);
 		virtual void setCurrentSlide(QPixmap slide, bool scale = false);
 		virtual void setController(MainSlideViewController * controller) { }
-                virtual QWidget * asWidget();
+		virtual QWidget * asWidget();
+
 	private:
 		int usableWidth;
 		QVBoxLayout * layout;

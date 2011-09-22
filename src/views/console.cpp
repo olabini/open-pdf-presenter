@@ -23,12 +23,12 @@
 PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(parent) {
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	this->layout = new QVBoxLayout(this);
-  this->layout->setSpacing(0);
-  this->layout->setMargin(0);
+	this->layout->setSpacing(0);
+	this->layout->setMargin(0);
 	this->setLayout(this->layout);
 
 	this->content = NULL;
-  this->barWidget = NULL;
+	this->barWidget = NULL;
 	this->refresh();
 
 }
@@ -40,24 +40,24 @@ void PresenterConsoleViewImpl::setController(PresenterConsoleViewController * co
 
 void PresenterConsoleViewImpl::refresh() {
 	if (this->content != NULL)
-	  this->layout->removeWidget(this->content);
+		this->layout->removeWidget(this->content);
 
 	if (this->barWidget != NULL)
-	  this->layout->removeWidget(this->barWidget);
+		this->layout->removeWidget(this->barWidget);
 
 
 	if (this->content != NULL)
 		this->layout->addWidget(this->content);
 
 	if (this->barWidget != NULL) {
-	  this->layout->addWidget(this->barWidget);
+		this->layout->addWidget(this->barWidget);
 		this->layout->setAlignment(this->barWidget,Qt::AlignHCenter | Qt::AlignBottom);
 	}
 }
 
 void PresenterConsoleViewImpl::setControlBarView(ControlBarView * view) {
 	view->asWidget()->setParent(this);
-  this->barWidget = view->asWidget();
+	this->barWidget = view->asWidget();
 
 	this->refresh();
 }

@@ -21,65 +21,65 @@
 #include <iostream>
 
 ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
-		this->duration = durationSeconds;
-    this->presenter = presenter;
-    this->bus = bus;
-    this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
-    this->bus->subscribe(&TimeChangedEvent::TYPE, (ITimeChangedEventHandler*)this);
-    this->view = view;
-    this->view->setController(this);
-    this->view->setTotalSlideCount(totalSlideCount+1);
-        this->totalSlideCount = totalSlideCount;
+	this->duration = durationSeconds;
+	this->presenter = presenter;
+	this->bus = bus;
+	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
+	this->bus->subscribe(&TimeChangedEvent::TYPE, (ITimeChangedEventHandler*)this);
+	this->view = view;
+	this->view->setController(this);
+	this->view->setTotalSlideCount(totalSlideCount+1);
+	this->totalSlideCount = totalSlideCount;
 }
 
 void ControlBarController::onNextSlideButton() {
-    this->fireSlideEvent(1);
+	this->fireSlideEvent(1);
 }
 
 void ControlBarController::onPrevSlideButton() {
-    this->fireSlideEvent(-1);
+	this->fireSlideEvent(-1);
 }
 
 void ControlBarController::fireSlideEvent(int delta) {
-    RelativeSlideEvent * event = new RelativeSlideEvent(delta);
-    this->bus->fire(event);
+	RelativeSlideEvent * event = new RelativeSlideEvent(delta);
+	this->bus->fire(event);
 }
 
 void ControlBarController::onSlideChanged(SlideChangedEvent * evt) {
-        this->view->setCurrentSlideNumber(evt->getCurrentSlideNumber()+1);
-        this->view->setSlidePercentage(evt->getCurrentSlideNumber()*100 / this->totalSlideCount);
+	this->view->setCurrentSlideNumber(evt->getCurrentSlideNumber()+1);
+	this->view->setSlidePercentage(evt->getCurrentSlideNumber()*100 / this->totalSlideCount);
 }
 
 void ControlBarController::onTimeChanged(TimeChangedEvent * evt) {
-    int time = evt->getElapsedTime();
-		this->view->setTimePercentage(time * 100 / this->duration);
-    int hours =  time / 3600;
-    time %= 3600;
-    int minutes = time / 60;
-    time %= 60;
-    int seconds = time;
-    this->view->setElapsedTime(hours, minutes, seconds);
-    time = evt->getRemainingTime();
-    hours =  time / 3600;
-    time %= 3600;
-    minutes = time / 60;
-    time %= 60;
-    seconds = time;
-    this->view->setRemainingTime(hours, minutes, seconds);
+	int time = evt->getElapsedTime();
+	this->view->setTimePercentage(time * 100 / this->duration);
+	int hours =  time / 3600;
+	time %= 3600;
+	int minutes = time / 60;
+	time %= 60;
+	int seconds = time;
+	this->view->setElapsedTime(hours, minutes, seconds);
+	time = evt->getRemainingTime();
+	hours =  time / 3600;
+	time %= 3600;
+	minutes = time / 60;
+	time %= 60;
+	seconds = time;
+	this->view->setRemainingTime(hours, minutes, seconds);
 }
 
 CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter) {
-    this->presenter = presenter;
+	this->presenter = presenter;
 	this->bus = bus;
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->view = view;
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-        this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap());
+	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap());
 
-    if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides())
-        this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1).asPixmap());
+	if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides())
+		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1).asPixmap());
 }
 
 MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter) {
@@ -90,22 +90,22 @@ MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSl
 }
 
 void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-        this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap());
+	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap());
 }
 
 MainWindowViewControllerImpl::MainWindowViewControllerImpl(IEventBus * bus, MainWindowView * view) {
-    this->bus = bus;
-    this->view = view;
+	this->bus = bus;
+	this->view = view;
 }
 
 void MainWindowViewControllerImpl::onKeyExit() {
-    this->bus->fire(new StopPresentationEvent());
+	this->bus->fire(new StopPresentationEvent());
 }
 
 void MainWindowViewControllerImpl::onKeyPrev() {
-    this->bus->fire(new RelativeSlideEvent(-1));
+	this->bus->fire(new RelativeSlideEvent(-1));
 }
 
 void MainWindowViewControllerImpl::onKeyNext() {
-    this->bus->fire(new RelativeSlideEvent(1));
+	this->bus->fire(new RelativeSlideEvent(1));
 }

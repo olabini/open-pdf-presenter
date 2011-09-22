@@ -41,54 +41,54 @@ class MainWindowViewControllerImpl;
 class MainSlideViewControllerImpl;
 
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler {
-        public:
-                OpenPdfPresenter(int argc, char ** argv);
-                ~OpenPdfPresenter();
-                int getCurrentSlide();
-                int getTotalSlides();
-                int getTotalTimeSeconds();
-                Slide getSlide(int slideNumber);
-                virtual void onNextSlide(RelativeSlideEvent * evt);
+	public:
+		OpenPdfPresenter(int argc, char ** argv);
+		~OpenPdfPresenter();
+		int getCurrentSlide();
+		int getTotalSlides();
+		int getTotalTimeSeconds();
+		Slide getSlide(int slideNumber);
+		virtual void onNextSlide(RelativeSlideEvent * evt);
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
-                virtual void onGotoSlide(AbsoluteSlideEvent * evt);
-                virtual void onTimeout(TimerEvent * evt);
-                virtual void onStartPresentation(StartPresentationEvent * evt);
-                virtual void onStopPresentation(StopPresentationEvent * evt);
-                ScaleFactor * getScaleFactor();
-                int start();
-        private:
-                int currentSlideNumber;
-                int totalSlides;
-                int elapsedTime;
-                int totalTime;
+		virtual void onGotoSlide(AbsoluteSlideEvent * evt);
+		virtual void onTimeout(TimerEvent * evt);
+		virtual void onStartPresentation(StartPresentationEvent * evt);
+		virtual void onStopPresentation(StopPresentationEvent * evt);
+		ScaleFactor * getScaleFactor();
+		int start();
+	private:
+		int currentSlideNumber;
+		int totalSlides;
+		int elapsedTime;
+		int totalTime;
 				
-                ScaleFactor * scaleFactor;
-                QString pdfFileName;
-                QEventBus * bus;
-                Timer * timer;
-                Poppler::Document * document;
+		ScaleFactor * scaleFactor;
+		QString pdfFileName;
+		QEventBus * bus;
+		Timer * timer;
+		Poppler::Document * document;
 
-                Renderer * renderer;
+		Renderer * renderer;
 
-                void parseArguments(int argc, char ** argv);
-                QList<ScaleFactor*> * computeScaleFactors();
-                void fireSlideChangedEvent();
-                void buildViews();
-                void buildControllers();
-                void setUpViews();
+		void parseArguments(int argc, char ** argv);
+		QList<ScaleFactor*> * computeScaleFactors();
+		void fireSlideChangedEvent();
+		void buildViews();
+		void buildControllers();
+		void setUpViews();
 
-        private: // views
-                ControlBarViewImpl * controlBarView;
-                PresenterConsoleViewImpl * presenterConsoleView;
-                CurrentNextSlideConsoleViewImpl * currentNextView;
-                MainSlideViewImpl * mainSlideView;
-                MainWindowViewImpl * mainConsoleWindow, * mainSlideWindow;
+	private: // views
+		ControlBarViewImpl * controlBarView;
+		PresenterConsoleViewImpl * presenterConsoleView;
+		CurrentNextSlideConsoleViewImpl * currentNextView;
+		MainSlideViewImpl * mainSlideView;
+		MainWindowViewImpl * mainConsoleWindow, * mainSlideWindow;
 
-        private: // controllers
-                ControlBarController * controlBarController;
-                CurrentNextSlideConsoleViewControllerImpl * currentNextController;
-                MainSlideViewControllerImpl * mainSlideController;
-                MainWindowViewControllerImpl * mainConsoleWindowController, * mainSlideWindowController;
+	private: // controllers
+		ControlBarController * controlBarController;
+		CurrentNextSlideConsoleViewControllerImpl * currentNextController;
+		MainSlideViewControllerImpl * mainSlideController;
+		MainWindowViewControllerImpl * mainConsoleWindowController, * mainSlideWindowController;
 
 };
 

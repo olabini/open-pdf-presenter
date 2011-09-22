@@ -39,8 +39,8 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 	private:
 		void refresh();
 		QVBoxLayout * layout;
-    QWidget * content;
-    QWidget * barWidget;
+		QWidget * content;
+		QWidget * barWidget;
 };
 
 class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideConsoleView {

@@ -27,30 +27,29 @@ class TimerEvent : public Event {
 	public:
 		virtual Type * getAssociatedType();
 		virtual void dispatch(IEventHandler * handler);
-        static Type TYPE;
+		static Type TYPE;
 };
 
 class ITimerEventHandler : public IEventHandler {
-    public:
-        virtual void onTimeout(TimerEvent * evt) = 0;
-    protected:
-        ~ITimerEventHandler() {}
+	public:
+		virtual void onTimeout(TimerEvent * evt) = 0;
+	protected:
+		~ITimerEventHandler() {}
 };
 
 class Timer : public QWidget {
+	Q_OBJECT
 
-    Q_OBJECT
+	public:
+		Timer(IEventBus * bus, QWidget * parent = 0);
+		~Timer();
 
-    public:
-        Timer(IEventBus * bus, QWidget * parent = 0);
-        ~Timer();
+	private:
+		QTimer * timer;
+		IEventBus * bus;
 
-    private:
-        QTimer * timer;
-        IEventBus * bus;
-
-    private slots:
-        void onTimeout();
+	private slots:
+		void onTimeout();
 };
 
 #endif

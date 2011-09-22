@@ -21,12 +21,12 @@
 
 MainWindowViewImpl::MainWindowViewImpl(QWidget * parent)  : QWidget(parent) {
 	this->layout = new QVBoxLayout(this);
-  this->layout->setSpacing(0);
-  this->layout->setMargin(0);
-  this->layout->setAlignment(Qt::AlignCenter);
+	this->layout->setSpacing(0);
+	this->layout->setMargin(0);
+	this->layout->setAlignment(Qt::AlignCenter);
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	this->content = NULL;
-  this->setStyleSheet(QString("background-color: #3B4146;"));
+	this->setStyleSheet(QString("background-color: #3B4146;"));
 }
 
 void MainWindowViewImpl::setContent(QWidget * content) {
@@ -47,16 +47,16 @@ QWidget * MainWindowViewImpl::asWidget() {
 }
 
 void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
-    switch(event->key()) {
-        case Qt::Key_Escape:
-        case Qt::Key_Q:
-            this->controller->onKeyExit();
-            break;
-        case Qt::Key_Left:
-            this->controller->onKeyPrev();
-            break;
-        case Qt::Key_Right:
-            this->controller->onKeyNext();
-            break;
-    }
+	switch(event->key()) {
+		case Qt::Key_Escape:
+		case Qt::Key_Q:
+			this->controller->onKeyExit();
+			break;
+		case Qt::Key_Left:
+			this->controller->onKeyPrev();
+			break;
+		case Qt::Key_Right:
+			this->controller->onKeyNext();
+			break;
+	}
 }

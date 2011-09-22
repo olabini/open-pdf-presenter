@@ -21,24 +21,24 @@
 ControlBarViewImpl::ControlBarViewImpl(QWidget * parent) : QWidget(parent) {
 	ui.setupUi(this);
 
-  connect(ui.nextButtonLabel, SIGNAL(clicked()), this, SLOT(onNextButtonClick()));
-  connect(ui.prevButtonLabel, SIGNAL(clicked()), this, SLOT(onPrevButtonClick()));
+	connect(ui.nextButtonLabel, SIGNAL(clicked()), this, SLOT(onNextButtonClick()));
+	connect(ui.prevButtonLabel, SIGNAL(clicked()), this, SLOT(onPrevButtonClick()));
 }
 
 void ControlBarViewImpl::onNextButtonClick() {
-  this->controller->onNextSlideButton();
+	this->controller->onNextSlideButton();
 }
 
 void ControlBarViewImpl::onPrevButtonClick() {
-  this->controller->onPrevSlideButton();
+	this->controller->onPrevSlideButton();
 }
 
 void ControlBarViewImpl::setElapsedTime(int hours, int minutes, int seconds) {
-    this->ui.elapsedTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
+	this->ui.elapsedTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
 }
 
 void ControlBarViewImpl::setRemainingTime(int hours, int minutes, int seconds) {
-    this->ui.remainingTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
+	this->ui.remainingTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
 }
 
 void ControlBarViewImpl::setSlidePercentage (int percentage) {
@@ -50,15 +50,15 @@ void ControlBarViewImpl::setTimePercentage (int percentage) {
 }
 
 void ControlBarViewImpl::setTotalSlideCount(int count) {
-    this->ui.totalSlidesLabel->setText(QString("%1").arg(count));
+	this->ui.totalSlidesLabel->setText(QString("%1").arg(count));
 }
 
 void ControlBarViewImpl::setCurrentSlideNumber(int currentSlide) {
-    this->ui.currentSlideLabel->setText(QString("%1").arg(currentSlide));
+	this->ui.currentSlideLabel->setText(QString("%1").arg(currentSlide));
 }
 
 void ControlBarViewImpl::setController(ControlBarViewController * controller) {
-  this->controller = controller;
+	this->controller = controller;
 }
 
 QWidget * ControlBarViewImpl::asWidget() {

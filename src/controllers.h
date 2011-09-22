@@ -25,18 +25,18 @@ class OpenPdfPresenter;
 
 class ControlBarController : public ControlBarViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
 	public:
-        ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
+		ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
 		virtual void onNextSlideButton();
 		virtual void onPrevSlideButton();
 		virtual void onSlideChanged(SlideChangedEvent * evt);
-        virtual void onTimeChanged(TimeChangedEvent * evt);
-    private:
-        void fireSlideEvent(int delta);
-        ControlBarView * view;
-        IEventBus * bus;
-				int totalSlideCount;
-				int duration;
-        OpenPdfPresenter * presenter;
+		virtual void onTimeChanged(TimeChangedEvent * evt);
+	private:
+		void fireSlideEvent(int delta);
+		ControlBarView * view;
+		IEventBus * bus;
+		int totalSlideCount;
+		int duration;
+		OpenPdfPresenter * presenter;
 };
 
 class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler {
@@ -44,7 +44,7 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 		CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 	private:
-        OpenPdfPresenter * presenter;
+		OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;
 		IEventBus * bus;
 };
@@ -60,14 +60,14 @@ class MainSlideViewControllerImpl : public MainSlideViewController, public Slide
 };
 
 class MainWindowViewControllerImpl : public MainWindowViewController {
-    public:
-        MainWindowViewControllerImpl(IEventBus * bus, MainWindowView * view);
-        virtual void onKeyExit();
-        virtual void onKeyPrev();
-        virtual void onKeyNext();
-    private:
-        MainWindowView * view;
-        IEventBus * bus;
+	public:
+		MainWindowViewControllerImpl(IEventBus * bus, MainWindowView * view);
+		virtual void onKeyExit();
+		virtual void onKeyPrev();
+		virtual void onKeyNext();
+	private:
+		MainWindowView * view;
+		IEventBus * bus;
 };
 
 #endif
