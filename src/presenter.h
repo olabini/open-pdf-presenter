@@ -22,7 +22,6 @@
 #include "events/timer.h"
 #include "events/lifecycle.h"
 #include "views/view.h"
-#include "views/controlbar.h"
 #include "views/console.h"
 #include "views/mainwindow.h"
 #include "views/mainslide.h"
@@ -72,14 +71,13 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		void setUpViews();
 
 	private: // views
-		ControlBarViewImpl * controlBarView;
 		PresenterConsoleViewImpl * presenterConsoleView;
 		CurrentNextSlideConsoleViewImpl * currentNextView;
 		MainSlideViewImpl * mainSlideView;
 		MainWindowViewImpl * mainConsoleWindow, * mainSlideWindow;
 
 	private: // controllers
-		ControlBarController * controlBarController;
+		PresenterConsoleControllerImpl * presenterConsoleController;
 		CurrentNextSlideConsoleViewControllerImpl * currentNextController;
 		MainSlideViewControllerImpl * mainSlideController;
 		MainWindowViewControllerImpl * mainConsoleWindowController, * mainSlideWindowController;

@@ -16,14 +16,6 @@
 */
 #include <QApplication>
 
-#include "events/event.h"
-#include "events/timer.h"
-#include "views/view.h"
-#include "views/controlbar.h"
-#include "views/console.h"
-#include "views/mainwindow.h"
-#include "views/mainslide.h"
-#include "controllers.h"
 #include "presenter.h"
 
 int main(int argc, char ** argv) {

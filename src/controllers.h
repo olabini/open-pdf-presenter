@@ -23,16 +23,18 @@
 
 class OpenPdfPresenter;
 
-class ControlBarController : public ControlBarViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
+class PresenterConsoleControllerImpl : public PresenterConsoleViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
 	public:
-		ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
+		PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
 		virtual void onNextSlideButton();
 		virtual void onPrevSlideButton();
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onTimeChanged(TimeChangedEvent * evt);
 	private:
+		void computeTime(int time, int * hours, int * mins, int * secs);
+	private:
 		void fireSlideEvent(int delta);
-		ControlBarView * view;
+		PresenterConsoleView * view;
 		IEventBus * bus;
 		int totalSlideCount;
 		int duration;

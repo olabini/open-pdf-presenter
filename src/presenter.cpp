@@ -63,7 +63,6 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 }
 
 void OpenPdfPresenter::buildViews() {
-	this->controlBarView = new ControlBarViewImpl();
 	this->currentNextView = new CurrentNextSlideConsoleViewImpl();
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
@@ -72,7 +71,7 @@ void OpenPdfPresenter::buildViews() {
 }
 
 void OpenPdfPresenter::buildControllers() {
-	this->controlBarController = new ControlBarController(this->bus, this->controlBarView, this, this->totalSlides, this->totalTime);
+	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this, this->totalSlides, this->totalTime);
 	this->currentNextController = new CurrentNextSlideConsoleViewControllerImpl(this->bus,this->currentNextView,this);
 	this->mainConsoleWindowController = new MainWindowViewControllerImpl(this->bus,this->mainConsoleWindow);
 	this->mainSlideWindowController = new MainWindowViewControllerImpl(this->bus,this->mainSlideWindow);
@@ -80,9 +79,8 @@ void OpenPdfPresenter::buildControllers() {
 }
 
 void OpenPdfPresenter::setUpViews() {
-	this->controlBarView->setController(this->controlBarController);
+	this->presenterConsoleView->setController(this->presenterConsoleController);
 	this->currentNextView->setController(this->currentNextController);
-	this->presenterConsoleView->setControlBarView(this->controlBarView);
 	this->presenterConsoleView->setContent(this->currentNextView);
 	
 	this->mainConsoleWindow->setController(this->mainConsoleWindowController);
@@ -112,14 +110,13 @@ OpenPdfPresenter::~OpenPdfPresenter() {
 	delete this->document;
 	
 	// Views
-	delete this->controlBarView;
 	delete this->currentNextView;
 	delete this->presenterConsoleView;
 	delete this->mainSlideView;
 	delete this->mainConsoleWindow;
 	
 	// Controllers
-	delete this->controlBarController;
+	delete this->presenterConsoleController;
 	delete this->currentNextController;
 	delete this->mainConsoleWindowController;
 	delete this->mainSlideWindowController;

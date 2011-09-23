@@ -39,8 +39,6 @@ class MainWindowViewController : public Controller {
 		~MainWindowViewController() {}
 };
 
-class PresenterConsoleView;
-
 class MainWindowView : public View<MainWindowViewController> {
 	public:
 		virtual void setContent(QWidget * content) = 0;
@@ -48,30 +46,15 @@ class MainWindowView : public View<MainWindowViewController> {
 		~MainWindowView() {}
 };
 
-class ControlBarView;
-
 class PresenterConsoleViewController : public Controller {
+	public:
+		virtual void onNextSlideButton() = 0;
+		virtual void onPrevSlideButton() = 0;
 	protected:
 		~PresenterConsoleViewController() {}
 };
 
 class PresenterConsoleView : public View<PresenterConsoleViewController> {
-	public:
-		virtual void setContent(QWidget * view) = 0;
-		virtual void setControlBarView(ControlBarView * view) = 0;
-	protected:
-		~PresenterConsoleView() {}
-};
-
-class ControlBarViewController: public Controller {
-	public:
-		virtual void onNextSlideButton() = 0;
-		virtual void onPrevSlideButton() = 0;
-	protected:
-		~ControlBarViewController() {}
-};
-
-class ControlBarView : public View<ControlBarViewController> {
 	public:
 		virtual void setElapsedTime(int hours, int minutes, int seconds) = 0;
 		virtual void setSlidePercentage (int percentage) = 0;
@@ -79,8 +62,9 @@ class ControlBarView : public View<ControlBarViewController> {
 		virtual void setTimePercentage (int percentage) = 0;
 		virtual void setTotalSlideCount(int count) = 0;
 		virtual void setCurrentSlideNumber(int currentSlide) = 0;
+		virtual void setContent(QWidget * view) = 0;
 	protected:
-		~ControlBarView() {}
+		~PresenterConsoleView() {}
 };
 
 class CurrentNextSlideConsoleViewController : public Controller {

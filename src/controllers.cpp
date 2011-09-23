@@ -19,7 +19,7 @@
 #include "events/slide.h"
 #include "presenter.h"
 
-ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
+PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
 	this->duration = durationSeconds;
 	this->presenter = presenter;
 	this->bus = bus;
@@ -31,40 +31,39 @@ ControlBarController::ControlBarController(IEventBus * bus, ControlBarView * vie
 	this->totalSlideCount = totalSlideCount;
 }
 
-void ControlBarController::onNextSlideButton() {
+void PresenterConsoleControllerImpl::onNextSlideButton() {
 	this->fireSlideEvent(1);
 }
 
-void ControlBarController::onPrevSlideButton() {
+void PresenterConsoleControllerImpl::onPrevSlideButton() {
 	this->fireSlideEvent(-1);
 }
 
-void ControlBarController::fireSlideEvent(int delta) {
-	RelativeSlideEvent * event = new RelativeSlideEvent(delta);
-	this->bus->fire(event);
+void PresenterConsoleControllerImpl::fireSlideEvent(int delta) {
+	this->bus->fire(new RelativeSlideEvent(delta));
 }
 
-void ControlBarController::onSlideChanged(SlideChangedEvent * evt) {
+void PresenterConsoleControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 	this->view->setCurrentSlideNumber(evt->getCurrentSlideNumber()+1);
 	this->view->setSlidePercentage(evt->getCurrentSlideNumber()*100 / this->totalSlideCount);
 }
 
-void ControlBarController::onTimeChanged(TimeChangedEvent * evt) {
+void PresenterConsoleControllerImpl::onTimeChanged(TimeChangedEvent * evt) {
 	int time = evt->getElapsedTime();
 	this->view->setTimePercentage(time * 100 / this->duration);
-	int hours =  time / 3600;
-	time %= 3600;
-	int minutes = time / 60;
-	time %= 60;
-	int seconds = time;
+	int hours, minutes, seconds;
+	this->computeTime(time,&hours,&minutes,&seconds);
 	this->view->setElapsedTime(hours, minutes, seconds);
-	time = evt->getRemainingTime();
-	hours =  time / 3600;
-	time %= 3600;
-	minutes = time / 60;
-	time %= 60;
-	seconds = time;
+	this->computeTime(evt->getRemainingTime(),&hours,&minutes,&seconds);
 	this->view->setRemainingTime(hours, minutes, seconds);
+}
+
+void PresenterConsoleControllerImpl::computeTime(int time, int *hours, int *minutes, int *seconds) {
+	*hours =  time / 3600;
+	time %= 3600;
+	*minutes = time / 60;
+	time %= 60;
+	*seconds = time;
 }
 
 CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter) {

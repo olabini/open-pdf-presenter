@@ -24,6 +24,7 @@
 #include "viewutils.h"
 #include "ui_slideframe.h"
 #include "ui_currentnextslide.h"
+#include "ui_controlbar.h"
 
 class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 
@@ -31,16 +32,27 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 
 	public:
 		PresenterConsoleViewImpl(QWidget * parent = 0);
-		virtual void setControlBarView(ControlBarView * view);
+		virtual void setElapsedTime(int hours, int minutes, int seconds);
+		virtual void setRemainingTime(int hours, int minutes, int seconds);
+		virtual void setSlidePercentage (int percentage);
+		virtual void setTotalSlideCount(int count);
+		virtual void setTimePercentage (int currentSlide);
+		virtual void setCurrentSlideNumber(int currentSlide);
 		virtual void setController(PresenterConsoleViewController * controller);
 		virtual QWidget * asWidget();
 		virtual void setContent(QWidget * view);
-
 	private:
 		void refresh();
+
+	private:
+		PresenterConsoleViewController * controller;
 		QVBoxLayout * layout;
-		QWidget * content;
-		QWidget * barWidget;
+		QWidget * content, * controlBarWrapper;
+		Ui::ControlBar * controlBarUi;
+
+	private slots:
+		void onNextButtonClick();
+		void onPrevButtonClick();
 };
 
 class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideConsoleView {
@@ -48,15 +60,15 @@ class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideC
 
 	public:
 		CurrentNextSlideConsoleViewImpl(QWidget * parent = 0);
-                virtual void setCurrentSlide(QPixmap slide);
-                virtual void setNextSlide(QPixmap slide);
+		virtual void setCurrentSlide(QPixmap slide);
+		virtual void setNextSlide(QPixmap slide);
 		virtual void setController(CurrentNextSlideConsoleViewController * controller);
 		virtual QWidget * asWidget();
 
 	private:
 		SlideFrame * currentSlideFrame;
 		SlideFrame * nextSlideFrame;
-		Ui::CurrentNextSlide ui;
+		Ui::CurrentNextSlide currentNextSlideUi;
 };
 
 #endif

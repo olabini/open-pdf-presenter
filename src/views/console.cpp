@@ -21,6 +21,13 @@
 #include <QPushButton>
 
 PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(parent) {
+	this->controlBarWrapper = new QWidget(this);
+	this->controlBarWrapper->setStyleSheet("background: none;");
+
+	this->controlBarUi = new Ui::ControlBar();
+	this->controlBarUi->setupUi(this->controlBarWrapper);
+	connect(this->controlBarUi->nextButtonLabel, SIGNAL(clicked()), this, SLOT(onNextButtonClick()));
+	connect(this->controlBarUi->prevButtonLabel, SIGNAL(clicked()), this, SLOT(onPrevButtonClick()));
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	this->layout = new QVBoxLayout(this);
 	this->layout->setSpacing(0);
@@ -28,7 +35,6 @@ PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(p
 	this->setLayout(this->layout);
 
 	this->content = NULL;
-	this->barWidget = NULL;
 	this->refresh();
 
 }
@@ -39,27 +45,16 @@ void PresenterConsoleViewImpl::setController(PresenterConsoleViewController * co
 }
 
 void PresenterConsoleViewImpl::refresh() {
+	this->layout->removeWidget(this->controlBarWrapper);
+
 	if (this->content != NULL)
 		this->layout->removeWidget(this->content);
-
-	if (this->barWidget != NULL)
-		this->layout->removeWidget(this->barWidget);
-
 
 	if (this->content != NULL)
 		this->layout->addWidget(this->content);
 
-	if (this->barWidget != NULL) {
-		this->layout->addWidget(this->barWidget);
-		this->layout->setAlignment(this->barWidget,Qt::AlignHCenter | Qt::AlignBottom);
-	}
-}
-
-void PresenterConsoleViewImpl::setControlBarView(ControlBarView * view) {
-	view->asWidget()->setParent(this);
-	this->barWidget = view->asWidget();
-
-	this->refresh();
+	this->layout->addWidget(this->controlBarWrapper);
+	this->layout->setAlignment(this->controlBarWrapper,Qt::AlignHCenter | Qt::AlignBottom);
 }
 
 void PresenterConsoleViewImpl::setContent(QWidget * view) {
@@ -71,16 +66,48 @@ QWidget * PresenterConsoleViewImpl::asWidget() {
 	return this;
 }
 
+void PresenterConsoleViewImpl::onNextButtonClick() {
+	this->controller->onNextSlideButton();
+}
+
+void PresenterConsoleViewImpl::onPrevButtonClick() {
+	this->controller->onPrevSlideButton();
+}
+
+void PresenterConsoleViewImpl::setElapsedTime(int hours, int minutes, int seconds) {
+	this->controlBarUi->elapsedTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
+}
+
+void PresenterConsoleViewImpl::setRemainingTime(int hours, int minutes, int seconds) {
+	this->controlBarUi->remainingTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
+}
+
+void PresenterConsoleViewImpl::setSlidePercentage (int percentage) {
+	this->controlBarUi->slideSlider->setSliderPosition(percentage);
+}
+
+void PresenterConsoleViewImpl::setTimePercentage (int percentage) {
+	this->controlBarUi->timeSlider->setSliderPosition(percentage);
+}
+
+void PresenterConsoleViewImpl::setTotalSlideCount(int count) {
+	this->controlBarUi->totalSlidesLabel->setText(QString("%1").arg(count));
+}
+
+void PresenterConsoleViewImpl::setCurrentSlideNumber(int currentSlide) {
+	this->controlBarUi->currentSlideLabel->setText(QString("%1").arg(currentSlide));
+}
+
 CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * parent) : QWidget(parent) {
-	ui.setupUi(this);
+	currentNextSlideUi.setupUi(this);
 }
 
 void CurrentNextSlideConsoleViewImpl::setCurrentSlide(QPixmap slide) {
-	this->ui.leftSlideFrame->setContent(slide, this->geometry().width() * 0.6);
+	this->currentNextSlideUi.leftSlideFrame->setContent(slide, this->geometry().width() * 0.6);
 }
 
 void CurrentNextSlideConsoleViewImpl::setNextSlide(QPixmap slide) {
-	this->ui.rightSlideFrame->setContent(slide, this->geometry().width() * 0.25);
+	this->currentNextSlideUi.rightSlideFrame->setContent(slide, this->geometry().width() * 0.25);
 }
 
 void CurrentNextSlideConsoleViewImpl::setController(CurrentNextSlideConsoleViewController * slide) {

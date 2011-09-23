@@ -34,7 +34,6 @@ HEADERS += src/events/event.h \
            src/events/slide.h \
            src/events/timer.h \
            src/events/lifecycle.h \
-           src/views/controlbar.h \
            src/views/console.h \
            src/views/mainwindow.h \
            src/views/mainslide.h \
@@ -53,7 +52,6 @@ SOURCES += src/main.cpp \
            src/events/slide.cpp \
            src/events/timer.cpp \
            src/events/lifecycle.cpp \
-           src/views/controlbar.cpp \
            src/views/console.cpp \
            src/views/mainwindow.cpp \
            src/views/mainslide.cpp \
