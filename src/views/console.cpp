@@ -77,8 +77,9 @@ void PresenterConsoleViewImpl::setElapsedTime(int hours, int minutes, int second
 	this->controlBarUi->elapsedTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
 }
 
-void PresenterConsoleViewImpl::setRemainingTime(int hours, int minutes, int seconds) {
-	this->controlBarUi->remainingTimeLabel->setText(QString("%1:%2:%3").arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
+void PresenterConsoleViewImpl::setRemainingTime(int hours, int minutes, int seconds, bool overtime) {
+	this->controlBarUi->remainingTimeLabel->setStyleSheet(QString("background: none; color: %1;").arg((overtime ? "red" : "white")));
+	this->controlBarUi->remainingTimeLabel->setText(QString("%1%2:%3:%4").arg((overtime ? "-" : " ")).arg(hours,2,10,QChar('0')).arg(minutes,2,10,QChar('0')).arg(seconds,2,10,QChar('0')));
 }
 
 void PresenterConsoleViewImpl::setSlidePercentage (int percentage) {

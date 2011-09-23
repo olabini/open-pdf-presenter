@@ -54,8 +54,12 @@ void PresenterConsoleControllerImpl::onTimeChanged(TimeChangedEvent * evt) {
 	int hours, minutes, seconds;
 	this->computeTime(time,&hours,&minutes,&seconds);
 	this->view->setElapsedTime(hours, minutes, seconds);
-	this->computeTime(evt->getRemainingTime(),&hours,&minutes,&seconds);
-	this->view->setRemainingTime(hours, minutes, seconds);
+	time = evt->getRemainingTime();
+	bool overtime = time < 0;
+	if (overtime)
+		time *= -1;
+	this->computeTime(time,&hours,&minutes,&seconds);
+	this->view->setRemainingTime(hours, minutes, seconds, overtime);
 }
 
 void PresenterConsoleControllerImpl::computeTime(int time, int *hours, int *minutes, int *seconds) {

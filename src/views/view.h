@@ -59,7 +59,7 @@ class PresenterConsoleView : public View<PresenterConsoleViewController> {
 	public:
 		virtual void setElapsedTime(int hours, int minutes, int seconds) = 0;
 		virtual void setSlidePercentage (int percentage) = 0;
-		virtual void setRemainingTime(int hours, int minutes, int seconds) = 0;
+		virtual void setRemainingTime(int hours, int minutes, int seconds, bool overtime) = 0;
 		virtual void setTimePercentage (int percentage) = 0;
 		virtual void setTotalSlideCount(int count) = 0;
 		virtual void setCurrentSlideNumber(int currentSlide) = 0;

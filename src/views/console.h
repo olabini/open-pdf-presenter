@@ -33,7 +33,7 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 	public:
 		PresenterConsoleViewImpl(QWidget * parent = 0);
 		virtual void setElapsedTime(int hours, int minutes, int seconds);
-		virtual void setRemainingTime(int hours, int minutes, int seconds);
+		virtual void setRemainingTime(int hours, int minutes, int seconds, bool overtime);
 		virtual void setSlidePercentage (int percentage);
 		virtual void setTotalSlideCount(int count);
 		virtual void setTimePercentage (int currentSlide);
