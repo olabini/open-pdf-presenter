@@ -26,7 +26,6 @@
 #include "views/mainwindow.h"
 #include "views/mainslide.h"
 #include "renderer.h"
-#include "utils.h"
 #include "controllers.h"
 
 #include <QList>
@@ -47,15 +46,14 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		virtual void onStartPresentation(StartPresentationEvent * evt);
 		virtual void onStopPresentation(StopPresentationEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent * evt);
-		ScaleFactor * getScaleFactor();
 		int start();
 	private:
 		int currentSlideNumber;
 		int totalSlides;
 		int elapsedTime;
 		int totalTime;
+		int mainScreen, auxScreen;
 				
-		ScaleFactor * scaleFactor;
 		QString pdfFileName;
 		QEventBus * bus;
 		Timer * timer;
@@ -64,7 +62,6 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		Renderer * renderer;
 
 		void parseArguments(int argc, char ** argv);
-		QList<ScaleFactor*> * computeScaleFactors();
 		void fireSlideChangedEvent();
 		void buildViews();
 		void buildControllers();

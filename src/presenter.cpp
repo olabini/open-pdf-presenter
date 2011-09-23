@@ -23,29 +23,20 @@
 #include <QDesktopWidget>
 #include <iostream>
 
-#define TEST_DPI 96.0
-
 OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->parseArguments(argc, argv);
-	
-	QList<ScaleFactor*> * factors = this->computeScaleFactors();
-	
-	this->scaleFactor = NULL;
-	
-	for(int i = 0 ; i < factors->size() ; i++) {
-		ScaleFactor * factor = factors->at(i);
-		if (this->scaleFactor == NULL || factor->usableArea < this->scaleFactor->usableArea)
-			this->scaleFactor = factor;
-	}
-	
-	for(int i = 0 ; i < factors->size() ; i++) {
-		ScaleFactor * factor = factors->at(i);
-		if (this->scaleFactor != factor)
-			delete factor;
-	}
-	
-	delete factors;
 
+	QDesktopWidget * desktopWidget = QApplication::desktop();
+	this->mainScreen = desktopWidget->primaryScreen();
+	this->auxScreen = desktopWidget->primaryScreen();
+
+	for (int i = 0 ; i < desktopWidget->numScreens() ; i++) {
+		if (i != this->mainScreen) {
+			this->auxScreen = i;
+			break;
+		}
+	}
+	
 	this->elapsedTime = 0;
 	this->currentSlideNumber = 0;
 	this->bus = new QEventBus();
@@ -58,7 +49,7 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->buildViews();
 	this->buildControllers();
 	this->setUpViews();
-	this->renderer = new Renderer(this->bus,this->document,this->scaleFactor);
+	this->renderer = new Renderer(this->bus,this->document, desktopWidget->screen(this->mainScreen)->geometry());
 	this->timer = new Timer(this->bus);
 }
 
@@ -67,7 +58,7 @@ void OpenPdfPresenter::buildViews() {
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
 	this->mainSlideWindow = new MainWindowViewImpl();
-	this->mainSlideView = new MainSlideViewImpl(this->scaleFactor->usableWidth);
+	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->mainScreen)->geometry().width());
 }
 
 void OpenPdfPresenter::buildControllers() {
@@ -92,10 +83,10 @@ void OpenPdfPresenter::setUpViews() {
 
 int OpenPdfPresenter::start() {
 	QDesktopWidget * desktopWidget = QApplication::desktop();
-	this->mainSlideWindow->move(desktopWidget->screenGeometry(this->scaleFactor->screen).topLeft());
-	this->mainSlideWindow->showFullScreen();
-	this->mainConsoleWindow->move(desktopWidget->screenGeometry(((this->scaleFactor->screen + 1) % 2)).topLeft());
+	this->mainConsoleWindow->move(desktopWidget->screenGeometry(this->auxScreen).topLeft());
 	this->mainConsoleWindow->showFullScreen();
+	this->mainSlideWindow->move(desktopWidget->screenGeometry(this->mainScreen).topLeft());
+	this->mainSlideWindow->showFullScreen();
 
 	this->bus->fire(new SlideChangedEvent(0));
 	this->renderer->start();
@@ -105,7 +96,6 @@ int OpenPdfPresenter::start() {
 
 OpenPdfPresenter::~OpenPdfPresenter() {
 	delete this->renderer;
-	delete this->scaleFactor;
 	delete this->timer;
 	delete this->document;
 	
@@ -148,51 +138,6 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 	
 	this->totalSlides = this->document->numPages() - 1;
-}
-
-
-QList<ScaleFactor*> * OpenPdfPresenter::computeScaleFactors() {
-
-	Poppler::Page * page = this->document->page(0);
-	QImage image = page->renderToImage(TEST_DPI, TEST_DPI);
-	delete page;
-		
-	double ratio = ((double) image.width()) / ((double)image.height());
-
-	QDesktopWidget * desktopWidget = QApplication::desktop();
-
-	QList<ScaleFactor*> * ret = new QList<ScaleFactor*>();
-	
-	for (int i = 0 ; i < desktopWidget->screenCount(); i++) {
-
-		ScaleFactor * scaleFactor = new ScaleFactor();
-
-		scaleFactor->screen = i;
-
-		QRect screen = desktopWidget->screenGeometry(i);
-		double screenRatio = ((double) screen.width()) / ((double) screen.height());
-		if (screenRatio < ratio) {
-			scaleFactor->usableWidth = screen.width();
-			scaleFactor->usableHeight = ((double) screen.width()) / ratio;
-		}
-		else  if (screenRatio > ratio) {
-			scaleFactor->usableHeight = screen.height();
-			scaleFactor->usableWidth = ((double) screen.height()) * ratio;
-		}
-		else {
-			scaleFactor->usableWidth = screen.width();
-			scaleFactor->usableHeight = screen.height();
-		}
-
-		scaleFactor->usableArea = scaleFactor->usableWidth * scaleFactor->usableHeight;
-		scaleFactor->xScaleFactor = ((double) scaleFactor->usableWidth / ((double) image.width())) * TEST_DPI;
-		scaleFactor->yScaleFactor = ((double) scaleFactor->usableHeight / ((double) image.height())) * TEST_DPI;
-
-
-		ret->append(scaleFactor);
-	}
-
-	return ret;
 }
 
 int OpenPdfPresenter::getCurrentSlide() {
@@ -244,10 +189,6 @@ int OpenPdfPresenter::getTotalTimeSeconds() {
 
 Slide OpenPdfPresenter::getSlide(int slideNumber) {
 	return this->renderer->getSlide(slideNumber);
-}
-
-ScaleFactor * OpenPdfPresenter::getScaleFactor() {
-	return this->scaleFactor;
 }
 
 void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {

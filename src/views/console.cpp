@@ -40,8 +40,7 @@ PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(p
 }
 
 void PresenterConsoleViewImpl::setController(PresenterConsoleViewController * controller) {
-	this->content = content;
-	this->refresh();
+	this->controller = controller;
 }
 
 void PresenterConsoleViewImpl::refresh() {

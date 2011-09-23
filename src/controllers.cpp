@@ -95,7 +95,8 @@ MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSl
 }
 
 void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap());
+	QPixmap slide = this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap();
+	this->view->setCurrentSlide(slide);
 }
 
 MainWindowViewControllerImpl::MainWindowViewControllerImpl(IEventBus * bus, MainWindowView * view) {

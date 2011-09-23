@@ -17,67 +17,91 @@
 #ifndef _OPEN_PDF_PRESENTER_RENDERER_H_
 #define _OPEN_PDF_PRESENTER_RENDERER_H_
 
+#include <QList>
+#include <QImage>
+#include <QPixmap>
+#include <QPoint>
+#include <QRect>
+
 #include <QString>
 #include <QMutex>
 #include <QWaitCondition>
 #include <poppler-qt4.h>
 
 #include "events/event.h"
-#include "utils.h"
+
+class Slide {
+	public:
+		Slide(QImage image);
+		QPixmap asPixmap();
+		QImage asImage();
+		QRect computeUsableArea(QRect geometry);
+		QPoint computeScaleFactor(QRect geometry, int multiplier = 1);
+	private:
+		QImage image;
+};
 
 class SlideRenderedEventHandler;
 
 class SlideRenderedEvent : public Event {
-		public:
-				SlideRenderedEvent(int slideNumber, Slide slide);
-				virtual Type * getAssociatedType();
-				virtual void dispatch(IEventHandler * handler);
-				static Type TYPE;
-				int getSlideNumber();
-				Slide getSlide();
-		private:
-				int slideNumber;
-				Slide slide;
+	public:
+		SlideRenderedEvent(int slideNumber, Slide slide);
+		virtual Type * getAssociatedType();
+		virtual void dispatch(IEventHandler * handler);
+		static Type TYPE;
+		int getSlideNumber();
+		Slide getSlide();
+	private:
+		int slideNumber;
+		Slide slide;
 };
 
 class SlideRenderedEventHandler : public IEventHandler {
-		public:
-				virtual void onSlideRendered(SlideRenderedEvent * evt) = 0;
-		protected:
-				~SlideRenderedEventHandler() {}
+	public:
+		virtual void onSlideRendered(SlideRenderedEvent * evt) = 0;
+	protected:
+		~SlideRenderedEventHandler() {}
 };
 
 class RendererThread;
 
 class Renderer {
-		public:
-				Renderer(IEventBus * bus, Poppler::Document * document, ScaleFactor * currentFactor);
-				~Renderer();
-				void setScaleFactor(ScaleFactor * factor);
-				Slide getSlide(int slideNumber);
-				void start();
-				void run();
-		private:
-				Slide loadingSlide;
-				IEventBus * bus;
-				Poppler::Document * document;
-				ScaleFactor * currentFactor;
-				QList<Slide> * slides;
-				RendererThread * thread;
+	public:
+		Renderer(IEventBus * bus, Poppler::Document * document, QRect geometry);
+		~Renderer();
+		void setGeometry(QRect geometry);
+		Slide getSlide(int slideNumber);
+		void start();
+		void run();
 
-				QMutex * mutex;
-				QWaitCondition * factorChanged;
-				bool stopThread;
+	private:
+		Slide renderSlide(int slideNumber);
+		void fillTestSlideSize(int slideNumber);
 
-				Slide renderSlide(int slideNumber, ScaleFactor * factor);
+	private:
+		Slide loadingSlide;
+		IEventBus * bus;
+		Poppler::Document * document;
+		QRect currentGeometry;
+		QList<Slide> * slides;
+		QList<Slide> * testSlides;
+		QList<bool> * loadedSlides;
+		QList<bool> * loadedTestSlides;
+
+		RendererThread * thread;
+
+		QMutex * mutex;
+		QWaitCondition * geometryChanged;
+		bool stopThread;
+
 };
 
 class RendererThread : public QThread {
-		public:
-				RendererThread(Renderer * renderer);
-				void run();
-		private:
-				Renderer * renderer;
+	public:
+		RendererThread(Renderer * renderer);
+		void run();
+	private:
+		Renderer * renderer;
 };
 
 #endif // _RENDERER_H_

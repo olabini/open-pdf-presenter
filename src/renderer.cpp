@@ -16,6 +16,55 @@
 */
 #include "renderer.h"
 
+#include <QPointF>
+
+#define TEST_DPI 96.0
+
+Slide::Slide(QImage image) {
+	this->image = image;
+}
+
+QImage Slide::asImage() {
+	return this->image;
+}
+
+QPixmap Slide::asPixmap() {
+	return QPixmap::fromImage(this->image);
+}
+
+QRect Slide::computeUsableArea(QRect geometry) {
+	double ratio = ((double) this->image.width()) / ((double) this->image.height());
+	double screenRatio = ((double) geometry.width()) / ((double) geometry.height());
+
+	if (screenRatio < ratio) {
+		// Complex computation!
+		// The following assignment looks pointless but reveals important info
+		// Do not remove it (and the others that follow)
+		geometry.setWidth(geometry.width());
+		geometry.setHeight(((double) geometry.width()) / ratio);
+	}
+	else  if (screenRatio > ratio) {
+		geometry.setHeight(geometry.height());
+		geometry.setWidth(((double) geometry.height()) * ratio);
+	}
+	else {
+		geometry.setWidth(geometry.width());
+		geometry.setHeight(geometry.height());
+	}
+
+	return geometry;
+}
+
+QPoint Slide::computeScaleFactor(QRect geometry, int multiplier) {
+	geometry = this->computeUsableArea(geometry);
+
+	int xScaleFactor, yScaleFactor;
+	xScaleFactor = ((double) geometry.width() / ((double) this->image.width())) * multiplier;
+	yScaleFactor = ((double) geometry.height() / ((double) this->image.height())) * multiplier;
+
+	return QPoint(xScaleFactor,yScaleFactor);
+}
+
 Type SlideRenderedEvent::TYPE = Type();
 
 SlideRenderedEvent::SlideRenderedEvent(int slideNumber, Slide slide) : slide(slide) {
@@ -38,18 +87,25 @@ Slide SlideRenderedEvent::getSlide() {
 	return this->slide;
 }
 
-Renderer::Renderer(IEventBus * bus, Poppler::Document * document, ScaleFactor * currentFactor) :
-    loadingSlide(&ScaleFactor::DUMMY, QImage(QString(":/presenter/loadingslide.svg")).scaledToWidth(currentFactor->usableWidth,Qt::SmoothTransformation)) {
+Renderer::Renderer(IEventBus * bus, Poppler::Document * document, QRect geometry) :loadingSlide(QImage(QString(":/presenter/loadingslide.svg"))) {
 	this->bus = bus;
 	this->document = document;
-	this->currentFactor = currentFactor;
+	this->currentGeometry = geometry;
 
 	this->slides = new QList<Slide>();
-	for (int i = 0 ; i < this->document->numPages() ; i++)
+	this->testSlides = new QList<Slide>();
+	this->loadedSlides = new QList<bool>();
+	this->loadedTestSlides = new QList<bool>();
+
+	for (int i = 0 ; i < this->document->numPages() ; i++) {
 		this->slides->append(this->loadingSlide);
+		this->testSlides->append(this->loadingSlide);
+		this->loadedSlides->append(false);
+		this->loadedTestSlides->append(false);
+	}
 
 	this->mutex = new QMutex();
-	this->factorChanged = new QWaitCondition();
+	this->geometryChanged = new QWaitCondition();
 
 	this->thread = new RendererThread(this);
 	this->stopThread = false;
@@ -62,21 +118,27 @@ void Renderer::start() {
 Renderer::~Renderer() {
 	this->mutex->lock();
 	this->stopThread = true;
-	this->factorChanged->wakeAll();
+	this->geometryChanged->wakeAll();
 	this->mutex->unlock();
 
 	this->thread->wait();
 	delete this->thread;
 	delete this->mutex;
-	delete this->factorChanged;
+	delete this->geometryChanged;
 
 	delete this->slides;
+	delete this->testSlides;
+	delete this->loadedSlides;
 }
 
-void Renderer::setScaleFactor(ScaleFactor * factor) {
+void Renderer::setGeometry(QRect geometry) {
 	this->mutex->lock();
-	this->currentFactor = factor;
-	this->factorChanged->wakeAll();
+	this->currentGeometry = geometry;
+	this->loadedSlides->clear();
+	for (int i = 0 ; i < this->document->numPages() ; i++)
+		this->loadedSlides->append(false);
+
+	this->geometryChanged->wakeAll();
 	this->mutex->unlock();
 }
 
@@ -97,30 +159,43 @@ void Renderer::run() {
 				this->mutex->unlock();
 				return;
 			}
-			Slide slide = this->slides->at(i);
-			if (slide.getFactor() == &ScaleFactor::DUMMY || slide.getFactor() != this->currentFactor) {
-				ScaleFactor * factor = this->currentFactor;
+			if (!this->loadedSlides->at(i)) {
 				this->mutex->unlock();
 				renderedAny = true;
-				Slide newSlide = this->renderSlide(i,factor);
+				Slide newSlide = this->renderSlide(i);
 				this->mutex->lock();
 				this->slides->replace(i,newSlide);
+				this->loadedSlides->replace(i,true);
 				this->bus->fire(new SlideRenderedEvent(i,newSlide));
 			}
 		}
 		if (!renderedAny)
-			this->factorChanged->wait(this->mutex);
+			this->geometryChanged->wait(this->mutex);
 	}
 }
 
-Slide Renderer::renderSlide(int slideNumber, ScaleFactor * factor) {
+Slide Renderer::renderSlide(int slideNumber) {
+	this->fillTestSlideSize(slideNumber);
+
+	Slide testSlide =  this->testSlides->at(slideNumber);
+
+	QPoint scaleFactor = testSlide.computeScaleFactor(this->currentGeometry,TEST_DPI);
+
 	Poppler::Page * pdfPage = this->document->page(slideNumber);
-
-	QImage image = pdfPage->renderToImage(factor->xScaleFactor,factor->yScaleFactor);
-
+	QImage image = pdfPage->renderToImage(scaleFactor.x(),scaleFactor.y());
 	delete pdfPage;
 
-	return Slide(factor, image);
+	return Slide(image);
+}
+
+void Renderer::fillTestSlideSize(int slideNumber) {
+	if (!this->loadedTestSlides->at(slideNumber)) {
+		Poppler::Page * testPage = this->document->page(slideNumber);
+		Slide testSlide = Slide(testPage->renderToImage(TEST_DPI, TEST_DPI));
+		this->testSlides->replace(slideNumber,testSlide);
+		this->loadedTestSlides->replace(slideNumber,true);
+		delete testPage;
+	}
 }
 
 RendererThread::RendererThread(Renderer *renderer) {
