@@ -101,12 +101,18 @@ CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * paren
 	currentNextSlideUi.setupUi(this);
 }
 
-void CurrentNextSlideConsoleViewImpl::setCurrentSlide(QPixmap slide) {
-	this->currentNextSlideUi.leftSlideFrame->setContent(slide, this->geometry().width() * 0.6);
+void CurrentNextSlideConsoleViewImpl::setCurrentSlide(Slide slide) {
+	QRect area = this->geometry();
+	area.setHeight(area.height() - 100);
+	area.setWidth(area.width() * 0.6);
+	this->currentNextSlideUi.leftSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
 }
 
-void CurrentNextSlideConsoleViewImpl::setNextSlide(QPixmap slide) {
-	this->currentNextSlideUi.rightSlideFrame->setContent(slide, this->geometry().width() * 0.25);
+void CurrentNextSlideConsoleViewImpl::setNextSlide(Slide slide) {
+	QRect area = this->geometry();
+	area.setHeight(area.height() - 100);
+	area.setWidth(area.width() * 0.25);
+	this->currentNextSlideUi.rightSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
 }
 
 void CurrentNextSlideConsoleViewImpl::setController(CurrentNextSlideConsoleViewController * slide) {

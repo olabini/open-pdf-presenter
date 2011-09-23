@@ -75,15 +75,15 @@ CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewController
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap());
+	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
 
 	if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides())
-		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1).asPixmap());
+		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
 	if (evt->getSlideNumber() == this->presenter->getCurrentSlide() + 1) {
-		this->view->setNextSlide(evt->getSlide().asPixmap());
+		this->view->setNextSlide(evt->getSlide());
 	}
 }
 

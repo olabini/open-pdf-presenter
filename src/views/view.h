@@ -18,6 +18,7 @@
 #define _VIEW_H_
 
 #include <QWidget>
+#include "../renderer.h"
 
 class Controller {
 };
@@ -73,8 +74,8 @@ class CurrentNextSlideConsoleViewController : public Controller {
 class CurrentNextSlideConsoleView : public View<CurrentNextSlideConsoleViewController> {
 
 	public:
-		virtual void setCurrentSlide(QPixmap slide) = 0;
-		virtual void setNextSlide(QPixmap slide) = 0;
+		virtual void setCurrentSlide(Slide slide) = 0;
+		virtual void setNextSlide(Slide slide) = 0;
 
 	protected:
 		~CurrentNextSlideConsoleView() { }

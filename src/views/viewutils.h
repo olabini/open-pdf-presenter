@@ -25,7 +25,7 @@ class SlideFrame : public QWidget {
 
 	public:
 		SlideFrame(QWidget * parent = 0);
-		void setContent(QPixmap content, int width);
+		void setContent(QPixmap content, QRect area);
 
 	private:
 		Ui::SlideFrame ui;

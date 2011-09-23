@@ -20,6 +20,9 @@ SlideFrame::SlideFrame(QWidget * parent) : QWidget(parent) {
 	ui.setupUi(this);
 }
 
-void SlideFrame::setContent(QPixmap content, int width) {
-	this->ui.slideLabel->setPixmap(content.scaledToWidth(width, Qt::SmoothTransformation));
+void SlideFrame::setContent(QPixmap content, QRect area) {
+	if (content.width() > content.height())
+		this->ui.slideLabel->setPixmap(content.scaledToWidth(area.width(), Qt::SmoothTransformation));
+	else
+		this->ui.slideLabel->setPixmap(content.scaledToHeight(area.height(), Qt::SmoothTransformation));
 }
