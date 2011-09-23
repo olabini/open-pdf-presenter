@@ -58,5 +58,8 @@ void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
 		case Qt::Key_Right:
 			this->controller->onKeyNext();
 			break;
+		case Qt::Key_R:
+			this->controller->onKeyReset();
+			break;
 	}
 }

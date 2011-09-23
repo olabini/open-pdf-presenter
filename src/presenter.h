@@ -31,7 +31,7 @@
 #include <QList>
 #include <poppler-qt4.h>
 
-class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler, public SlideRenderedEventHandler {
+class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler, public SlideRenderedEventHandler, public ResetPresentationEventHandler {
 	public:
 		OpenPdfPresenter(int argc, char ** argv);
 		~OpenPdfPresenter();
@@ -46,6 +46,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		virtual void onStartPresentation(StartPresentationEvent * evt);
 		virtual void onStopPresentation(StopPresentationEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent * evt);
+		virtual void onResetPresentation(ResetPresentationEvent * evt);
 		int start();
 	private:
 		int currentSlideNumber;

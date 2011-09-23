@@ -69,6 +69,7 @@ class MainWindowViewControllerImpl : public MainWindowViewController {
 		virtual void onKeyExit();
 		virtual void onKeyPrev();
 		virtual void onKeyNext();
+		virtual void onKeyReset();
 	private:
 		MainWindowView * view;
 		IEventBus * bus;

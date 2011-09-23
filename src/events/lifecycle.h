@@ -81,4 +81,18 @@ class StartStopPresentationEventHandler : public IEventHandler {
 		~StartStopPresentationEventHandler() { }
 };
 
+class ResetPresentationEvent : public Event {
+	public:
+		virtual Type * getAssociatedType();
+		virtual void dispatch(IEventHandler * handler);
+		static Type TYPE;
+};
+
+class ResetPresentationEventHandler : public IEventHandler {
+	public:
+		virtual void onResetPresentation(ResetPresentationEvent * event) = 0;
+	protected:
+		~ResetPresentationEventHandler() { }
+};
+
 #endif

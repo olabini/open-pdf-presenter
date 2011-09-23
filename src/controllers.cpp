@@ -121,3 +121,7 @@ void MainWindowViewControllerImpl::onKeyPrev() {
 void MainWindowViewControllerImpl::onKeyNext() {
 	this->bus->fire(new RelativeSlideEvent(1));
 }
+
+void MainWindowViewControllerImpl::onKeyReset() {
+	this->bus->fire(new ResetPresentationEvent());
+}

@@ -75,3 +75,13 @@ void StartPresentationEvent::dispatch(IEventHandler * handler) {
 void StopPresentationEvent::dispatch(IEventHandler * handler) {
 	((StartStopPresentationEventHandler*)handler)->onStopPresentation(this);
 }
+
+Type ResetPresentationEvent::TYPE = Type();
+
+Type * ResetPresentationEvent::getAssociatedType() {
+	return &ResetPresentationEvent::TYPE;
+}
+
+void ResetPresentationEvent::dispatch(IEventHandler * handler) {
+	((ResetPresentationEventHandler*)handler)->onResetPresentation(this);
+}

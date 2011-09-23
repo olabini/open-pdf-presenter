@@ -36,6 +36,7 @@ class MainWindowViewController : public Controller {
 		virtual void onKeyExit() = 0;
 		virtual void onKeyNext() = 0;
 		virtual void onKeyPrev() = 0;
+		virtual void onKeyReset() = 0;
 	protected:
 		~MainWindowViewController() {}
 };

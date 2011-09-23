@@ -45,6 +45,7 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
 	this->bus->subscribe(&StopPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE,(SlideRenderedEventHandler*)this);
+	this->bus->subscribe(&ResetPresentationEvent::TYPE,(ResetPresentationEventHandler*)this);
 
 	this->buildViews();
 	this->buildControllers();
@@ -201,4 +202,11 @@ void OpenPdfPresenter::onStopPresentation(StopPresentationEvent * evt) {
 void OpenPdfPresenter::onSlideRendered(SlideRenderedEvent * evt) {
 	if (evt->getSlideNumber() == this->currentSlideNumber)
 		this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
+}
+
+void OpenPdfPresenter::onResetPresentation(ResetPresentationEvent * evt) {
+	this->currentSlideNumber = 0;
+	this->elapsedTime = 0;
+	this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->totalTime - this->elapsedTime));
+	this->fireSlideChangedEvent();
 }
