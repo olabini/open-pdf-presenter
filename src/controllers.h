@@ -50,6 +50,7 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;
 		IEventBus * bus;
+		Slide pastLastSlide;
 };
 
 class MainSlideViewControllerImpl : public MainSlideViewController, public SlideChangedEventHandler {

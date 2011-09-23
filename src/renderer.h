@@ -100,6 +100,7 @@ class RendererThread : public QThread {
 	public:
 		RendererThread(Renderer * renderer);
 		void run();
+		void dummywait();
 	private:
 		Renderer * renderer;
 };

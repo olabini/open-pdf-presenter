@@ -66,7 +66,7 @@ void PresenterConsoleControllerImpl::computeTime(int time, int *hours, int *minu
 	*seconds = time;
 }
 
-CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter) {
+CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter) :pastLastSlide(QImage(QString(":/presenter/pastlastslide.svg"))) {
 	this->presenter = presenter;
 	this->bus = bus;
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
@@ -79,6 +79,8 @@ void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent
 
 	if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides())
 		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
+	else
+		this->view->setNextSlide(pastLastSlide);
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
