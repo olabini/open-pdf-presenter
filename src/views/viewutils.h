@@ -18,17 +18,29 @@
 #define _VIEWUTILS_H_
 
 #include <QWidget>
-#include "ui_slideframe.h"
+#include "ui_frame.h"
 
-class SlideFrame : public QWidget {
+class Frame : public QWidget {
 	Q_OBJECT
 
+	public:
+		Frame(QWidget * parent = 0);
+		void setContent(QWidget * content);
+
+	private:
+		Ui::Frame ui;
+};
+
+class SlideFrame : public Frame {
 	public:
 		SlideFrame(QWidget * parent = 0);
 		void setContent(QPixmap content, QRect area);
 
 	private:
-		Ui::SlideFrame ui;
+		void setContent(QWidget * content);
+
+	private:
+		QLabel * contentLabel;
 };
 
 #endif // _VIEWUTILS_H_

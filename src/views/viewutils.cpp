@@ -16,13 +16,23 @@
 */
 #include "viewutils.h"
 
-SlideFrame::SlideFrame(QWidget * parent) : QWidget(parent) {
+Frame::Frame(QWidget * parent) : QWidget(parent) {
 	ui.setupUi(this);
+}
+
+void Frame::setContent(QWidget * content) {
+	this->ui.gridLayout->addWidget(content,1,1);
+}
+
+SlideFrame::SlideFrame(QWidget * parent) : Frame(parent) {
+	this->contentLabel = new QLabel(this);
+	this->contentLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	Frame::setContent(this->contentLabel);
 }
 
 void SlideFrame::setContent(QPixmap content, QRect area) {
 	if (content.width() > content.height())
-		this->ui.slideLabel->setPixmap(content.scaledToWidth(area.width(), Qt::SmoothTransformation));
+		this->contentLabel->setPixmap(content.scaledToWidth(area.width(), Qt::SmoothTransformation));
 	else
-		this->ui.slideLabel->setPixmap(content.scaledToHeight(area.height(), Qt::SmoothTransformation));
+		this->contentLabel->setPixmap(content.scaledToHeight(area.height(), Qt::SmoothTransformation));
 }

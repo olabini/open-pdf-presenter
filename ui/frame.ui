@@ -16,7 +16,7 @@
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <ui version="4.0">
- <class>SlideFrame</class>
+ <class>Frame</class>
  <widget class="QWidget" name="topWidget">
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
@@ -183,19 +183,6 @@
      </property>
      <property name="pixmap">
       <pixmap resource="../resources/presenterscreen/presenterscreen.qrc">:/presenter/BorderActiveBottomRight.png</pixmap>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="slideLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
      </property>
     </widget>
    </item>

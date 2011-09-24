@@ -44,8 +44,8 @@ HEADERS += src/events/event.h \
     src/renderer.h
 FORMS += \
     ui/controlbar.ui \
-    ui/slideframe.ui \
-    ui/currentnextslide.ui
+    ui/currentnextslide.ui \
+    ui/frame.ui
 SOURCES += src/main.cpp \
            src/events/event.cpp \
            src/events/slide.cpp \
