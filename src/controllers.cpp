@@ -93,6 +93,24 @@ void CurrentNextSlideConsoleViewControllerImpl::onSlideRendered(SlideRenderedEve
 	}
 }
 
+SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus *bus, SlideGridConsoleView *view, OpenPdfPresenter *presenter) {
+	this->bus = bus;
+	this->view = view;
+	this->presenter = presenter;
+	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
+	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
+}
+
+void SlideGridConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent *evt) {
+}
+
+void SlideGridConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
+}
+
+void SlideGridConsoleViewControllerImpl::onSelectSlide(int slideNumber) {
+	this->bus->fire(new AbsoluteSlideEvent(slideNumber));
+}
+
 MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter) {
   this->presenter = presenter;
 	this->bus = bus;

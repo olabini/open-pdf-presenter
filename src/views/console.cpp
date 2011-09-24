@@ -17,6 +17,7 @@
 #include "console.h"
 
 #include <iostream>
+#include <math.h>
 #include <QLabel>
 #include <QPushButton>
 
@@ -122,3 +123,72 @@ void CurrentNextSlideConsoleViewImpl::setController(CurrentNextSlideConsoleViewC
 QWidget * CurrentNextSlideConsoleViewImpl::asWidget() {
 	return this;
 }
+
+SlideGridConsoleViewImpl::SlideGridConsoleViewImpl(QWidget * parent) : Frame(parent) {
+	QWidget * content = new QWidget(this);
+	this->layout = new QGridLayout(content);
+	content->setLayout(this->layout);
+	content->setStyleSheet("background-color: #2F3438;");
+	this->setContent(content);
+	this->slides = new QList<QLabel*>();
+	this->selectedSlide = -1;
+	this->rows = this->cols = 0;
+}
+
+SlideGridConsoleViewImpl::~SlideGridConsoleViewImpl() {
+	delete this->layout;
+	this->deleteSlides();
+	delete this->slides;
+}
+
+void SlideGridConsoleViewImpl::deleteSlides() {
+	while (!this->slides->isEmpty()) {
+		QLabel * firstSlide = this->slides->takeFirst();
+		this->layout->removeWidget(firstSlide);
+		delete firstSlide;
+	}
+}
+
+void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
+	this->deleteSlides();
+
+	this->cols = ceil(sqrt((double)total));
+	this->rows = floor(sqrt((double)total));
+
+	QSize area = this->size();
+	area.setWidth(area.width() / this->cols);
+	area.setHeight((area.height() - 100) / this->rows);
+
+	for (int i = 0 ; i < total ; i++) {
+		QLabel * frame = new QLabel();
+		frame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		this->slides->append(frame);
+		frame->setPixmap(QPixmap::fromImage(QImage(QString(":/presenter/pastlastslide.svg")).scaledToWidth(area.width(),Qt::SmoothTransformation)));
+	}
+
+	int totalDisplayed = 0;
+	for (int row = 0; row < this->rows ; row++) {
+		for (int col = 0 ; col  < this->cols ; col++, totalDisplayed++) {
+			if (totalDisplayed < total) {
+				this->layout->addWidget(this->slides->at(totalDisplayed),row,col,Qt::AlignCenter);
+			} else
+				return;
+		}
+	}
+}
+
+void SlideGridConsoleViewImpl::setSlide(int slideNumber, Slide slide) {
+}
+
+void SlideGridConsoleViewImpl::setCurrentSlide(int slideNumber) {
+}
+
+void SlideGridConsoleViewImpl::setController(SlideGridConsoleViewController *controller) {
+	this->controller = controller;
+}
+
+QWidget * SlideGridConsoleViewImpl::asWidget() {
+	return this;
+}
+
+

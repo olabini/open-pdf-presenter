@@ -53,6 +53,18 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 		Slide pastLastSlide;
 };
 
+class SlideGridConsoleViewControllerImpl : public SlideGridConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
+	public:
+		SlideGridConsoleViewControllerImpl(IEventBus * bus, SlideGridConsoleView * view, OpenPdfPresenter * presenter);
+		virtual void onSlideChanged(SlideChangedEvent * evt);
+		virtual void onSlideRendered(SlideRenderedEvent *evt);
+		virtual void onSelectSlide(int slideNumber);
+	private:
+		OpenPdfPresenter * presenter;
+		SlideGridConsoleView * view;
+		IEventBus * bus;
+};
+
 class MainSlideViewControllerImpl : public MainSlideViewController, public SlideChangedEventHandler {
 	public:
 		MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter);

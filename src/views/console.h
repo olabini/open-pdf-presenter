@@ -20,9 +20,10 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPixmap>
+#include <QList>
 #include "view.h"
 #include "viewutils.h"
-#include "ui_slideframe.h"
+#include "ui_frame.h"
 #include "ui_currentnextslide.h"
 #include "ui_controlbar.h"
 
@@ -69,6 +70,29 @@ class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideC
 		SlideFrame * currentSlideFrame;
 		SlideFrame * nextSlideFrame;
 		Ui::CurrentNextSlide currentNextSlideUi;
+};
+
+class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {
+	Q_OBJECT
+
+	public:
+		SlideGridConsoleViewImpl(QWidget * parent = 0);
+		~SlideGridConsoleViewImpl();
+		virtual void setTotalNumberOfSlides(int total);
+		virtual void setCurrentSlide(int slideNumber);
+		virtual void setSlide(int slideNumber, Slide slide);
+		virtual void setController(SlideGridConsoleViewController * controller);
+		virtual QWidget * asWidget();
+
+	private:
+		void deleteSlides();
+
+	private:
+		QGridLayout * layout;
+		QList<QLabel*> * slides;
+		int selectedSlide;
+		int rows, cols;
+		SlideGridConsoleViewController * controller;
 };
 
 #endif

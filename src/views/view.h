@@ -70,6 +70,8 @@ class PresenterConsoleView : public View<PresenterConsoleViewController> {
 };
 
 class CurrentNextSlideConsoleViewController : public Controller {
+	protected:
+		~CurrentNextSlideConsoleViewController() { }
 };
 
 class CurrentNextSlideConsoleView : public View<CurrentNextSlideConsoleViewController> {
@@ -82,6 +84,21 @@ class CurrentNextSlideConsoleView : public View<CurrentNextSlideConsoleViewContr
 		~CurrentNextSlideConsoleView() { }
 };
 
+class SlideGridConsoleViewController {
+	public:
+		virtual void onSelectSlide(int slideNumber) = 0;
+	protected:
+		~SlideGridConsoleViewController() { }
+};
+
+class SlideGridConsoleView : public View<SlideGridConsoleViewController> {
+	public:
+		virtual void setTotalNumberOfSlides(int total) = 0;
+		virtual void setCurrentSlide(int slideNumber) = 0;
+		virtual void setSlide(int slideNumber, Slide slide) = 0;
+	protected:
+		~SlideGridConsoleView() { }
+};
 
 class MainSlideViewController : public Controller {
 };

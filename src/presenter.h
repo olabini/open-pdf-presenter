@@ -71,12 +71,14 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 	private: // views
 		PresenterConsoleViewImpl * presenterConsoleView;
 		CurrentNextSlideConsoleViewImpl * currentNextView;
+		SlideGridConsoleViewImpl * slideGridView;
 		MainSlideViewImpl * mainSlideView;
 		MainWindowViewImpl * mainConsoleWindow, * mainSlideWindow;
 
 	private: // controllers
 		PresenterConsoleControllerImpl * presenterConsoleController;
 		CurrentNextSlideConsoleViewControllerImpl * currentNextController;
+		SlideGridConsoleViewControllerImpl * slideGridController;
 		MainSlideViewControllerImpl * mainSlideController;
 		MainWindowViewControllerImpl * mainConsoleWindowController, * mainSlideWindowController;
 

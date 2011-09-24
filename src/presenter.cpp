@@ -56,6 +56,7 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 
 void OpenPdfPresenter::buildViews() {
 	this->currentNextView = new CurrentNextSlideConsoleViewImpl();
+	this->slideGridView = new SlideGridConsoleViewImpl();
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
 	this->mainSlideWindow = new MainWindowViewImpl();
@@ -65,6 +66,7 @@ void OpenPdfPresenter::buildViews() {
 void OpenPdfPresenter::buildControllers() {
 	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this, this->totalSlides, this->totalTime);
 	this->currentNextController = new CurrentNextSlideConsoleViewControllerImpl(this->bus,this->currentNextView,this);
+	this->slideGridController = new SlideGridConsoleViewControllerImpl(this->bus,this->slideGridView,this);
 	this->mainConsoleWindowController = new MainWindowViewControllerImpl(this->bus,this->mainConsoleWindow);
 	this->mainSlideWindowController = new MainWindowViewControllerImpl(this->bus,this->mainSlideWindow);
 	this->mainSlideController = new MainSlideViewControllerImpl(this->bus, this->mainSlideView, this);
@@ -102,6 +104,7 @@ OpenPdfPresenter::~OpenPdfPresenter() {
 	
 	// Views
 	delete this->currentNextView;
+	delete this->slideGridView;
 	delete this->presenterConsoleView;
 	delete this->mainSlideView;
 	delete this->mainConsoleWindow;
