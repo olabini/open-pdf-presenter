@@ -21,6 +21,7 @@
 #include <QVBoxLayout>
 #include <QPixmap>
 #include <QList>
+#include <QPushButton>
 #include "view.h"
 #include "viewutils.h"
 #include "ui_frame.h"
@@ -89,7 +90,7 @@ class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {
 
 	private:
 		QGridLayout * layout;
-		QList<QLabel*> * slides;
+		QList<QPushButton*> * slides;
 		int selectedSlide;
 		int rows, cols;
 		SlideGridConsoleViewController * controller;

@@ -127,10 +127,12 @@ QWidget * CurrentNextSlideConsoleViewImpl::asWidget() {
 SlideGridConsoleViewImpl::SlideGridConsoleViewImpl(QWidget * parent) : Frame(parent) {
 	QWidget * content = new QWidget(this);
 	this->layout = new QGridLayout(content);
+	this->layout->setMargin(0);
+	this->layout->setSpacing(0);
 	content->setLayout(this->layout);
 	content->setStyleSheet("background-color: #2F3438;");
 	this->setContent(content);
-	this->slides = new QList<QLabel*>();
+	this->slides = new QList<QPushButton*>();
 	this->selectedSlide = -1;
 	this->rows = this->cols = 0;
 }
@@ -143,7 +145,7 @@ SlideGridConsoleViewImpl::~SlideGridConsoleViewImpl() {
 
 void SlideGridConsoleViewImpl::deleteSlides() {
 	while (!this->slides->isEmpty()) {
-		QLabel * firstSlide = this->slides->takeFirst();
+		QPushButton * firstSlide = this->slides->takeFirst();
 		this->layout->removeWidget(firstSlide);
 		delete firstSlide;
 	}
@@ -153,17 +155,21 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 	this->deleteSlides();
 
 	this->cols = ceil(sqrt((double)total));
-	this->rows = floor(sqrt((double)total)) + 1;
+	this->rows = floor(sqrt((double)total));
+
+	if ((this->cols * this->rows) < total)
+		(this->rows)++;
 
 	QSize area = this->size();
 	area.setWidth(area.width() / this->cols);
 	area.setHeight((area.height() - 100) / this->rows);
 
 	for (int i = 0 ; i < total ; i++) {
-		QLabel * frame = new QLabel();
+		QPushButton * frame = new QPushButton();
 		frame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		frame->setFlat(true);
 		this->slides->append(frame);
-		frame->setPixmap(QPixmap::fromImage(QImage(QString(":/presenter/pastlastslide.svg")).scaledToWidth(area.width(),Qt::SmoothTransformation)));
+		frame->setIcon(QIcon(QPixmap::fromImage(QImage(QString(":/presenter/pastlastslide.svg")).scaledToWidth(area.width(),Qt::SmoothTransformation))));
 	}
 
 	int totalDisplayed = 0;
@@ -182,13 +188,12 @@ void SlideGridConsoleViewImpl::setSlide(int slideNumber, Slide slide) {
 	area.setWidth(area.width() / this->cols);
 	area.setHeight((area.height() - 100) / this->rows);
 
-	QRect usableArea = slide.computeUsableArea(QRect(0,0,area.width(),area.height()));
+	QRect usableArea = slide.computeUsableArea(QRect(0,0,area.width()-4,area.height()-4));
+	area.setWidth(usableArea.width());
+	area.setHeight(usableArea.height());
 
-	if (usableArea.width() > usableArea.height()) {
-		this->slides->at(slideNumber)->setPixmap(slide.asPixmap().scaledToWidth(usableArea.width(),Qt::SmoothTransformation));
-	} else {
-		this->slides->at(slideNumber)->setPixmap(slide.asPixmap().scaledToHeight(usableArea.height(),Qt::SmoothTransformation));
-	}
+	this->slides->at(slideNumber)->setIconSize(area);
+	this->slides->at(slideNumber)->setIcon(slide.asPixmap());
 }
 
 void SlideGridConsoleViewImpl::setCurrentSlide(int slideNumber) {
