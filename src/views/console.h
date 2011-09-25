@@ -88,6 +88,9 @@ class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {
 	private:
 		void deleteSlides();
 
+	private slots:
+		void onSlideClick();
+
 	private:
 		QGridLayout * layout;
 		QList<QPushButton*> * slides;

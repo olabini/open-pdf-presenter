@@ -168,6 +168,7 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 		QPushButton * frame = new QPushButton();
 		frame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 		frame->setFlat(true);
+		connect(frame, SIGNAL(clicked()), this, SLOT(onSlideClick()));
 		this->slides->append(frame);
 		frame->setIcon(QIcon(QPixmap::fromImage(QImage(QString(":/presenter/pastlastslide.svg")).scaledToWidth(area.width(),Qt::SmoothTransformation))));
 	}
@@ -205,6 +206,15 @@ void SlideGridConsoleViewImpl::setController(SlideGridConsoleViewController *con
 
 QWidget * SlideGridConsoleViewImpl::asWidget() {
 	return this;
+}
+
+void SlideGridConsoleViewImpl::onSlideClick() {
+	for (int i = 0 ; i < this->slides->size() ; i++) {
+		if (QObject::sender() == this->slides->at(i)) {
+			this->controller->onSelectSlide(i);
+			return;
+		}
+	}
 }
 
 
