@@ -93,6 +93,7 @@ int OpenPdfPresenter::start() {
 
 	this->bus->fire(new SlideChangedEvent(0));
 	this->renderer->start();
+	this->timer->start();
 
 	return QApplication::instance()->exec();
 }

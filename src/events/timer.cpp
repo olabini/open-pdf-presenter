@@ -30,6 +30,9 @@ Timer::Timer(IEventBus * bus, QWidget * parent) : QWidget(parent) {
 	this->timer = new QTimer(this);
 	this->bus = bus;
 	connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+}
+
+void Timer::start() {
 	this->timer->start(1000);
 }
 

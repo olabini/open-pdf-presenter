@@ -42,6 +42,7 @@ class Timer : public QWidget {
 
 	public:
 		Timer(IEventBus * bus, QWidget * parent = 0);
+		void start();
 		~Timer();
 
 	private:
