@@ -47,11 +47,11 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->bus->subscribe(&SlideRenderedEvent::TYPE,(SlideRenderedEventHandler*)this);
 	this->bus->subscribe(&ResetPresentationEvent::TYPE,(ResetPresentationEventHandler*)this);
 
+	this->renderer = new Renderer(this->bus,this->document, desktopWidget->screen(this->mainScreen)->geometry());
+	this->timer = new Timer(this->bus);
 	this->buildViews();
 	this->buildControllers();
 	this->setUpViews();
-	this->renderer = new Renderer(this->bus,this->document, desktopWidget->screen(this->mainScreen)->geometry());
-	this->timer = new Timer(this->bus);
 }
 
 void OpenPdfPresenter::buildViews() {

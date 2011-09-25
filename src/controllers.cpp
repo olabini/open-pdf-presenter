@@ -99,12 +99,18 @@ SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus
 	this->presenter = presenter;
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
+
+	this->view->setTotalNumberOfSlides(this->presenter->getTotalSlides());
+	for (int i = 0 ; i < this->presenter->getTotalSlides() ; i++) {
+		this->view->setSlide(i,this->presenter->getSlide(i));
+	}
 }
 
 void SlideGridConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent *evt) {
 }
 
 void SlideGridConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
+	this->view->setSlide(evt->getSlideNumber(),evt->getSlide());
 }
 
 void SlideGridConsoleViewControllerImpl::onSelectSlide(int slideNumber) {

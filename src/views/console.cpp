@@ -153,7 +153,7 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 	this->deleteSlides();
 
 	this->cols = ceil(sqrt((double)total));
-	this->rows = floor(sqrt((double)total));
+	this->rows = floor(sqrt((double)total)) + 1;
 
 	QSize area = this->size();
 	area.setWidth(area.width() / this->cols);
@@ -178,6 +178,17 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 }
 
 void SlideGridConsoleViewImpl::setSlide(int slideNumber, Slide slide) {
+	QSize area = this->size();
+	area.setWidth(area.width() / this->cols);
+	area.setHeight((area.height() - 100) / this->rows);
+
+	QRect usableArea = slide.computeUsableArea(QRect(0,0,area.width(),area.height()));
+
+	if (usableArea.width() > usableArea.height()) {
+		this->slides->at(slideNumber)->setPixmap(slide.asPixmap().scaledToWidth(usableArea.width(),Qt::SmoothTransformation));
+	} else {
+		this->slides->at(slideNumber)->setPixmap(slide.asPixmap().scaledToHeight(usableArea.height(),Qt::SmoothTransformation));
+	}
 }
 
 void SlideGridConsoleViewImpl::setCurrentSlide(int slideNumber) {
