@@ -81,7 +81,7 @@ CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewController
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
 
-	if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides())
+	if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides() - 1)
 		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
 	else
 		this->view->setNextSlide(pastLastSlide);

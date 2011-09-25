@@ -142,7 +142,7 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
 	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 	
-	this->totalSlides = this->document->numPages() - 1;
+	this->totalSlides = this->document->numPages();
 }
 
 int OpenPdfPresenter::getCurrentSlide() {
