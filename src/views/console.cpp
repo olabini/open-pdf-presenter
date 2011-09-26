@@ -103,19 +103,22 @@ void PresenterConsoleViewImpl::setCurrentSlideNumber(int currentSlide) {
 
 CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * parent) : QWidget(parent) {
 	currentNextSlideUi.setupUi(this);
+	this->width = 1;
+	this->height = 1;
+}
+
+void CurrentNextSlideConsoleViewImpl::setGeometry(int width, int height) {
+	this->width = width;
+	this->height = height;
 }
 
 void CurrentNextSlideConsoleViewImpl::setCurrentSlide(Slide slide) {
-	QRect area = this->geometry();
-	area.setHeight(area.height() - PRESENTER_USEFUL_HEIGHT_DECREMENT);
-	area.setWidth(area.width() * 0.6);
+	QRect area = QRect(0,0,this->width * 0.6, this->height - PRESENTER_USEFUL_HEIGHT_DECREMENT);
 	this->currentNextSlideUi.leftSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
 }
 
 void CurrentNextSlideConsoleViewImpl::setNextSlide(Slide slide) {
-	QRect area = this->geometry();
-	area.setHeight(area.height() - PRESENTER_USEFUL_HEIGHT_DECREMENT);
-	area.setWidth(area.width() * 0.25);
+	QRect area = QRect(0,0,this->width * 0.25, this->height - PRESENTER_USEFUL_HEIGHT_DECREMENT);
 	this->currentNextSlideUi.rightSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
 }
 
@@ -187,11 +190,13 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 	}
 }
 
-void SlideGridConsoleViewImpl::setSlide(int slideNumber, Slide slide) {
-	QRect area =  QApplication::desktop()->screenGeometry(this);
-	area.setWidth((area.width() * PRESENTER_USEFUL_WIDTH_PERCENTAGE) / this->cols);
-	area.setHeight((area.height() - PRESENTER_USEFUL_HEIGHT_DECREMENT) / this->rows);
+void SlideGridConsoleViewImpl::setGeometry(int width, int height) {
+	this->width = width;
+	this->height = height;
+}
 
+void SlideGridConsoleViewImpl::setSlide(int slideNumber, Slide slide) {
+	QRect area =  QRect(0,0,((width * PRESENTER_USEFUL_WIDTH_PERCENTAGE) / this->cols),(height - PRESENTER_USEFUL_HEIGHT_DECREMENT) / this->rows);
 	area = slide.computeUsableArea(QRect(0,0,area.width()-4,area.height()-4));
 
 	this->slides->at(slideNumber)->setIconSize(QSize(area.width(),area.height()));

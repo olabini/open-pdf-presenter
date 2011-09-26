@@ -50,6 +50,7 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 		CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
+		virtual void setGeometry(int width, int height);
 	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;
@@ -63,6 +64,7 @@ class SlideGridConsoleViewControllerImpl : public SlideGridConsoleViewController
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		virtual void onSelectSlide(int slideNumber);
+		virtual void setGeometry(int width, int height);
 	private:
 		OpenPdfPresenter * presenter;
 		SlideGridConsoleView * view;

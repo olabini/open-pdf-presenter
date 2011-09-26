@@ -113,6 +113,12 @@ void CurrentNextSlideConsoleViewControllerImpl::onSlideRendered(SlideRenderedEve
 	}
 }
 
+void CurrentNextSlideConsoleViewControllerImpl::setGeometry(int width, int height) {
+	this->view->setGeometry(width, height);
+	this->view->setCurrentSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()));
+	this->view->setNextSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()+1));
+}
+
 SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus *bus, SlideGridConsoleView *view, OpenPdfPresenter *presenter) {
 	this->bus = bus;
 	this->view = view;
@@ -135,6 +141,12 @@ void SlideGridConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt
 
 void SlideGridConsoleViewControllerImpl::onSelectSlide(int slideNumber) {
 	this->bus->fire(new AbsoluteSlideEvent(slideNumber));
+}
+
+void SlideGridConsoleViewControllerImpl::setGeometry(int width, int height) {
+	this->view->setGeometry(width, height);
+	for (int i = 0 ; i < this->presenter->getTotalSlides() ; i++)
+		this->view->setSlide(i,this->presenter->getSlide(i));
 }
 
 MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter) {

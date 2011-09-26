@@ -61,6 +61,7 @@ class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideC
 
 	public:
 		CurrentNextSlideConsoleViewImpl(QWidget * parent = 0);
+		virtual void setGeometry(int width, int height);
 		virtual void setCurrentSlide(Slide slide);
 		virtual void setNextSlide(Slide slide);
 		virtual void setController(CurrentNextSlideConsoleViewController * controller);
@@ -70,6 +71,7 @@ class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideC
 		SlideFrame * currentSlideFrame;
 		SlideFrame * nextSlideFrame;
 		Ui::CurrentNextSlide currentNextSlideUi;
+		int width, height;
 };
 
 class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {
@@ -78,6 +80,7 @@ class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {
 	public:
 		SlideGridConsoleViewImpl(QWidget * parent = 0);
 		~SlideGridConsoleViewImpl();
+		virtual void setGeometry(int width, int height);
 		virtual void setTotalNumberOfSlides(int total);
 		virtual void setCurrentSlide(int slideNumber);
 		virtual void setSlide(int slideNumber, Slide slide);
@@ -96,6 +99,7 @@ class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {
 		int selectedSlide;
 		int rows, cols;
 		SlideGridConsoleViewController * controller;
+		int width, height;
 };
 
 #endif

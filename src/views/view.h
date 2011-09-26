@@ -73,6 +73,8 @@ class PresenterConsoleView : public View<PresenterConsoleViewController> {
 };
 
 class CurrentNextSlideConsoleViewController : public Controller {
+	public:
+		virtual void setGeometry(int width, int height) = 0;
 	protected:
 		~CurrentNextSlideConsoleViewController() { }
 };
@@ -85,6 +87,7 @@ class ConsoleView {
 class CurrentNextSlideConsoleView : public ConsoleView, public View<CurrentNextSlideConsoleViewController> {
 
 	public:
+		virtual void setGeometry(int width, int height) = 0;
 		virtual void setCurrentSlide(Slide slide) = 0;
 		virtual void setNextSlide(Slide slide) = 0;
 
@@ -94,6 +97,7 @@ class CurrentNextSlideConsoleView : public ConsoleView, public View<CurrentNextS
 
 class SlideGridConsoleViewController {
 	public:
+		virtual void setGeometry(int width, int height) = 0;
 		virtual void onSelectSlide(int slideNumber) = 0;
 	protected:
 		~SlideGridConsoleViewController() { }
@@ -101,6 +105,7 @@ class SlideGridConsoleViewController {
 
 class SlideGridConsoleView : public ConsoleView, public View<SlideGridConsoleViewController> {
 	public:
+		virtual void setGeometry(int width, int height) = 0;
 		virtual void setTotalNumberOfSlides(int total) = 0;
 		virtual void setCurrentSlide(int slideNumber) = 0;
 		virtual void setSlide(int slideNumber, Slide slide) = 0;
