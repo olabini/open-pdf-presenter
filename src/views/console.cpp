@@ -20,6 +20,10 @@
 #include <math.h>
 #include <QLabel>
 #include <QPushButton>
+#include <QDesktopWidget>
+
+#define PRESENTER_USEFUL_HEIGHT_DECREMENT 200
+#define PRESENTER_USEFUL_WIDTH_PERCENTAGE 0.8
 
 PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(parent) {
 	this->controlBarWrapper = new QWidget(this);
@@ -31,13 +35,20 @@ PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(p
 	connect(this->controlBarUi->prevButtonLabel, SIGNAL(clicked()), this, SLOT(onPrevButtonClick()));
 	connect(this->controlBarUi->slideGridButton, SIGNAL(clicked()), this, SLOT(onSlideGridButtonClick()));
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	this->layout = new QVBoxLayout(this);
-	this->layout->setSpacing(0);
-	this->layout->setMargin(0);
-	this->setLayout(this->layout);
+	this->innerLayout = new QVBoxLayout();
+	this->outerLayout = new QVBoxLayout();
+	this->outerLayout->setSpacing(0);
+	this->outerLayout->setMargin(0);
+	this->innerLayout->setSpacing(0);
+	this->innerLayout->setMargin(0);
+	this->setLayout(this->outerLayout);
+	this->outerLayout->addLayout(this->innerLayout);
+
+	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	this->content = NULL;
-	this->refresh();
+	this->outerLayout->addWidget(this->controlBarWrapper);
+	this->outerLayout->setAlignment(this->controlBarWrapper,Qt::AlignHCenter | Qt::AlignBottom);
 
 }
 
@@ -45,22 +56,8 @@ void PresenterConsoleViewImpl::setController(PresenterConsoleViewController * co
 	this->controller = controller;
 }
 
-void PresenterConsoleViewImpl::refresh() {
-	this->layout->removeWidget(this->controlBarWrapper);
-
-	if (this->content != NULL)
-		this->layout->removeWidget(this->content);
-
-	if (this->content != NULL)
-		this->layout->addWidget(this->content);
-
-	this->layout->addWidget(this->controlBarWrapper);
-	this->layout->setAlignment(this->controlBarWrapper,Qt::AlignHCenter | Qt::AlignBottom);
-}
-
-void PresenterConsoleViewImpl::setContent(QWidget * view) {
-	this->content = view;
-	this->refresh();
+void PresenterConsoleViewImpl::addContent(QWidget * view) {
+	this->innerLayout->addWidget(view, Qt::AlignCenter);
 }
 
 QWidget * PresenterConsoleViewImpl::asWidget() {
@@ -110,14 +107,14 @@ CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * paren
 
 void CurrentNextSlideConsoleViewImpl::setCurrentSlide(Slide slide) {
 	QRect area = this->geometry();
-	area.setHeight(area.height() - 100);
+	area.setHeight(area.height() - PRESENTER_USEFUL_HEIGHT_DECREMENT);
 	area.setWidth(area.width() * 0.6);
 	this->currentNextSlideUi.leftSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
 }
 
 void CurrentNextSlideConsoleViewImpl::setNextSlide(Slide slide) {
 	QRect area = this->geometry();
-	area.setHeight(area.height() - 100);
+	area.setHeight(area.height() - PRESENTER_USEFUL_HEIGHT_DECREMENT);
 	area.setWidth(area.width() * 0.25);
 	this->currentNextSlideUi.rightSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
 }
@@ -143,8 +140,8 @@ SlideGridConsoleViewImpl::SlideGridConsoleViewImpl(QWidget * parent) : Frame(par
 }
 
 SlideGridConsoleViewImpl::~SlideGridConsoleViewImpl() {
-	delete this->layout;
 	this->deleteSlides();
+	delete this->layout;
 	delete this->slides;
 }
 
@@ -165,14 +162,15 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 	if ((this->cols * this->rows) < total)
 		(this->rows)++;
 
-	QSize area = this->size();
-	area.setWidth(area.width() / this->cols);
-	area.setHeight((area.height() - 100) / this->rows);
+	QRect area =  QApplication::desktop()->screenGeometry(this);
+	area.setWidth((area.width() * PRESENTER_USEFUL_WIDTH_PERCENTAGE) / this->cols);
+	area.setHeight((area.height() - PRESENTER_USEFUL_HEIGHT_DECREMENT) / this->rows);
 
 	for (int i = 0 ; i < total ; i++) {
 		QPushButton * frame = new QPushButton();
 		frame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 		frame->setFlat(true);
+		frame->setFocusPolicy(Qt::NoFocus);
 		connect(frame, SIGNAL(clicked()), this, SLOT(onSlideClick()));
 		this->slides->append(frame);
 		frame->setIcon(QIcon(QPixmap::fromImage(QImage(QString(":/presenter/pastlastslide.svg")).scaledToWidth(area.width(),Qt::SmoothTransformation))));
@@ -190,15 +188,13 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 }
 
 void SlideGridConsoleViewImpl::setSlide(int slideNumber, Slide slide) {
-	QSize area = this->size();
-	area.setWidth(area.width() / this->cols);
-	area.setHeight((area.height() - 100) / this->rows);
+	QRect area =  QApplication::desktop()->screenGeometry(this);
+	area.setWidth((area.width() * PRESENTER_USEFUL_WIDTH_PERCENTAGE) / this->cols);
+	area.setHeight((area.height() - PRESENTER_USEFUL_HEIGHT_DECREMENT) / this->rows);
 
-	QRect usableArea = slide.computeUsableArea(QRect(0,0,area.width()-4,area.height()-4));
-	area.setWidth(usableArea.width());
-	area.setHeight(usableArea.height());
+	area = slide.computeUsableArea(QRect(0,0,area.width()-4,area.height()-4));
 
-	this->slides->at(slideNumber)->setIconSize(area);
+	this->slides->at(slideNumber)->setIconSize(QSize(area.width(),area.height()));
 	this->slides->at(slideNumber)->setIcon(slide.asPixmap());
 }
 

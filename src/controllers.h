@@ -25,7 +25,7 @@ class OpenPdfPresenter;
 
 class PresenterConsoleControllerImpl : public PresenterConsoleViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler {
 	public:
-		PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
+		PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleView * currentNextView, SlideGridConsoleView * slideGridView, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
 		virtual void onNextSlideButton();
 		virtual void onPrevSlideButton();
 		virtual void onSlideGridButton();
@@ -36,6 +36,8 @@ class PresenterConsoleControllerImpl : public PresenterConsoleViewController, pu
 	private:
 		void fireSlideEvent(int delta);
 		PresenterConsoleView * view;
+		CurrentNextSlideConsoleView * currentNextView;
+		SlideGridConsoleView * slideGridView;
 		IEventBus * bus;
 		int totalSlideCount;
 		int duration;

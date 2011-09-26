@@ -42,13 +42,11 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 		virtual void setCurrentSlideNumber(int currentSlide);
 		virtual void setController(PresenterConsoleViewController * controller);
 		virtual QWidget * asWidget();
-		virtual void setContent(QWidget * view);
-	private:
-		void refresh();
+		virtual void addContent(QWidget * view);
 
 	private:
 		PresenterConsoleViewController * controller;
-		QVBoxLayout * layout;
+		QVBoxLayout * innerLayout, * outerLayout;
 		QWidget * content, * controlBarWrapper;
 		Ui::ControlBar * controlBarUi;
 

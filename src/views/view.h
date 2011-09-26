@@ -65,7 +65,7 @@ class PresenterConsoleView : public View<PresenterConsoleViewController> {
 		virtual void setTimePercentage (int percentage) = 0;
 		virtual void setTotalSlideCount(int count) = 0;
 		virtual void setCurrentSlideNumber(int currentSlide) = 0;
-		virtual void setContent(QWidget * view) = 0;
+		virtual void addContent(QWidget * view) = 0;
 	protected:
 		~PresenterConsoleView() {}
 };

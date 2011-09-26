@@ -19,15 +19,20 @@
 #include "events/slide.h"
 #include "presenter.h"
 
-PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
+PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleView * currentNextView, SlideGridConsoleView * slideGridView, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
 	this->duration = durationSeconds;
 	this->presenter = presenter;
 	this->bus = bus;
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->bus->subscribe(&TimeChangedEvent::TYPE, (ITimeChangedEventHandler*)this);
 	this->view = view;
+	this->currentNextView = currentNextView;
+	this->slideGridView = slideGridView;
 	this->view->setController(this);
 	this->view->setTotalSlideCount(totalSlideCount+1);
+	this->view->addContent(this->slideGridView->asWidget());
+	this->slideGridView->asWidget()->setVisible(false);
+	this->view->addContent(this->currentNextView->asWidget());
 	this->totalSlideCount = totalSlideCount;
 }
 
@@ -40,6 +45,13 @@ void PresenterConsoleControllerImpl::onPrevSlideButton() {
 }
 
 void PresenterConsoleControllerImpl::onSlideGridButton() {
+	if (this->slideGridView->asWidget()->isVisible()) {
+		this->slideGridView->asWidget()->setVisible(false);
+		this->currentNextView->asWidget()->setVisible(true);
+	} else {
+		this->currentNextView->asWidget()->setVisible(false);
+		this->slideGridView->asWidget()->setVisible(true);
+	}
 }
 
 void PresenterConsoleControllerImpl::fireSlideEvent(int delta) {
