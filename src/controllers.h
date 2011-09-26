@@ -28,6 +28,7 @@ class PresenterConsoleControllerImpl : public PresenterConsoleViewController, pu
 		PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
 		virtual void onNextSlideButton();
 		virtual void onPrevSlideButton();
+		virtual void onSlideGridButton();
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onTimeChanged(TimeChangedEvent * evt);
 	private:

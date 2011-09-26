@@ -52,6 +52,7 @@ class PresenterConsoleViewController : public Controller {
 	public:
 		virtual void onNextSlideButton() = 0;
 		virtual void onPrevSlideButton() = 0;
+		virtual void onSlideGridButton() = 0;
 	protected:
 		~PresenterConsoleViewController() {}
 };
@@ -74,7 +75,12 @@ class CurrentNextSlideConsoleViewController : public Controller {
 		~CurrentNextSlideConsoleViewController() { }
 };
 
-class CurrentNextSlideConsoleView : public View<CurrentNextSlideConsoleViewController> {
+class ConsoleView {
+	protected:
+		~ConsoleView() { }
+};
+
+class CurrentNextSlideConsoleView : public ConsoleView, public View<CurrentNextSlideConsoleViewController> {
 
 	public:
 		virtual void setCurrentSlide(Slide slide) = 0;
@@ -91,7 +97,7 @@ class SlideGridConsoleViewController {
 		~SlideGridConsoleViewController() { }
 };
 
-class SlideGridConsoleView : public View<SlideGridConsoleViewController> {
+class SlideGridConsoleView : public ConsoleView, public View<SlideGridConsoleViewController> {
 	public:
 		virtual void setTotalNumberOfSlides(int total) = 0;
 		virtual void setCurrentSlide(int slideNumber) = 0;

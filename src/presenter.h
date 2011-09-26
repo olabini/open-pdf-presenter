@@ -60,6 +60,8 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		Timer * timer;
 		Poppler::Document * document;
 
+		ConsoleView * currentConsoleView;
+
 		Renderer * renderer;
 
 		void parseArguments(int argc, char ** argv);

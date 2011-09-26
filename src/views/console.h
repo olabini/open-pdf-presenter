@@ -55,6 +55,7 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 	private slots:
 		void onNextButtonClick();
 		void onPrevButtonClick();
+		void onSlideGridButtonClick();
 };
 
 class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideConsoleView {

@@ -39,6 +39,9 @@ void PresenterConsoleControllerImpl::onPrevSlideButton() {
 	this->fireSlideEvent(-1);
 }
 
+void PresenterConsoleControllerImpl::onSlideGridButton() {
+}
+
 void PresenterConsoleControllerImpl::fireSlideEvent(int delta) {
 	this->bus->fire(new RelativeSlideEvent(delta));
 }

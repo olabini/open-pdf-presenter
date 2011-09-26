@@ -29,6 +29,7 @@ PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(p
 	this->controlBarUi->setupUi(this->controlBarWrapper);
 	connect(this->controlBarUi->nextButtonLabel, SIGNAL(clicked()), this, SLOT(onNextButtonClick()));
 	connect(this->controlBarUi->prevButtonLabel, SIGNAL(clicked()), this, SLOT(onPrevButtonClick()));
+	connect(this->controlBarUi->slideGridButton, SIGNAL(clicked()), this, SLOT(onSlideGridButtonClick()));
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	this->layout = new QVBoxLayout(this);
 	this->layout->setSpacing(0);
@@ -72,6 +73,10 @@ void PresenterConsoleViewImpl::onNextButtonClick() {
 
 void PresenterConsoleViewImpl::onPrevButtonClick() {
 	this->controller->onPrevSlideButton();
+}
+
+void PresenterConsoleViewImpl::onSlideGridButtonClick() {
+	this->controller->onSlideGridButton();
 }
 
 void PresenterConsoleViewImpl::setElapsedTime(int hours, int minutes, int seconds) {

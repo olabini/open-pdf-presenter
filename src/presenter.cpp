@@ -52,6 +52,8 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->buildViews();
 	this->buildControllers();
 	this->setUpViews();
+
+	this->currentConsoleView = this->currentNextView;
 }
 
 void OpenPdfPresenter::buildViews() {
@@ -75,6 +77,7 @@ void OpenPdfPresenter::buildControllers() {
 void OpenPdfPresenter::setUpViews() {
 	this->presenterConsoleView->setController(this->presenterConsoleController);
 	this->currentNextView->setController(this->currentNextController);
+	this->slideGridView->setController(this->slideGridController);
 	this->presenterConsoleView->setContent(this->currentNextView);
 	
 	this->mainConsoleWindow->setController(this->mainConsoleWindowController);
