@@ -38,6 +38,7 @@ class MainWindowViewController : public Controller {
 		virtual void onKeyPrev() = 0;
 		virtual void onKeyReset() = 0;
 		virtual void onKeyToggleSlideGrid() = 0;
+		virtual void onKeySwapScreens() = 0;
 	protected:
 		~MainWindowViewController() {}
 };

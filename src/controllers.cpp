@@ -173,3 +173,7 @@ void MainWindowViewControllerImpl::onKeyReset() {
 void MainWindowViewControllerImpl::onKeyToggleSlideGrid() {
 	this->bus->fire(new ToggleSlideGridEvent());
 }
+
+void MainWindowViewControllerImpl::onKeySwapScreens() {
+	this->bus->fire(new SwapScreensEvent());
+}

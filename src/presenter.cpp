@@ -46,6 +46,7 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->bus->subscribe(&StopPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE,(SlideRenderedEventHandler*)this);
 	this->bus->subscribe(&ResetPresentationEvent::TYPE,(ResetPresentationEventHandler*)this);
+	this->bus->subscribe(&SwapScreensEvent::TYPE,(SwapScreensEventHandler*)this);
 
 	this->renderer = new Renderer(this->bus,this->document, desktopWidget->screen(this->mainScreen)->geometry());
 	this->timer = new Timer(this->bus);
@@ -215,4 +216,18 @@ void OpenPdfPresenter::onResetPresentation(ResetPresentationEvent * evt) {
 	this->elapsedTime = 0;
 	this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->totalTime - this->elapsedTime));
 	this->fireSlideChangedEvent();
+}
+
+void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
+	int tmp = this->mainScreen;
+	this->mainScreen = this->auxScreen;
+	this->auxScreen = tmp;
+
+	QDesktopWidget * desktopWidget = QApplication::desktop();
+	this->mainConsoleWindow->showNormal();
+	this->mainConsoleWindow->move(desktopWidget->screenGeometry(this->auxScreen).topLeft());
+	this->mainConsoleWindow->showFullScreen();
+	this->mainSlideWindow->showNormal();
+	this->mainSlideWindow->move(desktopWidget->screenGeometry(this->mainScreen).topLeft());
+	this->mainSlideWindow->showFullScreen();
 }

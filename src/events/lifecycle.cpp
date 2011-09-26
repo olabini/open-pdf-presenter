@@ -96,3 +96,13 @@ void ToggleSlideGridEvent::dispatch(IEventHandler * handler) {
 	((ToggleConsoleViewEventHandler*)handler)->onToggleSlideView(this);
 }
 
+Type SwapScreensEvent::TYPE = Type();
+
+Type * SwapScreensEvent::getAssociatedType() {
+	return &SwapScreensEvent::TYPE;
+}
+
+void SwapScreensEvent::dispatch(IEventHandler * handler) {
+	((SwapScreensEventHandler*)handler)->onSwapScreens(this);
+}
+

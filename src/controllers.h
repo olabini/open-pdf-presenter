@@ -87,6 +87,7 @@ class MainWindowViewControllerImpl : public MainWindowViewController {
 		virtual void onKeyNext();
 		virtual void onKeyReset();
 		virtual void onKeyToggleSlideGrid();
+		virtual void onKeySwapScreens();
 	private:
 		MainWindowView * view;
 		IEventBus * bus;

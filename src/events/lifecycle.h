@@ -113,4 +113,18 @@ class ToggleConsoleViewEventHandler : public IEventHandler {
 		~ToggleConsoleViewEventHandler() { }
 };
 
+class SwapScreensEvent : public Event {
+	public:
+		virtual Type * getAssociatedType();
+		virtual void dispatch(IEventHandler * handler);
+		static Type TYPE;
+};
+
+class SwapScreensEventHandler : public IEventHandler {
+	public:
+		virtual void onSwapScreens(SwapScreensEvent * event) = 0;
+	protected:
+		~SwapScreensEventHandler() { }
+};
+
 #endif
