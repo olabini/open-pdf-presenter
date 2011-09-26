@@ -25,6 +25,7 @@ PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, 
 	this->bus = bus;
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->bus->subscribe(&TimeChangedEvent::TYPE, (ITimeChangedEventHandler*)this);
+	this->bus->subscribe(&ToggleConsoleViewEvent::TYPE, (ToggleConsoleViewEventHandler*)this);
 	this->view = view;
 	this->currentNextView = currentNextView;
 	this->slideGridView = slideGridView;
@@ -75,6 +76,10 @@ void PresenterConsoleControllerImpl::onTimeChanged(TimeChangedEvent * evt) {
 		time *= -1;
 	this->computeTime(time,&hours,&minutes,&seconds);
 	this->view->setRemainingTime(hours, minutes, seconds, overtime);
+}
+
+void PresenterConsoleControllerImpl::onToggleSlideView(ToggleConsoleViewEvent *event) {
+	this->onSlideGridButton();
 }
 
 void PresenterConsoleControllerImpl::computeTime(int time, int *hours, int *minutes, int *seconds) {
@@ -163,4 +168,8 @@ void MainWindowViewControllerImpl::onKeyNext() {
 
 void MainWindowViewControllerImpl::onKeyReset() {
 	this->bus->fire(new ResetPresentationEvent());
+}
+
+void MainWindowViewControllerImpl::onKeyToggleSlideGrid() {
+	this->bus->fire(new ToggleSlideGridEvent());
 }

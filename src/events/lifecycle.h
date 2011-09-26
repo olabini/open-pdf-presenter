@@ -95,4 +95,22 @@ class ResetPresentationEventHandler : public IEventHandler {
 		~ResetPresentationEventHandler() { }
 };
 
+class ToggleConsoleViewEvent : public Event {
+	public:
+		virtual Type * getAssociatedType();
+		static Type TYPE;
+};
+
+class ToggleSlideGridEvent : public ToggleConsoleViewEvent {
+	public:
+		virtual void dispatch(IEventHandler * handler);
+};
+
+class ToggleConsoleViewEventHandler : public IEventHandler {
+	public:
+		virtual void onToggleSlideView(ToggleConsoleViewEvent * event) = 0;
+	protected:
+		~ToggleConsoleViewEventHandler() { }
+};
+
 #endif

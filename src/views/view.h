@@ -37,6 +37,7 @@ class MainWindowViewController : public Controller {
 		virtual void onKeyNext() = 0;
 		virtual void onKeyPrev() = 0;
 		virtual void onKeyReset() = 0;
+		virtual void onKeyToggleSlideGrid() = 0;
 	protected:
 		~MainWindowViewController() {}
 };

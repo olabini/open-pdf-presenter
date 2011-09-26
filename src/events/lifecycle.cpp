@@ -85,3 +85,14 @@ Type * ResetPresentationEvent::getAssociatedType() {
 void ResetPresentationEvent::dispatch(IEventHandler * handler) {
 	((ResetPresentationEventHandler*)handler)->onResetPresentation(this);
 }
+
+Type ToggleConsoleViewEvent::TYPE = Type();
+
+Type * ToggleConsoleViewEvent::getAssociatedType() {
+	return &ToggleConsoleViewEvent::TYPE;
+}
+
+void ToggleSlideGridEvent::dispatch(IEventHandler * handler) {
+	((ToggleConsoleViewEventHandler*)handler)->onToggleSlideView(this);
+}
+
