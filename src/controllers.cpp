@@ -30,7 +30,7 @@ PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, 
 	this->currentNextView = currentNextView;
 	this->slideGridView = slideGridView;
 	this->view->setController(this);
-	this->view->setTotalSlideCount(totalSlideCount+1);
+	this->view->setTotalSlideCount(totalSlideCount);
 	this->view->addContent(this->slideGridView->asWidget());
 	this->slideGridView->asWidget()->setVisible(false);
 	this->view->addContent(this->currentNextView->asWidget());
@@ -61,7 +61,7 @@ void PresenterConsoleControllerImpl::fireSlideEvent(int delta) {
 
 void PresenterConsoleControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 	this->view->setCurrentSlideNumber(evt->getCurrentSlideNumber()+1);
-	this->view->setSlidePercentage(evt->getCurrentSlideNumber()*100 / this->totalSlideCount);
+	this->view->setSlidePercentage(evt->getCurrentSlideNumber()*100 / (this->totalSlideCount - 1));
 }
 
 void PresenterConsoleControllerImpl::onTimeChanged(TimeChangedEvent * evt) {

@@ -163,7 +163,7 @@ void OpenPdfPresenter::fireSlideChangedEvent() {
 }
 
 void OpenPdfPresenter::onNextSlide(RelativeSlideEvent * evt) {
-	if (this->currentSlideNumber < this->totalSlides) {
+	if (this->currentSlideNumber < this->totalSlides - 1) {
 			this->currentSlideNumber += 1;
 			this->fireSlideChangedEvent();
 	}
