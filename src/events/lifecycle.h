@@ -106,9 +106,15 @@ class ToggleSlideGridEvent : public ToggleConsoleViewEvent {
 		virtual void dispatch(IEventHandler * handler);
 };
 
+class ToggleNotesEvent : public ToggleConsoleViewEvent {
+	public:
+		virtual void dispatch(IEventHandler * handler);
+};
+
 class ToggleConsoleViewEventHandler : public IEventHandler {
 	public:
 		virtual void onToggleSlideView(ToggleConsoleViewEvent * event) = 0;
+		virtual void onToggleNotesView(ToggleConsoleViewEvent * event) = 0;
 	protected:
 		~ToggleConsoleViewEventHandler() { }
 };

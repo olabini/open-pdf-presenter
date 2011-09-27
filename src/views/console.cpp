@@ -129,6 +129,39 @@ QWidget * CurrentNextSlideConsoleViewImpl::asWidget() {
 	return this;
 }
 
+CurrentNextSlideNotesConsoleViewImpl::CurrentNextSlideNotesConsoleViewImpl(QWidget *parent) : QWidget(parent) {
+	currentNextSlideNotesUi.setupUi(this);
+	this->width = 1;
+	this->height = 1;
+}
+
+void CurrentNextSlideNotesConsoleViewImpl::setGeometry(int width, int height) {
+	this->width = width;
+	this->height = height;
+}
+
+void CurrentNextSlideNotesConsoleViewImpl::setCurrentSlide(Slide slide) {
+	QRect area = QRect(0,0,this->width * 0.4, this->height * 0.5);
+	this->currentNextSlideNotesUi.currentSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
+}
+
+void CurrentNextSlideNotesConsoleViewImpl::setNextSlide(Slide slide) {
+	QRect area = QRect(0,0,this->width * 0.25, this->height * 0.5);
+	this->currentNextSlideNotesUi.nextSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
+}
+
+void CurrentNextSlideNotesConsoleViewImpl::setController(CurrentNextSlideNotesConsoleViewController * controller) {
+	this->controller = controller;
+}
+
+void CurrentNextSlideNotesConsoleViewImpl::setNotes(QString notes) {
+	this->currentNextSlideNotesUi.notesLabel->setText(notes);
+}
+
+QWidget * CurrentNextSlideNotesConsoleViewImpl::asWidget() {
+	return this;
+}
+
 SlideGridConsoleViewImpl::SlideGridConsoleViewImpl(QWidget * parent) : Frame(parent) {
 	QWidget * content = new QWidget(this);
 	this->layout = new QGridLayout(content);

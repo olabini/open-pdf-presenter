@@ -18,6 +18,7 @@
 #define _VIEW_H_
 
 #include <QWidget>
+#include <QString>
 #include "../renderer.h"
 
 class Controller {
@@ -38,6 +39,7 @@ class MainWindowViewController : public Controller {
 		virtual void onKeyPrev() = 0;
 		virtual void onKeyReset() = 0;
 		virtual void onKeyToggleSlideGrid() = 0;
+		virtual void onKeyToggleNotes() = 0;
 		virtual void onKeySwapScreens() = 0;
 	protected:
 		~MainWindowViewController() {}
@@ -93,6 +95,27 @@ class CurrentNextSlideConsoleView : public ConsoleView, public View<CurrentNextS
 
 	protected:
 		~CurrentNextSlideConsoleView() { }
+};
+
+class CurrentNextSlideNotesConsoleViewController : public Controller {
+	public:
+		virtual void setGeometry(int width, int height) = 0;
+		virtual void onZoomIn() = 0;
+		virtual void onZoomOut() = 0;
+	protected:
+		~CurrentNextSlideNotesConsoleViewController() { }
+};
+
+class CurrentNextSlideNotesConsoleView : public ConsoleView, public View<CurrentNextSlideNotesConsoleViewController> {
+
+	public:
+		virtual void setGeometry(int width, int height) = 0;
+		virtual void setCurrentSlide(Slide slide) = 0;
+		virtual void setNextSlide(Slide slide) = 0;
+		virtual void setNotes(QString notes) = 0;
+
+	protected:
+		~CurrentNextSlideNotesConsoleView() { }
 };
 
 class SlideGridConsoleViewController {

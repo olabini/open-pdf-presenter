@@ -25,13 +25,15 @@ class OpenPdfPresenter;
 
 class PresenterConsoleControllerImpl : public PresenterConsoleViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler, public ToggleConsoleViewEventHandler {
 	public:
-		PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleView * currentNextView, SlideGridConsoleView * slideGridView, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
+		PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleView * currentNextView, SlideGridConsoleView * slideGridView, CurrentNextSlideNotesConsoleView * currentNextNotesView, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
 		virtual void onNextSlideButton();
 		virtual void onPrevSlideButton();
 		virtual void onSlideGridButton();
+		virtual void onNotesButton();
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onTimeChanged(TimeChangedEvent * evt);
 		virtual void onToggleSlideView(ToggleConsoleViewEvent *event);
+		virtual void onToggleNotesView(ToggleConsoleViewEvent *event);
 	private:
 		void computeTime(int time, int * hours, int * mins, int * secs);
 	private:
@@ -39,10 +41,12 @@ class PresenterConsoleControllerImpl : public PresenterConsoleViewController, pu
 		PresenterConsoleView * view;
 		CurrentNextSlideConsoleView * currentNextView;
 		SlideGridConsoleView * slideGridView;
+		CurrentNextSlideNotesConsoleView * currentNextNotesView;
 		IEventBus * bus;
 		int totalSlideCount;
 		int duration;
 		OpenPdfPresenter * presenter;
+		bool notesViewEnabled;
 };
 
 class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
@@ -54,6 +58,21 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;
+		IEventBus * bus;
+		Slide pastLastSlide;
+};
+
+class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNotesConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
+	public:
+		CurrentNextSlideNotesConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideNotesConsoleView * view, OpenPdfPresenter * presenter);
+		virtual void onSlideChanged(SlideChangedEvent * evt);
+		virtual void onSlideRendered(SlideRenderedEvent *evt);
+		virtual void setGeometry(int width, int height);
+		virtual void onZoomIn();
+		virtual void onZoomOut();
+	private:
+		OpenPdfPresenter * presenter;
+		CurrentNextSlideNotesConsoleView * view;
 		IEventBus * bus;
 		Slide pastLastSlide;
 };
@@ -89,6 +108,7 @@ class MainWindowViewControllerImpl : public MainWindowViewController {
 		virtual void onKeyNext();
 		virtual void onKeyReset();
 		virtual void onKeyToggleSlideGrid();
+		virtual void onKeyToggleNotes();
 		virtual void onKeySwapScreens();
 	private:
 		MainWindowView * view;

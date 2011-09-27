@@ -96,6 +96,10 @@ void ToggleSlideGridEvent::dispatch(IEventHandler * handler) {
 	((ToggleConsoleViewEventHandler*)handler)->onToggleSlideView(this);
 }
 
+void ToggleNotesEvent::dispatch(IEventHandler * handler) {
+	((ToggleConsoleViewEventHandler*)handler)->onToggleNotesView(this);
+}
+
 Type SwapScreensEvent::TYPE = Type();
 
 Type * SwapScreensEvent::getAssociatedType() {

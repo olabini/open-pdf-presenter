@@ -74,6 +74,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 	private: // views
 		PresenterConsoleViewImpl * presenterConsoleView;
 		CurrentNextSlideConsoleViewImpl * currentNextView;
+		CurrentNextSlideNotesConsoleViewImpl * currentNextNotesView;
 		SlideGridConsoleViewImpl * slideGridView;
 		MainSlideViewImpl * mainSlideView;
 		MainWindowViewImpl * mainConsoleWindow, * mainSlideWindow;
@@ -81,6 +82,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 	private: // controllers
 		PresenterConsoleControllerImpl * presenterConsoleController;
 		CurrentNextSlideConsoleViewControllerImpl * currentNextController;
+		CurrentNextSlideNotesConsoleViewControllerImpl * currentNextNotesController;
 		SlideGridConsoleViewControllerImpl * slideGridController;
 		MainSlideViewControllerImpl * mainSlideController;
 		MainWindowViewControllerImpl * mainConsoleWindowController, * mainSlideWindowController;

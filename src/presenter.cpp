@@ -59,6 +59,7 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 
 void OpenPdfPresenter::buildViews() {
 	this->currentNextView = new CurrentNextSlideConsoleViewImpl();
+	this->currentNextNotesView = new CurrentNextSlideNotesConsoleViewImpl();
 	this->slideGridView = new SlideGridConsoleViewImpl();
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
@@ -67,8 +68,9 @@ void OpenPdfPresenter::buildViews() {
 }
 
 void OpenPdfPresenter::buildControllers() {
-	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this->currentNextView, this->slideGridView, this, this->totalSlides, this->totalTime);
+	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this->currentNextView, this->slideGridView, this->currentNextNotesView, this, this->totalSlides, this->totalTime);
 	this->currentNextController = new CurrentNextSlideConsoleViewControllerImpl(this->bus,this->currentNextView,this);
+	this->currentNextNotesController = new CurrentNextSlideNotesConsoleViewControllerImpl(this->bus,this->currentNextNotesView,this);
 	this->slideGridController = new SlideGridConsoleViewControllerImpl(this->bus,this->slideGridView,this);
 	this->mainConsoleWindowController = new MainWindowViewControllerImpl(this->bus,this->mainConsoleWindow);
 	this->mainSlideWindowController = new MainWindowViewControllerImpl(this->bus,this->mainSlideWindow);
@@ -78,6 +80,7 @@ void OpenPdfPresenter::buildControllers() {
 void OpenPdfPresenter::setUpViews() {
 	this->presenterConsoleView->setController(this->presenterConsoleController);
 	this->currentNextView->setController(this->currentNextController);
+	this->currentNextNotesView->setController(this->currentNextNotesController);
 	this->slideGridView->setController(this->slideGridController);
 	
 	this->mainConsoleWindow->setController(this->mainConsoleWindowController);
@@ -91,6 +94,7 @@ int OpenPdfPresenter::start() {
 	QDesktopWidget * desktopWidget = QApplication::desktop();
 	QRect geometry = desktopWidget->screenGeometry(this->auxScreen);
 	this->currentNextController->setGeometry(geometry.width(),geometry.height());
+	this->currentNextNotesController->setGeometry(geometry.width(),geometry.height());
 	this->slideGridController->setGeometry(geometry.width(),geometry.height());
 	this->mainConsoleWindow->move(geometry.topLeft());
 	this->mainConsoleWindow->showFullScreen();

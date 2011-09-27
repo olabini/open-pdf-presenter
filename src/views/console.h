@@ -26,6 +26,7 @@
 #include "viewutils.h"
 #include "ui_frame.h"
 #include "ui_currentnextslide.h"
+#include "ui_notes.h"
 #include "ui_controlbar.h"
 
 class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
@@ -72,6 +73,26 @@ class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideC
 		SlideFrame * nextSlideFrame;
 		Ui::CurrentNextSlide currentNextSlideUi;
 		int width, height;
+};
+
+class CurrentNextSlideNotesConsoleViewImpl : public QWidget, public CurrentNextSlideNotesConsoleView {
+	Q_OBJECT
+
+	public:
+		CurrentNextSlideNotesConsoleViewImpl(QWidget * parent = 0);
+		virtual void setGeometry(int width, int height);
+		virtual void setCurrentSlide(Slide slide);
+		virtual void setNextSlide(Slide slide);
+		virtual void setNotes(QString notes);
+		virtual void setController(CurrentNextSlideNotesConsoleViewController * controller);
+		virtual QWidget * asWidget();
+
+	private:
+		SlideFrame * currentSlideFrame;
+		SlideFrame * nextSlideFrame;
+		Ui::CurrentNextSlideNotes currentNextSlideNotesUi;
+		int width, height;
+		CurrentNextSlideNotesConsoleViewController * controller;
 };
 
 class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {

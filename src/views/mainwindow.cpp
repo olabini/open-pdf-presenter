@@ -67,5 +67,8 @@ void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
 		case Qt::Key_S:
 			this->controller->onKeySwapScreens();
 			break;
+		case Qt::Key_N:
+			this->controller->onKeyToggleNotes();
+			break;
 	}
 }

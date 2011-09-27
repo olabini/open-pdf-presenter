@@ -19,7 +19,7 @@
 #include "events/slide.h"
 #include "presenter.h"
 
-PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleView * currentNextView, SlideGridConsoleView * slideGridView, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
+PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleView * currentNextView, SlideGridConsoleView * slideGridView, CurrentNextSlideNotesConsoleView * currentNextNotesView, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
 	this->duration = durationSeconds;
 	this->presenter = presenter;
 	this->bus = bus;
@@ -29,12 +29,16 @@ PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, 
 	this->view = view;
 	this->currentNextView = currentNextView;
 	this->slideGridView = slideGridView;
+	this->currentNextNotesView = currentNextNotesView;
 	this->view->setController(this);
 	this->view->setTotalSlideCount(totalSlideCount);
-	this->view->addContent(this->slideGridView->asWidget());
 	this->slideGridView->asWidget()->setVisible(false);
+	this->view->addContent(this->slideGridView->asWidget());
+	this->currentNextNotesView->asWidget()->setVisible(false);
+	this->view->addContent(this->currentNextNotesView->asWidget());
 	this->view->addContent(this->currentNextView->asWidget());
 	this->totalSlideCount = totalSlideCount;
+	this->notesViewEnabled = false;
 }
 
 void PresenterConsoleControllerImpl::onNextSlideButton() {
@@ -48,10 +52,26 @@ void PresenterConsoleControllerImpl::onPrevSlideButton() {
 void PresenterConsoleControllerImpl::onSlideGridButton() {
 	if (this->slideGridView->asWidget()->isVisible()) {
 		this->slideGridView->asWidget()->setVisible(false);
-		this->currentNextView->asWidget()->setVisible(true);
+		if (this->notesViewEnabled)
+			this->currentNextNotesView->asWidget()->setVisible(true);
+		else
+			this->currentNextView->asWidget()->setVisible(true);
 	} else {
+		this->currentNextNotesView->asWidget()->setVisible(false);
 		this->currentNextView->asWidget()->setVisible(false);
 		this->slideGridView->asWidget()->setVisible(true);
+	}
+}
+
+void PresenterConsoleControllerImpl::onNotesButton() {
+	this->notesViewEnabled = this->slideGridView->asWidget()->isVisible() || !(this->notesViewEnabled);
+	this->slideGridView->asWidget()->setVisible(false);
+	if (this->notesViewEnabled) {
+		this->currentNextView->asWidget()->setVisible(false);
+		this->currentNextNotesView->asWidget()->setVisible(true);
+	} else {
+		this->currentNextNotesView->asWidget()->setVisible(false);
+		this->currentNextView->asWidget()->setVisible(true);
 	}
 }
 
@@ -80,6 +100,10 @@ void PresenterConsoleControllerImpl::onTimeChanged(TimeChangedEvent * evt) {
 
 void PresenterConsoleControllerImpl::onToggleSlideView(ToggleConsoleViewEvent *event) {
 	this->onSlideGridButton();
+}
+
+void PresenterConsoleControllerImpl::onToggleNotesView(ToggleConsoleViewEvent *event) {
+	this->onNotesButton();
 }
 
 void PresenterConsoleControllerImpl::computeTime(int time, int *hours, int *minutes, int *seconds) {
@@ -117,6 +141,42 @@ void CurrentNextSlideConsoleViewControllerImpl::setGeometry(int width, int heigh
 	this->view->setGeometry(width, height);
 	this->view->setCurrentSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()));
 	this->view->setNextSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()+1));
+}
+
+
+CurrentNextSlideNotesConsoleViewControllerImpl::CurrentNextSlideNotesConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideNotesConsoleView * view, OpenPdfPresenter * presenter) :pastLastSlide(QImage(QString(":/presenter/pastlastslide.svg"))) {
+	this->presenter = presenter;
+	this->bus = bus;
+	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
+	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
+	this->view = view;
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
+	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
+
+	if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides() - 1)
+		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
+	else
+		this->view->setNextSlide(pastLastSlide);
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
+	if (evt->getSlideNumber() == this->presenter->getCurrentSlide() + 1) {
+		this->view->setNextSlide(evt->getSlide());
+	}
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::setGeometry(int width, int height) {
+	this->view->setGeometry(width, height);
+	this->view->setCurrentSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()));
+	this->view->setNextSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()+1));
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::onZoomIn() {
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::onZoomOut() {
 }
 
 SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus *bus, SlideGridConsoleView *view, OpenPdfPresenter *presenter) {
@@ -185,6 +245,11 @@ void MainWindowViewControllerImpl::onKeyReset() {
 void MainWindowViewControllerImpl::onKeyToggleSlideGrid() {
 	this->bus->fire(new ToggleSlideGridEvent());
 }
+
+void MainWindowViewControllerImpl::onKeyToggleNotes() {
+	this->bus->fire(new ToggleNotesEvent());
+}
+
 
 void MainWindowViewControllerImpl::onKeySwapScreens() {
 	this->bus->fire(new SwapScreensEvent());
