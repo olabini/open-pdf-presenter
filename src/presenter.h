@@ -27,6 +27,7 @@
 #include "views/mainslide.h"
 #include "renderer.h"
 #include "controllers.h"
+#include "parser.h"
 
 #include <QList>
 #include <poppler-qt4.h>
@@ -39,6 +40,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		int getTotalSlides();
 		int getTotalTimeSeconds();
 		Slide getSlide(int slideNumber);
+		QString getNotes(int slideNumber);
 		virtual void onNextSlide(RelativeSlideEvent * evt);
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
 		virtual void onGotoSlide(AbsoluteSlideEvent * evt);
@@ -64,6 +66,8 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		ConsoleView * currentConsoleView;
 
 		Renderer * renderer;
+
+		NotesParser * parser;
 
 		void parseArguments(int argc, char ** argv);
 		void fireSlideChangedEvent();

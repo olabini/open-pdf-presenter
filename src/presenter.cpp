@@ -109,6 +109,8 @@ int OpenPdfPresenter::start() {
 }
 
 OpenPdfPresenter::~OpenPdfPresenter() {
+	if (this->parser != NULL)
+		delete this->parser;
 	delete this->renderer;
 	delete this->timer;
 	delete this->document;
@@ -148,7 +150,15 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 	if (!this->document)
 		// TODO: print error
 		exit(1);
-	
+
+	if (args.size() > 3) {
+		this->parser = new NotesParser(this->document->numPages());
+		if (!this->parser->validateAndParse(args.at(3)))
+			exit(1);
+	} else {
+		this->parser = NULL;
+	}
+
 	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
 	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 	
@@ -242,4 +252,8 @@ void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 	this->mainSlideWindow->showFullScreen();
 
 	this->renderer->setGeometry(desktopWidget->screenGeometry(this->mainScreen));
+}
+
+QString OpenPdfPresenter::getNotes(int slideNumber) {
+	return this->parser->getNotes(slideNumber);
 }

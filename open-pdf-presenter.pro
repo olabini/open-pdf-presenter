@@ -23,6 +23,7 @@ UI_DIR = $$OBJECTS_DIR
 RCC_DIR = $$OBJECTS_DIR
 
 CONFIG += qt debug
+QT += xml xmlpatterns
 
 # POPPLER
 INCLUDEPATH += /usr/include/poppler/qt4
@@ -41,7 +42,8 @@ HEADERS += src/events/event.h \
            src/views/viewutils.h \
            src/controllers.h \
            src/presenter.h \
-    src/renderer.h
+    src/renderer.h \
+    src/parser.h
 FORMS += \
     ui/controlbar.ui \
     ui/currentnextslide.ui \
@@ -58,7 +60,8 @@ SOURCES += src/main.cpp \
            src/views/viewutils.cpp \
            src/controllers.cpp \
            src/presenter.cpp \
-    src/renderer.cpp
+    src/renderer.cpp \
+    src/parser.cpp
 
 RESOURCES += \
     resources/controlbar/controlbar.qrc \

@@ -159,6 +159,8 @@ void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideChanged(SlideChanged
 		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
 	else
 		this->view->setNextSlide(pastLastSlide);
+
+	this->view->setNotes(this->presenter->getNotes(evt->getCurrentSlideNumber()));
 }
 
 void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
