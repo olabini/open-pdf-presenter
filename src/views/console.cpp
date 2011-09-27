@@ -133,6 +133,8 @@ CurrentNextSlideNotesConsoleViewImpl::CurrentNextSlideNotesConsoleViewImpl(QWidg
 	currentNextSlideNotesUi.setupUi(this);
 	this->width = 1;
 	this->height = 1;
+	connect(this->currentNextSlideNotesUi.zoomInButton, SIGNAL(clicked()), this, SLOT(onZoomInButtonClick()));
+	connect(this->currentNextSlideNotesUi.zoomOutButton, SIGNAL(clicked()), this, SLOT(onZoomOutButtonClick()));
 }
 
 void CurrentNextSlideNotesConsoleViewImpl::setGeometry(int width, int height) {
@@ -160,6 +162,22 @@ void CurrentNextSlideNotesConsoleViewImpl::setNotes(QString notes) {
 
 QWidget * CurrentNextSlideNotesConsoleViewImpl::asWidget() {
 	return this;
+}
+
+void CurrentNextSlideNotesConsoleViewImpl::onZoomInButtonClick() {
+	QFont font;
+	font.setPointSize(this->currentNextSlideNotesUi.notesLabel->font().pointSize()+2);
+	font.setBold(true);
+	font.setWeight(75);
+	this->currentNextSlideNotesUi.notesLabel->setFont(font);
+}
+
+void CurrentNextSlideNotesConsoleViewImpl::onZoomOutButtonClick() {
+	QFont font;
+	font.setPointSize(this->currentNextSlideNotesUi.notesLabel->font().pointSize()-2);
+	font.setBold(true);
+	font.setWeight(75);
+	this->currentNextSlideNotesUi.notesLabel->setFont(font);
 }
 
 SlideGridConsoleViewImpl::SlideGridConsoleViewImpl(QWidget * parent) : Frame(parent) {

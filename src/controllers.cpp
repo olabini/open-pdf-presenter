@@ -175,12 +175,6 @@ void CurrentNextSlideNotesConsoleViewControllerImpl::setGeometry(int width, int 
 	this->view->setNextSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()+1));
 }
 
-void CurrentNextSlideNotesConsoleViewControllerImpl::onZoomIn() {
-}
-
-void CurrentNextSlideNotesConsoleViewControllerImpl::onZoomOut() {
-}
-
 SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus *bus, SlideGridConsoleView *view, OpenPdfPresenter *presenter) {
 	this->bus = bus;
 	this->view = view;

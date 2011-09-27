@@ -93,6 +93,10 @@ class CurrentNextSlideNotesConsoleViewImpl : public QWidget, public CurrentNextS
 		Ui::CurrentNextSlideNotes currentNextSlideNotesUi;
 		int width, height;
 		CurrentNextSlideNotesConsoleViewController * controller;
+
+	private slots:
+		void onZoomInButtonClick();
+		void onZoomOutButtonClick();
 };
 
 class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {

@@ -100,8 +100,6 @@ class CurrentNextSlideConsoleView : public ConsoleView, public View<CurrentNextS
 class CurrentNextSlideNotesConsoleViewController : public Controller {
 	public:
 		virtual void setGeometry(int width, int height) = 0;
-		virtual void onZoomIn() = 0;
-		virtual void onZoomOut() = 0;
 	protected:
 		~CurrentNextSlideNotesConsoleViewController() { }
 };

@@ -68,8 +68,6 @@ class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNo
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		virtual void setGeometry(int width, int height);
-		virtual void onZoomIn();
-		virtual void onZoomOut();
 	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideNotesConsoleView * view;
