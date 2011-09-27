@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:simpleType name="sliderange">
+	<xs:restriction base="xs:string">
+		<xs:pattern value="[1-9][0-9]*-[1-9][0-9]*"/>
+	</xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="slidenumber">
+	<xs:restriction base="xs:string">
+		<xs:pattern value="[1-9][0-9]*(,[1-9][0-9]*)*"/>
+	</xs:restriction>
+</xs:simpleType>
+
+
+<xs:complexType name="slidenote">
+	<xs:simpleContent>
+		<xs:extension base="xs:string">
+			<xs:attribute name="range" type="sliderange" use="optional"/>
+			<xs:attribute name="number" type="slidenumber" use="optional"/>
+		</xs:extension>
+	</xs:simpleContent>
+</xs:complexType>
+
+<xs:complexType name="slidenotes">
+	<xs:sequence>
+		<xs:element name="note" type="slidenote" maxOccurs="unbounded"/>
+	</xs:sequence>
+</xs:complexType>
+
+<xs:element name="notes" type="slidenotes" />
+
+</xs:schema>

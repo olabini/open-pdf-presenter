@@ -64,3 +64,6 @@ RESOURCES += \
     resources/controlbar/controlbar.qrc \
     resources/presenterscreen/presenterscreen.qrc \
     resources/notes/notes.qrc
+
+OTHER_FILES += \
+    resources/notes/notes.xsd
