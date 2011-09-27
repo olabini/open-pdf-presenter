@@ -55,6 +55,7 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 		void onNextButtonClick();
 		void onPrevButtonClick();
 		void onSlideGridButtonClick();
+		void onNotesButtonClick();
 };
 
 class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideConsoleView {

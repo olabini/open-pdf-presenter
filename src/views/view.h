@@ -57,6 +57,7 @@ class PresenterConsoleViewController : public Controller {
 		virtual void onNextSlideButton() = 0;
 		virtual void onPrevSlideButton() = 0;
 		virtual void onSlideGridButton() = 0;
+		virtual void onNotesButton() = 0;
 	protected:
 		~PresenterConsoleViewController() {}
 };
