@@ -225,6 +225,7 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 		frame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 		frame->setFlat(true);
 		frame->setFocusPolicy(Qt::NoFocus);
+		frame->setToolTip(QString("%1").arg(i+1));
 		connect(frame, SIGNAL(clicked()), this, SLOT(onSlideClick()));
 		this->slides->append(frame);
 		frame->setIcon(QIcon(QPixmap::fromImage(QImage(QString(":/presenter/pastlastslide.svg")).scaledToWidth(area.width(),Qt::SmoothTransformation))));

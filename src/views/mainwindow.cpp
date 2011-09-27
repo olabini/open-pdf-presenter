@@ -27,6 +27,7 @@ MainWindowViewImpl::MainWindowViewImpl(QWidget * parent)  : QWidget(parent) {
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	this->content = NULL;
 	this->setStyleSheet(QString("background-color: #3B4146;"));
+	this->setAttribute(Qt::WA_AlwaysShowToolTips);
 }
 
 void MainWindowViewImpl::setContent(QWidget * content) {
