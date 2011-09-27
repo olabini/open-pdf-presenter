@@ -45,7 +45,8 @@ HEADERS += src/events/event.h \
 FORMS += \
     ui/controlbar.ui \
     ui/currentnextslide.ui \
-    ui/frame.ui
+    ui/frame.ui \
+    ui/notes.ui
 SOURCES += src/main.cpp \
            src/events/event.cpp \
            src/events/slide.cpp \
@@ -61,4 +62,5 @@ SOURCES += src/main.cpp \
 
 RESOURCES += \
     resources/controlbar/controlbar.qrc \
-    resources/presenterscreen/presenterscreen.qrc
+    resources/presenterscreen/presenterscreen.qrc \
+    resources/notes/notes.qrc

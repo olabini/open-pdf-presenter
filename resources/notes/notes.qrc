@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/notes">
+        <file>ButtonMinusNormal.png</file>
+        <file>ButtonPlusNormal.png</file>
+    </qresource>
+</RCC>
