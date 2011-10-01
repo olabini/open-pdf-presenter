@@ -28,6 +28,8 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 	public:
 		MainSlideViewImpl(int usableWidth, QWidget * parent = NULL);
 		virtual void setCurrentSlide(QPixmap slide, bool scale = false);
+		virtual void setBlackBlankScreen();
+		virtual void setWhiteBlankScreen();
 		virtual void setController(MainSlideViewController * controller) { }
 		virtual QWidget * asWidget();
 
@@ -35,6 +37,8 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 		int usableWidth;
 		QVBoxLayout * layout;
 		QLabel * slideLabel;
+		QWidget * blackBlankScreen;
+		QWidget * whiteBlankScreen;
 };
 
 #endif

@@ -88,14 +88,18 @@ class SlideGridConsoleViewControllerImpl : public SlideGridConsoleViewController
 		IEventBus * bus;
 };
 
-class MainSlideViewControllerImpl : public MainSlideViewController, public SlideChangedEventHandler {
+class MainSlideViewControllerImpl : public MainSlideViewController, public SlideChangedEventHandler, public ShowBlankScreenEventHandler {
 	public:
 		MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
+		virtual void onBlackScreen(BlankScreenEvent *evt);
+		virtual void onWhiteScreen(BlankScreenEvent *evt);
 	private:
 		OpenPdfPresenter * presenter;
 		MainSlideView * view;
 		IEventBus * bus;
+		int currentSlide;
+		bool blackBlank, whiteBlank;
 };
 
 class MainWindowViewControllerImpl : public MainWindowViewController {
@@ -108,6 +112,8 @@ class MainWindowViewControllerImpl : public MainWindowViewController {
 		virtual void onKeyToggleSlideGrid();
 		virtual void onKeyToggleNotes();
 		virtual void onKeySwapScreens();
+		virtual void onKeyBlackScreen();
+		virtual void onKeyWhiteScreen();
 	private:
 		MainWindowView * view;
 		IEventBus * bus;

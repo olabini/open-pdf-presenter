@@ -110,3 +110,17 @@ void SwapScreensEvent::dispatch(IEventHandler * handler) {
 	((SwapScreensEventHandler*)handler)->onSwapScreens(this);
 }
 
+Type BlankScreenEvent::TYPE = Type();
+
+Type * BlankScreenEvent::getAssociatedType() {
+	return &BlankScreenEvent::TYPE;
+}
+
+void BlackBlankScreenEvent::dispatch(IEventHandler *handler) {
+	((ShowBlankScreenEventHandler*)handler)->onBlackScreen(this);
+}
+
+void WhiteBlankScreenEvent::dispatch(IEventHandler *handler) {
+	((ShowBlankScreenEventHandler*)handler)->onWhiteScreen(this);
+}
+

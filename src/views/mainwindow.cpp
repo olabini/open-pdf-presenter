@@ -71,5 +71,11 @@ void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
 		case Qt::Key_N:
 			this->controller->onKeyToggleNotes();
 			break;
+	case Qt::Key_W:
+			this->controller->onKeyWhiteScreen();
+			break;
+	case Qt::Key_B:
+			this->controller->onKeyBlackScreen();
+			break;
 	}
 }

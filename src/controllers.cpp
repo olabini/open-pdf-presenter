@@ -209,12 +209,39 @@ MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSl
   this->presenter = presenter;
 	this->bus = bus;
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
+	this->bus->subscribe(&BlankScreenEvent::TYPE, (ShowBlankScreenEventHandler*)this);
 	this->view = view;
+	this->currentSlide = 0;
+	this->blackBlank = this->whiteBlank = false;
 }
 
 void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 	QPixmap slide = this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap();
 	this->view->setCurrentSlide(slide);
+	this->currentSlide = evt->getCurrentSlideNumber();
+	this->blackBlank = this->whiteBlank = false;
+}
+
+void MainSlideViewControllerImpl::onBlackScreen(BlankScreenEvent *evt) {
+	if (this->blackBlank) {
+		this->blackBlank = false;
+		this->view->setCurrentSlide(this->presenter->getSlide(this->currentSlide).asPixmap());
+		return;
+	}
+	this->blackBlank = true;
+	this->whiteBlank = false;
+	this->view->setBlackBlankScreen();
+}
+
+void MainSlideViewControllerImpl::onWhiteScreen(BlankScreenEvent *evt) {
+	if (this->whiteBlank) {
+		this->whiteBlank = false;
+		this->view->setCurrentSlide(this->presenter->getSlide(this->currentSlide).asPixmap());
+		return;
+	}
+	this->whiteBlank = true;
+	this->blackBlank = false;
+	this->view->setWhiteBlankScreen();
 }
 
 MainWindowViewControllerImpl::MainWindowViewControllerImpl(IEventBus * bus, MainWindowView * view) {
@@ -246,7 +273,14 @@ void MainWindowViewControllerImpl::onKeyToggleNotes() {
 	this->bus->fire(new ToggleNotesEvent());
 }
 
-
 void MainWindowViewControllerImpl::onKeySwapScreens() {
 	this->bus->fire(new SwapScreensEvent());
+}
+
+void MainWindowViewControllerImpl::onKeyWhiteScreen() {
+	this->bus->fire(new WhiteBlankScreenEvent());
+}
+
+void MainWindowViewControllerImpl::onKeyBlackScreen() {
+	this->bus->fire(new BlackBlankScreenEvent());
 }

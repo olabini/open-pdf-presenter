@@ -41,6 +41,8 @@ class MainWindowViewController : public Controller {
 		virtual void onKeyToggleSlideGrid() = 0;
 		virtual void onKeyToggleNotes() = 0;
 		virtual void onKeySwapScreens() = 0;
+		virtual void onKeyBlackScreen() = 0;
+		virtual void onKeyWhiteScreen() = 0;
 	protected:
 		~MainWindowViewController() {}
 };
@@ -141,6 +143,8 @@ class MainSlideViewController : public Controller {
 class MainSlideView : public View<MainSlideViewController> {
 	public:
 		virtual void setCurrentSlide(QPixmap slide, bool scale = false) = 0;
+		virtual void setBlackBlankScreen() = 0;
+		virtual void setWhiteBlankScreen() = 0;
 	protected:
 		~MainSlideView() { }
 };

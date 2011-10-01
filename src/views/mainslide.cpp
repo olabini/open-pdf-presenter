@@ -17,11 +17,25 @@
 
 #include "mainslide.h"
 
+#include <QDesktopWidget>
+#include <QApplication>
+
 MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidget(parent) {
 	this->usableWidth = usableWidth;
 	this->layout = new QVBoxLayout(this);
 	this->setLayout(this->layout);
+	this->layout->setSpacing(0);
+	this->layout->setMargin(0);
 	this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
+	this->blackBlankScreen = new QWidget(this);
+	this->blackBlankScreen->setStyleSheet("background-color: black;");
+	this->blackBlankScreen->setVisible(false);
+	this->layout->addWidget(this->blackBlankScreen);
+	this->whiteBlankScreen = new QWidget(this);
+	this->whiteBlankScreen->setStyleSheet("background-color: white;");
+	this->whiteBlankScreen->setVisible(false);
+	this->layout->addWidget(this->whiteBlankScreen);
 
 	this->slideLabel = new QLabel(this);
 	this->layout->addWidget(this->slideLabel);
@@ -30,10 +44,30 @@ MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidge
 }
 
 void MainSlideViewImpl::setCurrentSlide(QPixmap slide, bool scale) {
+	this->blackBlankScreen->setVisible(false);
+	this->whiteBlankScreen->setVisible(false);
+	this->slideLabel->setVisible(true);
+
 	if (scale)
 		this->slideLabel->setPixmap(slide.scaledToWidth(this->usableWidth, Qt::SmoothTransformation));
 	else
 		this->slideLabel->setPixmap(slide);
+}
+
+void MainSlideViewImpl::setBlackBlankScreen() {
+	this->whiteBlankScreen->setVisible(false);
+	this->slideLabel->setVisible(false);
+	QDesktopWidget * desktopwidget = QApplication::desktop();
+	this->blackBlankScreen->setGeometry(desktopwidget->screenGeometry(this->slideLabel));
+	this->blackBlankScreen->setVisible(true);
+}
+
+void MainSlideViewImpl::setWhiteBlankScreen() {
+	this->blackBlankScreen->setVisible(false);
+	this->slideLabel->setVisible(false);
+	QDesktopWidget * desktopwidget = QApplication::desktop();
+	this->whiteBlankScreen->setGeometry(desktopwidget->screenGeometry(this->slideLabel));
+	this->whiteBlankScreen->setVisible(true);
 }
 
 QWidget * MainSlideViewImpl::asWidget() {

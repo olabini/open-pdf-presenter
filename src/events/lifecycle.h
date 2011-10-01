@@ -133,4 +133,28 @@ class SwapScreensEventHandler : public IEventHandler {
 		~SwapScreensEventHandler() { }
 };
 
+class BlankScreenEvent : public Event {
+	public:
+		virtual Type * getAssociatedType();
+		static Type TYPE;
+};
+
+class WhiteBlankScreenEvent : public BlankScreenEvent {
+	public:
+		virtual void dispatch(IEventHandler * handler);
+};
+
+class BlackBlankScreenEvent : public BlankScreenEvent {
+	public:
+		virtual void dispatch(IEventHandler * handler);
+};
+
+class ShowBlankScreenEventHandler : public IEventHandler {
+	public:
+		virtual void onWhiteScreen(BlankScreenEvent * evt) = 0;
+		virtual void onBlackScreen(BlankScreenEvent * evt) = 0;
+	protected:
+		~ShowBlankScreenEventHandler() { }
+};
+
 #endif
