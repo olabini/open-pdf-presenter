@@ -109,8 +109,7 @@ int OpenPdfPresenter::start() {
 }
 
 OpenPdfPresenter::~OpenPdfPresenter() {
-	if (this->parser != NULL)
-		delete this->parser;
+	delete this->parser;
 	delete this->renderer;
 	delete this->timer;
 	delete this->document;
@@ -151,12 +150,10 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 		// TODO: print error
 		exit(1);
 
+	this->parser = new NotesParser(this->document->numPages());
 	if (args.size() > 3) {
-		this->parser = new NotesParser(this->document->numPages());
 		if (!this->parser->validateAndParse(args.at(3)))
 			exit(1);
-	} else {
-		this->parser = NULL;
 	}
 
 	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
