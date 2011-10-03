@@ -17,9 +17,6 @@
 
 #include "mainslide.h"
 
-#include <QDesktopWidget>
-#include <QApplication>
-
 MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidget(parent) {
 	this->usableWidth = usableWidth;
 	this->layout = new QVBoxLayout(this);
@@ -31,10 +28,12 @@ MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidge
 	this->blackBlankScreen = new QWidget(this);
 	this->blackBlankScreen->setStyleSheet("background-color: black;");
 	this->blackBlankScreen->setVisible(false);
+	this->blackBlankScreen->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	this->layout->addWidget(this->blackBlankScreen);
 	this->whiteBlankScreen = new QWidget(this);
 	this->whiteBlankScreen->setStyleSheet("background-color: white;");
 	this->whiteBlankScreen->setVisible(false);
+	this->whiteBlankScreen->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	this->layout->addWidget(this->whiteBlankScreen);
 
 	this->slideLabel = new QLabel(this);
@@ -57,16 +56,12 @@ void MainSlideViewImpl::setCurrentSlide(QPixmap slide, bool scale) {
 void MainSlideViewImpl::setBlackBlankScreen() {
 	this->whiteBlankScreen->setVisible(false);
 	this->slideLabel->setVisible(false);
-	QDesktopWidget * desktopwidget = QApplication::desktop();
-	this->blackBlankScreen->setGeometry(desktopwidget->screenGeometry(this->slideLabel));
 	this->blackBlankScreen->setVisible(true);
 }
 
 void MainSlideViewImpl::setWhiteBlankScreen() {
 	this->blackBlankScreen->setVisible(false);
 	this->slideLabel->setVisible(false);
-	QDesktopWidget * desktopwidget = QApplication::desktop();
-	this->whiteBlankScreen->setGeometry(desktopwidget->screenGeometry(this->slideLabel));
 	this->whiteBlankScreen->setVisible(true);
 }
 
