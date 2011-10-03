@@ -160,10 +160,16 @@ void Renderer::run() {
 				return;
 			}
 			if (!this->loadedSlides->at(i)) {
-				this->mutex->unlock();
-				renderedAny = true;
-				Slide newSlide = this->renderSlide(i);
-				this->mutex->lock();
+				Slide newSlide = this->slides->at(i);
+				while (1) {
+					QRect geometry = this->currentGeometry;
+					this->mutex->unlock();
+					renderedAny = true;
+					newSlide = this->renderSlide(i);
+					this->mutex->lock();
+					if (this->currentGeometry == geometry)
+						break;
+				}
 				this->slides->replace(i,newSlide);
 				this->loadedSlides->replace(i,true);
 				this->bus->fire(new SlideRenderedEvent(i,newSlide));
