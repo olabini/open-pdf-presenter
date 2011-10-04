@@ -33,6 +33,8 @@ class MainWindowViewImpl : public QWidget, public MainWindowView {
 
 	protected:
 		void keyPressEvent(QKeyEvent * event);
+		void mousePressEvent(QMouseEvent * event);
+		void wheelEvent(QWheelEvent * event);
 
 	private:
 		QWidget * content;

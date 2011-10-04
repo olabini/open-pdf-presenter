@@ -47,6 +47,22 @@ QWidget * MainWindowViewImpl::asWidget() {
 	return this;
 }
 
+void MainWindowViewImpl::mousePressEvent(QMouseEvent * event) {
+	if (event->buttons() & Qt::LeftButton) {
+		this->controller->onKeyNext();
+	} else if (event->buttons() & Qt::RightButton) {
+		this->controller->onKeyPrev();
+	}
+}
+
+void MainWindowViewImpl::wheelEvent(QWheelEvent *event) {
+	if (event->delta() > 0) {
+		this->controller->onKeyNext();
+	} else {
+		this->controller->onKeyPrev();
+	}
+}
+
 void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
 	switch(event->key()) {
 		case Qt::Key_Escape:
@@ -54,9 +70,15 @@ void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
 			this->controller->onKeyExit();
 			break;
 		case Qt::Key_Left:
+		case Qt::Key_Up:
+		case Qt::Key_Backspace:
+		case Qt::Key_PageUp:
 			this->controller->onKeyPrev();
 			break;
 		case Qt::Key_Right:
+		case Qt::Key_Space:
+		case Qt::Key_Down:
+		case Qt::Key_PageDown:
 			this->controller->onKeyNext();
 			break;
 		case Qt::Key_R:
@@ -71,10 +93,11 @@ void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
 		case Qt::Key_N:
 			this->controller->onKeyToggleNotes();
 			break;
-	case Qt::Key_W:
+		case Qt::Key_W:
 			this->controller->onKeyWhiteScreen();
 			break;
-	case Qt::Key_B:
+		case Qt::Key_B:
+		case Qt::Key_Period:
 			this->controller->onKeyBlackScreen();
 			break;
 	}
