@@ -57,6 +57,8 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		int elapsedTime;
 		int totalTime;
 		int mainScreen, auxScreen;
+
+		bool rehearseMode;
 				
 		QString pdfFileName;
 		QEventBus * bus;

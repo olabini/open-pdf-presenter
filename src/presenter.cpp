@@ -98,8 +98,10 @@ int OpenPdfPresenter::start() {
 	this->slideGridController->setGeometry(geometry.width(),geometry.height());
 	this->mainConsoleWindow->move(geometry.topLeft());
 	this->mainConsoleWindow->showFullScreen();
-	this->mainSlideWindow->move(desktopWidget->screenGeometry(this->mainScreen).topLeft());
-	this->mainSlideWindow->showFullScreen();
+	if (!this->rehearseMode) {
+		this->mainSlideWindow->move(desktopWidget->screenGeometry(this->mainScreen).topLeft());
+		this->mainSlideWindow->showFullScreen();
+	}
 
 	this->bus->fire(new SlideChangedEvent(0));
 	this->renderer->start();
@@ -138,21 +140,31 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 	if (args.size() < 3)
 		// TODO: print error
 		exit(1);
+
+	int currentArg = 1;
+
+	if (args.at(currentArg) == "-r") {
+		this->rehearseMode = true;
+		currentArg++;
+	}
+	else {
+		this->rehearseMode = false;
+	}
 	
 	bool ok;
-	this->totalTime = args.at(1).toInt(&ok);
+	this->totalTime = args.at(currentArg++).toInt(&ok);
 	if (!ok)
 		// TODO: print error
 		exit(1);
 	
-	this->document = Poppler::Document::load(args.at(2));
+	this->document = Poppler::Document::load(args.at(currentArg++));
 	if (!this->document)
 		// TODO: print error
 		exit(1);
 
 	this->parser = new NotesParser(this->document->numPages());
-	if (args.size() > 3) {
-		if (!this->parser->validateAndParse(args.at(3)))
+	if (args.size() > currentArg) {
+		if (!this->parser->validateAndParse(args.at(currentArg++)))
 			exit(1);
 	}
 
@@ -244,9 +256,11 @@ void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 	this->slideGridController->setGeometry(geometry.width(),geometry.height());
 	this->mainConsoleWindow->move(geometry.topLeft());
 	this->mainConsoleWindow->showFullScreen();
-	this->mainSlideWindow->showNormal();
-	this->mainSlideWindow->move(desktopWidget->screenGeometry(this->mainScreen).topLeft());
-	this->mainSlideWindow->showFullScreen();
+	if (!this->rehearseMode) {
+		this->mainSlideWindow->showNormal();
+		this->mainSlideWindow->move(desktopWidget->screenGeometry(this->mainScreen).topLeft());
+		this->mainSlideWindow->showFullScreen();
+	}
 
 	this->renderer->setGeometry(desktopWidget->screenGeometry(this->mainScreen));
 }
