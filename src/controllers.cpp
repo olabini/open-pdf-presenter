@@ -16,6 +16,7 @@
 */
 #include "controllers.h"
 
+#include <algorithm>
 #include "events/slide.h"
 #include "presenter.h"
 
@@ -81,7 +82,7 @@ void PresenterConsoleControllerImpl::fireSlideEvent(int delta) {
 
 void PresenterConsoleControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 	this->view->setCurrentSlideNumber(evt->getCurrentSlideNumber()+1);
-	this->view->setSlidePercentage(evt->getCurrentSlideNumber()*100 / (this->totalSlideCount - 1));
+	this->view->setSlidePercentage(evt->getCurrentSlideNumber()*100 / std::max((this->totalSlideCount - 1),1));
 }
 
 void PresenterConsoleControllerImpl::onTimeChanged(TimeChangedEvent * evt) {
@@ -140,7 +141,10 @@ void CurrentNextSlideConsoleViewControllerImpl::onSlideRendered(SlideRenderedEve
 void CurrentNextSlideConsoleViewControllerImpl::setGeometry(int width, int height) {
 	this->view->setGeometry(width, height);
 	this->view->setCurrentSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()));
-	this->view->setNextSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()+1));
+	if (this->presenter->getCurrentSlide() < this->presenter->getTotalSlides() - 1)
+		this->view->setNextSlide(presenter->getSlide(this->presenter->getCurrentSlide()+1));
+	else
+		this->view->setNextSlide(pastLastSlide);
 }
 
 
@@ -172,7 +176,10 @@ void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideRendered(SlideRender
 void CurrentNextSlideNotesConsoleViewControllerImpl::setGeometry(int width, int height) {
 	this->view->setGeometry(width, height);
 	this->view->setCurrentSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()));
-	this->view->setNextSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()+1));
+	if (this->presenter->getCurrentSlide() < this->presenter->getTotalSlides() - 1)
+		this->view->setNextSlide(presenter->getSlide(this->presenter->getCurrentSlide()+1));
+	else
+		this->view->setNextSlide(pastLastSlide);
 }
 
 SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus *bus, SlideGridConsoleView *view, OpenPdfPresenter *presenter) {
