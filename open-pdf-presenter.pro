@@ -17,6 +17,7 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += . src ui src/events src/views
 INCLUDEPATH += . src/events src/views
+INCLUDEPATH += include
 OBJECTS_DIR = build
 MOC_DIR = $$OBJECTS_DIR
 UI_DIR = $$OBJECTS_DIR
