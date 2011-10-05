@@ -23,6 +23,8 @@
 #include <QDesktopWidget>
 #include <iostream>
 
+#include <tclap/CmdLine.h>
+
 OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->parseArguments(argc, argv);
 
@@ -134,38 +136,36 @@ OpenPdfPresenter::~OpenPdfPresenter() {
 }
 
 void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
-	this->totalTime = 120;
-	
-	QStringList args = QCoreApplication::arguments();
-	if (args.size() < 3)
-		// TODO: print error
-		exit(1);
+	TCLAP::CmdLine cmd("open-pdf-presenter",' ');
 
-	int currentArg = 1;
+	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
+	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",true,0,"Duration");
+	TCLAP::SwitchArg rehearseSwitch("r","rehearse","Enable rehearse mode");
+	TCLAP::UnlabeledValueArg<std::string> pdfFileArg("Presentation","The PDF file with the presentation's slides",true,"","PDF file");
 
-	if (args.at(currentArg) == "-r") {
-		this->rehearseMode = true;
-		currentArg++;
-	}
-	else {
-		this->rehearseMode = false;
-	}
-	
-	bool ok;
-	this->totalTime = args.at(currentArg++).toInt(&ok);
-	if (!ok)
-		// TODO: print error
-		exit(1);
-	
-	this->document = Poppler::Document::load(args.at(currentArg++));
-	if (!this->document)
-		// TODO: print error
-		exit(1);
+	cmd.add(rehearseSwitch);
+	cmd.add(durationArg);
+	cmd.add(notesArg);
+	cmd.add(pdfFileArg);
 
-	this->parser = new NotesParser(this->document->numPages());
-	if (args.size() > currentArg) {
-		if (!this->parser->validateAndParse(args.at(currentArg++)))
+	try {
+		cmd.parse(QCoreApplication::argc(),QCoreApplication::argv());
+
+		this->rehearseMode = rehearseSwitch.getValue();
+		this->totalTime = durationArg.getValue();
+		this->document = Poppler::Document::load(QString(pdfFileArg.getValue().c_str()));
+		if (!this->document)
+			// TODO: print error
 			exit(1);
+
+		this->parser = new NotesParser(this->document->numPages());
+		if (notesArg.isSet()) {
+			if (!this->parser->validateAndParse(QString(notesArg.getValue().c_str())))
+				// TODO: print error
+				exit(1);
+		}
+	} catch (TCLAP::ArgException &e) {
+		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
 	}
 
 	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
