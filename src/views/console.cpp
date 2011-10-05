@@ -114,11 +114,11 @@ CurrentNextSlideConsoleViewImpl::CurrentNextSlideConsoleViewImpl(QWidget * paren
 
 void CurrentNextSlideConsoleViewImpl::setGeometry(int width, int height) {
 	this->width = width;
-	this->height = height;
+	this->height = height - PRESENTER_USEFUL_HEIGHT_DECREMENT;
 }
 
 void CurrentNextSlideConsoleViewImpl::setCurrentSlide(Slide slide) {
-	QRect area = QRect(0,0,this->width * 0.6, this->height - PRESENTER_USEFUL_HEIGHT_DECREMENT);
+	QRect area = QRect(0,0,this->width * 0.6, this->height);
 	this->currentNextSlideUi.leftSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
 }
 
@@ -144,7 +144,7 @@ CurrentNextSlideNotesConsoleViewImpl::CurrentNextSlideNotesConsoleViewImpl(QWidg
 
 void CurrentNextSlideNotesConsoleViewImpl::setGeometry(int width, int height) {
 	this->width = width;
-	this->height = height;
+	this->height = height - PRESENTER_USEFUL_HEIGHT_DECREMENT;
 }
 
 void CurrentNextSlideNotesConsoleViewImpl::setCurrentSlide(Slide slide) {
@@ -249,11 +249,11 @@ void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
 
 void SlideGridConsoleViewImpl::setGeometry(int width, int height) {
 	this->width = width;
-	this->height = height;
+	this->height = height - PRESENTER_USEFUL_HEIGHT_DECREMENT;
 }
 
 void SlideGridConsoleViewImpl::setSlide(int slideNumber, Slide slide) {
-	QRect area =  QRect(0,0,((width * PRESENTER_USEFUL_WIDTH_PERCENTAGE) / this->cols),(height - PRESENTER_USEFUL_HEIGHT_DECREMENT) / this->rows);
+	QRect area =  QRect(0,0,((width * PRESENTER_USEFUL_WIDTH_PERCENTAGE) / this->cols),height / this->rows);
 	area = slide.computeUsableArea(QRect(0,0,area.width()-4,area.height()-4));
 
 	this->slides->at(slideNumber)->setIconSize(QSize(area.width(),area.height()));
