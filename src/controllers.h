@@ -23,38 +23,14 @@
 
 class OpenPdfPresenter;
 
-class PresenterConsoleControllerImpl : public PresenterConsoleViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler, public ToggleConsoleViewEventHandler {
-	public:
-		PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleView * currentNextView, SlideGridConsoleView * slideGridView, CurrentNextSlideNotesConsoleView * currentNextNotesView, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
-		virtual void onNextSlideButton();
-		virtual void onPrevSlideButton();
-		virtual void onSlideGridButton();
-		virtual void onNotesButton();
-		virtual void onSlideChanged(SlideChangedEvent * evt);
-		virtual void onTimeChanged(TimeChangedEvent * evt);
-		virtual void onToggleSlideView(ToggleConsoleViewEvent *event);
-		virtual void onToggleNotesView(ToggleConsoleViewEvent *event);
-	private:
-		void computeTime(int time, int * hours, int * mins, int * secs);
-	private:
-		void fireSlideEvent(int delta);
-		PresenterConsoleView * view;
-		CurrentNextSlideConsoleView * currentNextView;
-		SlideGridConsoleView * slideGridView;
-		CurrentNextSlideNotesConsoleView * currentNextNotesView;
-		IEventBus * bus;
-		int totalSlideCount;
-		int duration;
-		OpenPdfPresenter * presenter;
-		bool notesViewEnabled;
-};
-
 class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
 	public:
 		CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		virtual void setGeometry(int width, int height);
+		virtual void setVisible(bool isVisible);
+		QWidget * content();
 	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;
@@ -68,6 +44,8 @@ class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNo
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		virtual void setGeometry(int width, int height);
+		virtual void setVisible(bool isVisible);
+		QWidget * content();
 	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideNotesConsoleView * view;
@@ -82,6 +60,8 @@ class SlideGridConsoleViewControllerImpl : public SlideGridConsoleViewController
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		virtual void onSelectSlide(int slideNumber);
 		virtual void setGeometry(int width, int height);
+		virtual void setVisible(bool isVisible);
+		QWidget * content();
 	private:
 		OpenPdfPresenter * presenter;
 		SlideGridConsoleView * view;
@@ -118,5 +98,66 @@ class MainWindowViewControllerImpl : public MainWindowViewController {
 		MainWindowView * view;
 		IEventBus * bus;
 };
+
+class PresenterConsoleState {
+	public:
+		virtual PresenterConsoleState * onToggleSlideView() = 0;
+		virtual PresenterConsoleState * onToggleNotesView() = 0;
+		virtual void apply(CurrentNextSlideConsoleViewControllerImpl * currentNext, CurrentNextSlideNotesConsoleViewControllerImpl * notes, SlideGridConsoleViewControllerImpl * grid) = 0;
+};
+
+class PresenterConsoleControllerImpl : public PresenterConsoleViewController, public SlideChangedEventHandler, public ITimeChangedEventHandler, public ToggleConsoleViewEventHandler {
+	public:
+		PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleViewControllerImpl * currentNextController, SlideGridConsoleViewControllerImpl * slideGridController, CurrentNextSlideNotesConsoleViewControllerImpl * currentNextNotesController, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds);
+		~PresenterConsoleControllerImpl();
+		virtual void onNextSlideButton();
+		virtual void onPrevSlideButton();
+		virtual void onSlideGridButton();
+		virtual void onNotesButton();
+		virtual void onSlideChanged(SlideChangedEvent * evt);
+		virtual void onTimeChanged(TimeChangedEvent * evt);
+		virtual void onToggleSlideView(ToggleConsoleViewEvent *event);
+		virtual void onToggleNotesView(ToggleConsoleViewEvent *event);
+	private:
+		void computeTime(int time, int * hours, int * mins, int * secs);
+	private:
+		void fireSlideEvent(int delta);
+		PresenterConsoleView * view;
+		CurrentNextSlideConsoleViewControllerImpl * currentNext;
+		SlideGridConsoleViewControllerImpl * slideGrid;
+		CurrentNextSlideNotesConsoleViewControllerImpl * currentNextNotes;
+		IEventBus * bus;
+		int totalSlideCount;
+		int duration;
+		OpenPdfPresenter * presenter;
+		PresenterConsoleState * currentState;
+};
+
+class DefaultConsoleState : public PresenterConsoleState {
+	public:
+		PresenterConsoleState * onToggleSlideView();
+		PresenterConsoleState * onToggleNotesView();
+		void apply(CurrentNextSlideConsoleViewControllerImpl * currentNext, CurrentNextSlideNotesConsoleViewControllerImpl * notes, SlideGridConsoleViewControllerImpl * grid);
+};
+
+class SlideGridConsoleState : public PresenterConsoleState {
+	public:
+		SlideGridConsoleState(PresenterConsoleState * previousState);
+		~SlideGridConsoleState();
+		PresenterConsoleState * onToggleSlideView();
+		PresenterConsoleState * onToggleNotesView();
+		void apply(CurrentNextSlideConsoleViewControllerImpl * currentNext, CurrentNextSlideNotesConsoleViewControllerImpl * notes, SlideGridConsoleViewControllerImpl * grid);
+	private:
+		PresenterConsoleState * previousState;
+};
+
+class NotesConsoleState : public PresenterConsoleState {
+	public:
+		PresenterConsoleState * onToggleSlideView();
+		PresenterConsoleState * onToggleNotesView();
+		void apply(CurrentNextSlideConsoleViewControllerImpl * currentNext, CurrentNextSlideNotesConsoleViewControllerImpl * notes, SlideGridConsoleViewControllerImpl * grid);
+};
+
+
 
 #endif

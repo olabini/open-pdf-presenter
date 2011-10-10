@@ -20,7 +20,62 @@
 #include "events/slide.h"
 #include "presenter.h"
 
-PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleView * currentNextView, SlideGridConsoleView * slideGridView, CurrentNextSlideNotesConsoleView * currentNextNotesView, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
+PresenterConsoleState * DefaultConsoleState::onToggleNotesView() {
+	delete this;
+	return new NotesConsoleState();
+}
+
+PresenterConsoleState * DefaultConsoleState::onToggleSlideView() {
+	return new SlideGridConsoleState(this);
+}
+
+void DefaultConsoleState::apply(CurrentNextSlideConsoleViewControllerImpl *currentNext, CurrentNextSlideNotesConsoleViewControllerImpl *notes, SlideGridConsoleViewControllerImpl *grid) {
+	notes->setVisible(false);
+	grid->setVisible(false);
+	currentNext->setVisible(true);
+}
+
+PresenterConsoleState * NotesConsoleState::onToggleNotesView() {
+	delete this;
+	return new DefaultConsoleState();
+}
+
+PresenterConsoleState * NotesConsoleState::onToggleSlideView() {
+	return new SlideGridConsoleState(this);
+}
+
+void NotesConsoleState::apply(CurrentNextSlideConsoleViewControllerImpl *currentNext, CurrentNextSlideNotesConsoleViewControllerImpl *notes, SlideGridConsoleViewControllerImpl *grid) {
+	grid->setVisible(false);
+	currentNext->setVisible(false);
+	notes->setVisible(true);
+}
+
+SlideGridConsoleState::SlideGridConsoleState(PresenterConsoleState * previous) : previousState(previous) {
+}
+
+SlideGridConsoleState::~SlideGridConsoleState() {
+	delete this->previousState;
+}
+
+PresenterConsoleState * SlideGridConsoleState::onToggleNotesView() {
+	delete this;
+	return new NotesConsoleState();
+}
+
+PresenterConsoleState * SlideGridConsoleState::onToggleSlideView() {
+	PresenterConsoleState * ret = this->previousState;
+	this->previousState = NULL;
+	delete this;
+	return ret;
+}
+
+void SlideGridConsoleState::apply(CurrentNextSlideConsoleViewControllerImpl *currentNext, CurrentNextSlideNotesConsoleViewControllerImpl *notes, SlideGridConsoleViewControllerImpl *grid) {
+	currentNext->setVisible(false);
+	notes->setVisible(false);
+	grid->setVisible(true);
+}
+
+PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleViewControllerImpl * currentNext, SlideGridConsoleViewControllerImpl * slideGrid, CurrentNextSlideNotesConsoleViewControllerImpl * currentNextNotes, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
 	this->duration = durationSeconds;
 	this->presenter = presenter;
 	this->bus = bus;
@@ -28,18 +83,21 @@ PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, 
 	this->bus->subscribe(&TimeChangedEvent::TYPE, (ITimeChangedEventHandler*)this);
 	this->bus->subscribe(&ToggleConsoleViewEvent::TYPE, (ToggleConsoleViewEventHandler*)this);
 	this->view = view;
-	this->currentNextView = currentNextView;
-	this->slideGridView = slideGridView;
-	this->currentNextNotesView = currentNextNotesView;
+	this->currentNext= currentNext;
+	this->slideGrid= slideGrid;
+	this->currentNextNotes= currentNextNotes;
 	this->view->setController(this);
 	this->view->setTotalSlideCount(totalSlideCount);
-	this->slideGridView->asWidget()->setVisible(false);
-	this->view->addContent(this->slideGridView->asWidget());
-	this->currentNextNotesView->asWidget()->setVisible(false);
-	this->view->addContent(this->currentNextNotesView->asWidget());
-	this->view->addContent(this->currentNextView->asWidget());
+	this->currentState = new DefaultConsoleState();
+	this->currentState->apply(this->currentNext, this->currentNextNotes, this->slideGrid);
+	this->view->addContent(this->slideGrid->content());
+	this->view->addContent(this->currentNextNotes->content());
+	this->view->addContent(this->currentNext->content());
 	this->totalSlideCount = totalSlideCount;
-	this->notesViewEnabled = false;
+}
+
+PresenterConsoleControllerImpl::~PresenterConsoleControllerImpl() {
+	delete this->currentState;
 }
 
 void PresenterConsoleControllerImpl::onNextSlideButton() {
@@ -51,29 +109,13 @@ void PresenterConsoleControllerImpl::onPrevSlideButton() {
 }
 
 void PresenterConsoleControllerImpl::onSlideGridButton() {
-	if (this->slideGridView->asWidget()->isVisible()) {
-		this->slideGridView->asWidget()->setVisible(false);
-		if (this->notesViewEnabled)
-			this->currentNextNotesView->asWidget()->setVisible(true);
-		else
-			this->currentNextView->asWidget()->setVisible(true);
-	} else {
-		this->currentNextNotesView->asWidget()->setVisible(false);
-		this->currentNextView->asWidget()->setVisible(false);
-		this->slideGridView->asWidget()->setVisible(true);
-	}
+	this->currentState = this->currentState->onToggleSlideView();
+	this->currentState->apply(this->currentNext, this->currentNextNotes, this->slideGrid);
 }
 
 void PresenterConsoleControllerImpl::onNotesButton() {
-	this->notesViewEnabled = this->slideGridView->asWidget()->isVisible() || !(this->notesViewEnabled);
-	this->slideGridView->asWidget()->setVisible(false);
-	if (this->notesViewEnabled) {
-		this->currentNextView->asWidget()->setVisible(false);
-		this->currentNextNotesView->asWidget()->setVisible(true);
-	} else {
-		this->currentNextNotesView->asWidget()->setVisible(false);
-		this->currentNextView->asWidget()->setVisible(true);
-	}
+	this->currentState = this->currentState->onToggleNotesView();
+	this->currentState->apply(this->currentNext, this->currentNextNotes, this->slideGrid);
 }
 
 void PresenterConsoleControllerImpl::fireSlideEvent(int delta) {
@@ -123,6 +165,14 @@ CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewController
 	this->view = view;
 }
 
+QWidget * CurrentNextSlideConsoleViewControllerImpl::content() {
+	return this->view->asWidget();
+}
+
+void CurrentNextSlideConsoleViewControllerImpl::setVisible(bool isVisible) {
+	this->view->asWidget()->setVisible(isVisible);
+}
+
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
 
@@ -154,6 +204,14 @@ CurrentNextSlideNotesConsoleViewControllerImpl::CurrentNextSlideNotesConsoleView
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
 	this->view = view;
+}
+
+QWidget * CurrentNextSlideNotesConsoleViewControllerImpl::content() {
+	return this->view->asWidget();
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::setVisible(bool isVisible) {
+	this->view->asWidget()->setVisible(isVisible);
 }
 
 void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
@@ -194,6 +252,15 @@ SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus
 		this->view->setSlide(i,this->presenter->getSlide(i));
 	}
 }
+
+QWidget * SlideGridConsoleViewControllerImpl::content() {
+	return this->view->asWidget();
+}
+
+void SlideGridConsoleViewControllerImpl::setVisible(bool isVisible) {
+	this->view->asWidget()->setVisible(isVisible);
+}
+
 
 void SlideGridConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent *evt) {
 }

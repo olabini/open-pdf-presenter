@@ -70,10 +70,10 @@ void OpenPdfPresenter::buildViews() {
 }
 
 void OpenPdfPresenter::buildControllers() {
-	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this->currentNextView, this->slideGridView, this->currentNextNotesView, this, this->totalSlides, this->totalTime);
 	this->currentNextController = new CurrentNextSlideConsoleViewControllerImpl(this->bus,this->currentNextView,this);
 	this->currentNextNotesController = new CurrentNextSlideNotesConsoleViewControllerImpl(this->bus,this->currentNextNotesView,this);
 	this->slideGridController = new SlideGridConsoleViewControllerImpl(this->bus,this->slideGridView,this);
+	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this->currentNextController, this->slideGridController, this->currentNextNotesController, this, this->totalSlides, this->totalTime);
 	this->mainConsoleWindowController = new MainWindowViewControllerImpl(this->bus,this->mainConsoleWindow);
 	this->mainSlideWindowController = new MainWindowViewControllerImpl(this->bus,this->mainSlideWindow);
 	this->mainSlideController = new MainSlideViewControllerImpl(this->bus, this->mainSlideView, this);
