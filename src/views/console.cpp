@@ -119,12 +119,12 @@ void CurrentNextSlideConsoleViewImpl::setGeometry(int width, int height) {
 
 void CurrentNextSlideConsoleViewImpl::setCurrentSlide(Slide slide) {
 	QRect area = QRect(0,0,this->width * 0.6, this->height);
-	this->currentNextSlideUi.leftSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
+	this->currentNextSlideUi.leftSlideFrame->setContent(slide.asImage(), slide.computeUsableArea(area));
 }
 
 void CurrentNextSlideConsoleViewImpl::setNextSlide(Slide slide) {
 	QRect area = QRect(0,0,this->width * 0.25, this->height - PRESENTER_USEFUL_HEIGHT_DECREMENT);
-	this->currentNextSlideUi.rightSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
+	this->currentNextSlideUi.rightSlideFrame->setContent(slide.asImage(), slide.computeUsableArea(area));
 }
 
 void CurrentNextSlideConsoleViewImpl::setController(CurrentNextSlideConsoleViewController * slide) {
@@ -150,12 +150,12 @@ void CurrentNextSlideNotesConsoleViewImpl::setGeometry(int width, int height) {
 
 void CurrentNextSlideNotesConsoleViewImpl::setCurrentSlide(Slide slide) {
 	QRect area = QRect(0,0,this->width * 0.4, this->height * 0.5);
-	this->currentNextSlideNotesUi.currentSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
+	this->currentNextSlideNotesUi.currentSlideFrame->setContent(slide.asImage(), slide.computeUsableArea(area));
 }
 
 void CurrentNextSlideNotesConsoleViewImpl::setNextSlide(Slide slide) {
 	QRect area = QRect(0,0,this->width * 0.25, this->height * 0.5);
-	this->currentNextSlideNotesUi.nextSlideFrame->setContent(slide.asPixmap(), slide.computeUsableArea(area));
+	this->currentNextSlideNotesUi.nextSlideFrame->setContent(slide.asImage(), slide.computeUsableArea(area));
 }
 
 void CurrentNextSlideNotesConsoleViewImpl::setController(CurrentNextSlideNotesConsoleViewController * controller) {

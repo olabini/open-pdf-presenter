@@ -34,7 +34,7 @@ class Frame : public QWidget {
 class SlideFrame : public Frame {
 	public:
 		SlideFrame(QWidget * parent = 0);
-		void setContent(QPixmap content, QRect area);
+		void setContent(QImage content, QRect area);
 
 	private:
 		void setContent(QWidget * content);
