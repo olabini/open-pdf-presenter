@@ -163,6 +163,19 @@ CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewController
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
 	this->view = view;
+	this->currentSlideNumber = 0;
+}
+
+void CurrentNextSlideConsoleViewControllerImpl::refresh() {
+	if (!this->view->asWidget()->isVisible())
+		return;
+
+	this->view->setCurrentSlide(this->presenter->getSlide(this->currentSlideNumber));
+
+	if (this->currentSlideNumber < this->presenter->getTotalSlides() - 1)
+		this->view->setNextSlide(presenter->getSlide(this->currentSlideNumber + 1));
+	else
+		this->view->setNextSlide(pastLastSlide);
 }
 
 QWidget * CurrentNextSlideConsoleViewControllerImpl::content() {
@@ -171,30 +184,25 @@ QWidget * CurrentNextSlideConsoleViewControllerImpl::content() {
 
 void CurrentNextSlideConsoleViewControllerImpl::setVisible(bool isVisible) {
 	this->view->asWidget()->setVisible(isVisible);
+	if (isVisible)
+		this->refresh();
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
-
-	if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides() - 1)
-		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
-	else
-		this->view->setNextSlide(pastLastSlide);
+	this->currentSlideNumber = evt->getCurrentSlideNumber();
+	this->refresh();
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
 	if (evt->getSlideNumber() == this->presenter->getCurrentSlide() + 1) {
 		this->view->setNextSlide(evt->getSlide());
+		this->refresh();
 	}
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::setGeometry(int width, int height) {
 	this->view->setGeometry(width, height);
-	this->view->setCurrentSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()));
-	if (this->presenter->getCurrentSlide() < this->presenter->getTotalSlides() - 1)
-		this->view->setNextSlide(presenter->getSlide(this->presenter->getCurrentSlide()+1));
-	else
-		this->view->setNextSlide(pastLastSlide);
+	this->refresh();
 }
 
 
@@ -204,6 +212,21 @@ CurrentNextSlideNotesConsoleViewControllerImpl::CurrentNextSlideNotesConsoleView
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
 	this->view = view;
+	this->currentSlideNumber = 0;
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::refresh() {
+	if (!this->view->asWidget()->isVisible())
+		return;
+
+	this->view->setCurrentSlide(this->presenter->getSlide(this->currentSlideNumber));
+
+	if (this->currentSlideNumber < this->presenter->getTotalSlides() - 1)
+		this->view->setNextSlide(presenter->getSlide(this->currentSlideNumber + 1));
+	else
+		this->view->setNextSlide(pastLastSlide);
+
+	this->view->setNotes(this->presenter->getNotes(this->currentSlideNumber));
 }
 
 QWidget * CurrentNextSlideNotesConsoleViewControllerImpl::content() {
@@ -212,32 +235,24 @@ QWidget * CurrentNextSlideNotesConsoleViewControllerImpl::content() {
 
 void CurrentNextSlideNotesConsoleViewControllerImpl::setVisible(bool isVisible) {
 	this->view->asWidget()->setVisible(isVisible);
+	if (isVisible)
+		this->refresh();
 }
 
 void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-	this->view->setCurrentSlide(this->presenter->getSlide(evt->getCurrentSlideNumber()));
-
-	if (evt->getCurrentSlideNumber() < this->presenter->getTotalSlides() - 1)
-		this->view->setNextSlide(presenter->getSlide(evt->getCurrentSlideNumber()+1));
-	else
-		this->view->setNextSlide(pastLastSlide);
-
-	this->view->setNotes(this->presenter->getNotes(evt->getCurrentSlideNumber()));
+	this->currentSlideNumber = evt->getCurrentSlideNumber();
+	this->refresh();
 }
 
 void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
 	if (evt->getSlideNumber() == this->presenter->getCurrentSlide() + 1) {
-		this->view->setNextSlide(evt->getSlide());
+		this->refresh();
 	}
 }
 
 void CurrentNextSlideNotesConsoleViewControllerImpl::setGeometry(int width, int height) {
 	this->view->setGeometry(width, height);
-	this->view->setCurrentSlide(this->presenter->getSlide(this->presenter->getCurrentSlide()));
-	if (this->presenter->getCurrentSlide() < this->presenter->getTotalSlides() - 1)
-		this->view->setNextSlide(presenter->getSlide(this->presenter->getCurrentSlide()+1));
-	else
-		this->view->setNextSlide(pastLastSlide);
+	this->refresh();
 }
 
 SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus *bus, SlideGridConsoleView *view, OpenPdfPresenter *presenter) {

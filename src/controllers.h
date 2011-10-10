@@ -32,10 +32,13 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 		virtual void setVisible(bool isVisible);
 		QWidget * content();
 	private:
+		void refresh();
+	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;
 		IEventBus * bus;
 		Slide pastLastSlide;
+		int currentSlideNumber;
 };
 
 class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNotesConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
@@ -47,10 +50,13 @@ class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNo
 		virtual void setVisible(bool isVisible);
 		QWidget * content();
 	private:
+		void refresh();
+	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideNotesConsoleView * view;
 		IEventBus * bus;
 		Slide pastLastSlide;
+		int currentSlideNumber;
 };
 
 class SlideGridConsoleViewControllerImpl : public SlideGridConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
