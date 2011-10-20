@@ -139,7 +139,7 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 	TCLAP::CmdLine cmd("open-pdf-presenter",' ');
 
 	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
-	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",true,0,"Duration");
+	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",false,0,"Duration");
 	TCLAP::SwitchArg rehearseSwitch("r","rehearse","Enable rehearse mode");
 	TCLAP::UnlabeledValueArg<std::string> pdfFileArg("Presentation","The PDF file with the presentation's slides",true,"","PDF file");
 
