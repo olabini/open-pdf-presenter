@@ -157,14 +157,14 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 			// TODO: print error
 			exit(1);
 
-		this->document = Poppler::Document::load(QString(pdfFileArg.getValue().c_str()));
+		this->document = Poppler::Document::load(QString::fromLocal8Bit(pdfFileArg.getValue().c_str()));
 		if (!this->document)
 			// TODO: print error
 			exit(1);
 
 		this->parser = new NotesParser(this->document->numPages());
 		if (notesArg.isSet()) {
-			if (!this->parser->validateAndParse(QString(notesArg.getValue().c_str())))
+			if (!this->parser->validateAndParse(QString::fromLocal8Bit(notesArg.getValue().c_str())))
 				// TODO: print error
 				exit(1);
 		}
