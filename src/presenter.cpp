@@ -153,6 +153,10 @@ void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
 
 		this->rehearseMode = rehearseSwitch.getValue();
 		this->totalTime = durationArg.getValue();
+		if (this->totalTime < 0)
+			// TODO: print error
+			exit(1);
+
 		this->document = Poppler::Document::load(QString(pdfFileArg.getValue().c_str()));
 		if (!this->document)
 			// TODO: print error

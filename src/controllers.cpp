@@ -129,7 +129,10 @@ void PresenterConsoleControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 
 void PresenterConsoleControllerImpl::onTimeChanged(TimeChangedEvent * evt) {
 	int time = evt->getElapsedTime();
-	this->view->setTimePercentage(time * 100 / this->duration);
+	if (this->duration > 0)
+		this->view->setTimePercentage(time * 100 / this->duration);
+	else
+		this->view->setTimePercentage(100);
 	int hours, minutes, seconds;
 	this->computeTime(time,&hours,&minutes,&seconds);
 	this->view->setElapsedTime(hours, minutes, seconds);
