@@ -49,7 +49,8 @@ FORMS += \
     ui/controlbar.ui \
     ui/currentnextslide.ui \
     ui/frame.ui \
-    ui/notes.ui
+    ui/notes.ui \
+    ui/start-screen.ui
 SOURCES += src/main.cpp \
            src/events/event.cpp \
            src/events/slide.cpp \
@@ -71,3 +72,6 @@ RESOURCES += \
 
 OTHER_FILES += \
     resources/notes/notes.xsd
+
+
+
