@@ -44,7 +44,8 @@ HEADERS += src/events/event.h \
            src/controllers.h \
            src/presenter.h \
     src/renderer.h \
-    src/parser.h
+    src/parser.h \
+    src/views/startscreen.h
 FORMS += \
     ui/controlbar.ui \
     ui/currentnextslide.ui \
@@ -63,7 +64,8 @@ SOURCES += src/main.cpp \
            src/controllers.cpp \
            src/presenter.cpp \
     src/renderer.cpp \
-    src/parser.cpp
+    src/parser.cpp \
+    src/views/startscreen.cpp
 
 RESOURCES += \
     resources/controlbar/controlbar.qrc \
@@ -72,6 +74,8 @@ RESOURCES += \
 
 OTHER_FILES += \
     resources/notes/notes.xsd
+
+
 
 
 

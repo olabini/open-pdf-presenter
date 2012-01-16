@@ -125,8 +125,6 @@ class PresenterConsoleControllerImpl : public PresenterConsoleViewController, pu
 		virtual void onToggleSlideView(ToggleConsoleViewEvent *event);
 		virtual void onToggleNotesView(ToggleConsoleViewEvent *event);
 	private:
-		void computeTime(int time, int * hours, int * mins, int * secs);
-	private:
 		void fireSlideEvent(int delta);
 		PresenterConsoleView * view;
 		CurrentNextSlideConsoleViewControllerImpl * currentNext;
@@ -164,6 +162,21 @@ class NotesConsoleState : public PresenterConsoleState {
 		void apply(CurrentNextSlideConsoleViewControllerImpl * currentNext, CurrentNextSlideNotesConsoleViewControllerImpl * notes, SlideGridConsoleViewControllerImpl * grid);
 };
 
+class PresenterConfiguration;
 
+class StartScreenViewControllerImpl : public StartScreenViewController {
+	public:
+		StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus, PresenterConfiguration * configuration);
+		virtual void browsePresentation();
+		virtual void browseNotes();
+		virtual void ok();
+		virtual void quit();
+		virtual void discardNotes();
+
+	private:
+		StartScreenView * view;
+		IEventBus * bus;
+		PresenterConfiguration * configuration;
+};
 
 #endif

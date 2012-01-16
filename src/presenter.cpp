@@ -17,6 +17,7 @@
 #include "presenter.h"
 
 #include "events/lifecycle.h"
+#include "views/startscreen.h"
 
 #include <QCoreApplication>
 #include <QApplication>
@@ -25,19 +26,10 @@
 
 #include <tclap/CmdLine.h>
 
-OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
-	this->parseArguments(argc, argv);
+OpenPdfPresenter::OpenPdfPresenter(PresenterConfiguration * configuration) {
 
-	QDesktopWidget * desktopWidget = QApplication::desktop();
-	this->mainScreen = desktopWidget->primaryScreen();
-	this->auxScreen = desktopWidget->primaryScreen();
-
-	for (int i = 0 ; i < desktopWidget->numScreens() ; i++) {
-		if (i != this->mainScreen) {
-			this->auxScreen = i;
-			break;
-		}
-	}
+	this->renderer = NULL;
+	this->configuration = configuration;
 	
 	this->elapsedTime = 0;
 	this->currentSlideNumber = 0;
@@ -45,16 +37,13 @@ OpenPdfPresenter::OpenPdfPresenter(int argc, char ** argv) {
 	this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
 	this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
 	this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
+	this->bus->subscribe(&StartPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
 	this->bus->subscribe(&StopPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE,(SlideRenderedEventHandler*)this);
 	this->bus->subscribe(&ResetPresentationEvent::TYPE,(ResetPresentationEventHandler*)this);
 	this->bus->subscribe(&SwapScreensEvent::TYPE,(SwapScreensEventHandler*)this);
 
-	this->renderer = new Renderer(this->bus,this->document, desktopWidget->screen(this->mainScreen)->geometry());
 	this->timer = new Timer(this->bus);
-	this->buildViews();
-	this->buildControllers();
-	this->setUpViews();
 
 	this->currentConsoleView = this->currentNextView;
 }
@@ -66,14 +55,14 @@ void OpenPdfPresenter::buildViews() {
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
 	this->mainSlideWindow = new MainWindowViewImpl();
-	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->mainScreen)->geometry().width());
+	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->configuration->getMainScreen())->geometry().width());
 }
 
 void OpenPdfPresenter::buildControllers() {
 	this->currentNextController = new CurrentNextSlideConsoleViewControllerImpl(this->bus,this->currentNextView,this);
 	this->currentNextNotesController = new CurrentNextSlideNotesConsoleViewControllerImpl(this->bus,this->currentNextNotesView,this);
 	this->slideGridController = new SlideGridConsoleViewControllerImpl(this->bus,this->slideGridView,this);
-	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this->currentNextController, this->slideGridController, this->currentNextNotesController, this, this->totalSlides, this->totalTime);
+	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this->currentNextController, this->slideGridController, this->currentNextNotesController, this, this->configuration->getTotalSlides(), this->configuration->getTotalTime());
 	this->mainConsoleWindowController = new MainWindowViewControllerImpl(this->bus,this->mainConsoleWindow);
 	this->mainSlideWindowController = new MainWindowViewControllerImpl(this->bus,this->mainSlideWindow);
 	this->mainSlideController = new MainSlideViewControllerImpl(this->bus, this->mainSlideView, this);
@@ -93,97 +82,72 @@ void OpenPdfPresenter::setUpViews() {
 }
 
 int OpenPdfPresenter::start() {
+	StartScreenViewImpl * startScreenView = new StartScreenViewImpl();
+	StartScreenViewControllerImpl * startScreenController = new StartScreenViewControllerImpl(startScreenView,this->bus,this->configuration);
+	startScreenView->setController(startScreenController);
+	startScreenView->show();
+
+	int ret = QApplication::instance()->exec();
+
+	delete startScreenController;
+	delete startScreenView;
+
+	return ret;
+}
+
+void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
 	QDesktopWidget * desktopWidget = QApplication::desktop();
-	QRect geometry = desktopWidget->screenGeometry(this->auxScreen);
+	this->renderer = new Renderer(this->bus,this->configuration->getDocument(), desktopWidget->screen(this->configuration->getMainScreen())->geometry());
+
+	this->buildViews();
+	this->buildControllers();
+	this->setUpViews();
+
+	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
 	this->currentNextController->setGeometry(geometry.width(),geometry.height());
 	this->currentNextNotesController->setGeometry(geometry.width(),geometry.height());
 	this->slideGridController->setGeometry(geometry.width(),geometry.height());
 	this->mainConsoleWindow->move(geometry.topLeft());
 	this->mainConsoleWindow->showFullScreen();
-	if (!this->rehearseMode) {
-		this->mainSlideWindow->move(desktopWidget->screenGeometry(this->mainScreen).topLeft());
+
+	if (!this->configuration->isRehearseMode()) {
+		this->mainSlideWindow->move(desktopWidget->screenGeometry(this->configuration->getMainScreen()).topLeft());
 		this->mainSlideWindow->showFullScreen();
 	}
 
 	this->bus->fire(new SlideChangedEvent(0));
 	this->renderer->start();
 	this->timer->start();
-
-	return QApplication::instance()->exec();
 }
 
 OpenPdfPresenter::~OpenPdfPresenter() {
-	delete this->parser;
-	delete this->renderer;
+	if (this->renderer) {
+		delete this->renderer;
+
+		// Views
+		delete this->currentNextView;
+		delete this->slideGridView;
+		delete this->presenterConsoleView;
+		delete this->mainSlideView;
+		delete this->mainConsoleWindow;
+
+		// Controllers
+		delete this->presenterConsoleController;
+		delete this->currentNextController;
+		delete this->mainConsoleWindowController;
+		delete this->mainSlideWindowController;
+		delete this->mainSlideController;
+	}
 	delete this->timer;
-	delete this->document;
+	delete this->configuration;
 	
-	// Views
-	delete this->currentNextView;
-	delete this->slideGridView;
-	delete this->presenterConsoleView;
-	delete this->mainSlideView;
-	delete this->mainConsoleWindow;
-	
-	// Controllers
-	delete this->presenterConsoleController;
-	delete this->currentNextController;
-	delete this->mainConsoleWindowController;
-	delete this->mainSlideWindowController;
-	delete this->mainSlideController;
 	
 	delete this->bus;
 }
 
-void OpenPdfPresenter::parseArguments(int argc, char ** argv) {
-	TCLAP::CmdLine cmd("open-pdf-presenter",' ');
-
-	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
-	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",false,0,"Duration");
-	TCLAP::SwitchArg rehearseSwitch("r","rehearse","Enable rehearse mode");
-	TCLAP::UnlabeledValueArg<std::string> pdfFileArg("Presentation","The PDF file with the presentation's slides",true,"","PDF file");
-
-	cmd.add(rehearseSwitch);
-	cmd.add(durationArg);
-	cmd.add(notesArg);
-	cmd.add(pdfFileArg);
-
-	try {
-		cmd.parse(QCoreApplication::argc(),QCoreApplication::argv());
-
-		this->rehearseMode = rehearseSwitch.getValue();
-		this->totalTime = durationArg.getValue();
-		if (this->totalTime < 0)
-			// TODO: print error
-			exit(1);
-
-		this->document = Poppler::Document::load(QString::fromLocal8Bit(pdfFileArg.getValue().c_str()));
-		if (!this->document)
-			// TODO: print error
-			exit(1);
-
-		this->parser = new NotesParser(this->document->numPages());
-		if (notesArg.isSet()) {
-			if (!this->parser->validateAndParse(QString::fromLocal8Bit(notesArg.getValue().c_str())))
-				// TODO: print error
-				exit(1);
-		}
-	} catch (TCLAP::ArgException &e) {
-		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-	}
-
-	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
-	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
-	
-	this->totalSlides = this->document->numPages();
-}
 
 int OpenPdfPresenter::getCurrentSlide() {
 	return this->currentSlideNumber;
-}
-
-int OpenPdfPresenter::getTotalSlides() {
-	return this->totalSlides;
 }
 
 void OpenPdfPresenter::fireSlideChangedEvent() {
@@ -194,7 +158,7 @@ void OpenPdfPresenter::fireSlideChangedEvent() {
 }
 
 void OpenPdfPresenter::onNextSlide(RelativeSlideEvent * evt) {
-	if (this->currentSlideNumber < this->totalSlides - 1) {
+	if (this->currentSlideNumber < this->configuration->getTotalSlides() - 1) {
 			this->currentSlideNumber += 1;
 			this->fireSlideChangedEvent();
 	}
@@ -210,7 +174,7 @@ void OpenPdfPresenter::onPrevSlide(RelativeSlideEvent * evt) {
 void OpenPdfPresenter::onGotoSlide(AbsoluteSlideEvent * evt) {
 	int toSlide = evt->getSlideNumber();
 
-	if (toSlide >= 0 && toSlide < this->totalSlides) {
+	if (toSlide >= 0 && toSlide < this->configuration->getTotalSlides()) {
 		this->currentSlideNumber = evt->getSlideNumber();
 		this->fireSlideChangedEvent();
 	}
@@ -218,18 +182,11 @@ void OpenPdfPresenter::onGotoSlide(AbsoluteSlideEvent * evt) {
 
 void OpenPdfPresenter::onTimeout(TimerEvent * evt) {
 	this->elapsedTime++;
-	this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->totalTime - this->elapsedTime));
-}
-
-int OpenPdfPresenter::getTotalTimeSeconds() {
-	return this->totalTime;
+	this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->configuration->getTotalTime() - this->elapsedTime));
 }
 
 Slide OpenPdfPresenter::getSlide(int slideNumber) {
 	return this->renderer->getSlide(slideNumber);
-}
-
-void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
 }
 
 void OpenPdfPresenter::onStopPresentation(StopPresentationEvent * evt) {
@@ -244,31 +201,191 @@ void OpenPdfPresenter::onSlideRendered(SlideRenderedEvent * evt) {
 void OpenPdfPresenter::onResetPresentation(ResetPresentationEvent * evt) {
 	this->currentSlideNumber = 0;
 	this->elapsedTime = 0;
-	this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->totalTime - this->elapsedTime));
+	this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->configuration->getTotalTime() - this->elapsedTime));
 	this->fireSlideChangedEvent();
 }
 
 void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
-	int tmp = this->mainScreen;
-	this->mainScreen = this->auxScreen;
-	this->auxScreen = tmp;
+	this->configuration->swapScreens();
 
 	QDesktopWidget * desktopWidget = QApplication::desktop();
 	this->mainConsoleWindow->showNormal();
-	QRect geometry = desktopWidget->screenGeometry(this->auxScreen);
+	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
 	this->currentNextController->setGeometry(geometry.width(),geometry.height());
 	this->slideGridController->setGeometry(geometry.width(),geometry.height());
 	this->mainConsoleWindow->move(geometry.topLeft());
 	this->mainConsoleWindow->showFullScreen();
-	if (!this->rehearseMode) {
+	if (!this->configuration->isRehearseMode()) {
 		this->mainSlideWindow->showNormal();
-		this->mainSlideWindow->move(desktopWidget->screenGeometry(this->mainScreen).topLeft());
+		this->mainSlideWindow->move(desktopWidget->screenGeometry(this->configuration->getMainScreen()).topLeft());
 		this->mainSlideWindow->showFullScreen();
 	}
 
-	this->renderer->setGeometry(desktopWidget->screenGeometry(this->mainScreen));
+	this->renderer->setGeometry(desktopWidget->screenGeometry(this->configuration->getMainScreen()));
 }
 
 QString OpenPdfPresenter::getNotes(int slideNumber) {
-	return this->parser->getNotes(slideNumber);
+	return this->configuration->getParser()->getNotes(slideNumber);
+}
+
+PresenterConfiguration * OpenPdfPresenter::getConfiguration() {
+	return this->configuration;
+}
+
+PresenterConfiguration::PresenterConfiguration(int argc, char ** argv) {
+	QDesktopWidget * desktopWidget = QApplication::desktop();
+	this->mainScreen = desktopWidget->primaryScreen();
+	this->auxScreen = desktopWidget->primaryScreen();
+
+	for (int i = 0 ; i < desktopWidget->numScreens() ; i++) {
+		if (i != this->mainScreen) {
+			this->auxScreen = i;
+			break;
+		}
+	}
+
+	this->parser = NULL;
+	this->document = NULL;
+	this->parseArguments(argc,argv);
+}
+
+PresenterConfiguration::~PresenterConfiguration() {
+	delete this->parser;
+	delete this->document;
+}
+
+void PresenterConfiguration::parseArguments(int argc, char ** argv) {
+	TCLAP::CmdLine cmd("open-pdf-presenter",' ');
+
+	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
+	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",false,0,"Duration");
+	TCLAP::SwitchArg rehearseSwitch("r","rehearse","Enable rehearse mode");
+	TCLAP::UnlabeledValueArg<std::string> pdfFileArg("Presentation","The PDF file with the presentation's slides",false,"","PDF file");
+
+	cmd.add(rehearseSwitch);
+	cmd.add(durationArg);
+	cmd.add(notesArg);
+	cmd.add(pdfFileArg);
+
+	try {
+		cmd.parse(QCoreApplication::argc(),QCoreApplication::argv());
+
+		this->setRehearseMode(rehearseSwitch.getValue());
+		this->setTotalTime(durationArg.getValue());
+
+		this->document = NULL;
+		this->pdfFileName = QString::fromLocal8Bit(pdfFileArg.getValue().c_str());
+		if (pdfFileArg.isSet()) {
+			// Trigger PDF parsing
+			this->setPdfFileName(this->pdfFileName);
+
+			this->notesFileName = QString::fromLocal8Bit(notesArg.getValue().c_str());
+			if (notesArg.isSet())
+				// Trigger notes parsing
+				this->setNotesFileName(this->notesFileName);
+		}
+
+	} catch (TCLAP::ArgException &e) {
+		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+	}
+
+
+}
+
+void PresenterConfiguration::setPdfFileName(QString fileName) {
+	if (this->document)
+		delete this->document;
+
+	this->document = Poppler::Document::load(fileName);
+	if (!this->document)
+		// TODO: print error
+		exit(1);
+
+	this->pdfFileName = fileName;
+	this->totalSlides = this->document->numPages();
+	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
+	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
+
+	if (this->parser)
+		delete this->parser;
+
+	this->parser = new NotesParser(this->document->numPages());
+	this->notesFileName = QString("");
+}
+
+void PresenterConfiguration::setNotesFileName(QString fileName) {
+	if (!this->document)
+		return;
+
+	if (this->parser)
+		delete this->parser;
+
+	this->parser = new NotesParser(this->document->numPages());
+
+	if (!this->parser->validateAndParse(fileName))
+		// TODO: print error
+		exit(1);
+
+	this->notesFileName = fileName;
+}
+
+void PresenterConfiguration::setRehearseMode(bool rehearseMode) {
+	this->rehearseMode = rehearseMode;
+}
+
+void PresenterConfiguration::setTotalTime(int totalTime) {
+	this->totalTime = totalTime;
+	if (this->totalTime < 0)
+		// TODO: print error
+		exit(1);
+}
+
+void PresenterConfiguration::setMainScreen(int screen) {
+	this->mainScreen = screen;
+}
+
+void PresenterConfiguration::setAuxScreen(int screen) {
+	this->auxScreen = screen;
+}
+
+QString PresenterConfiguration::getPdfFileName() {
+	return this->pdfFileName;
+}
+
+QString PresenterConfiguration::getNotesFileName() {
+	return this->notesFileName;
+}
+
+Poppler::Document * PresenterConfiguration::getDocument() {
+	return this->document;
+}
+
+int PresenterConfiguration::getTotalSlides() {
+	return this->totalSlides;
+}
+
+int PresenterConfiguration::getTotalTime() {
+	return this->totalTime;
+}
+
+int PresenterConfiguration::getMainScreen() {
+	return this->mainScreen;
+}
+
+int PresenterConfiguration::getAuxScreen() {
+	return this->auxScreen;
+}
+
+NotesParser * PresenterConfiguration::getParser() {
+	return this->parser;
+}
+
+bool PresenterConfiguration::isRehearseMode() {
+	return this->rehearseMode;
+}
+
+void PresenterConfiguration::swapScreens() {
+	int tmp = this->mainScreen;
+	this->mainScreen = this->auxScreen;
+	this->auxScreen = tmp;
 }

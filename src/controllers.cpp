@@ -17,8 +17,21 @@
 #include "controllers.h"
 
 #include <algorithm>
+#include <QFileDialog>
 #include "events/slide.h"
 #include "presenter.h"
+
+static void durationToTime(int duration, int *hours, int *minutes, int *seconds) {
+	*hours =  duration / 3600;
+	duration %= 3600;
+	*minutes = duration / 60;
+	duration %= 60;
+	*seconds = duration;
+}
+
+static int timeToDuration(int hours, int minutes, int seconds) {
+	return (hours * 3600) + (minutes * 60) + (seconds);
+}
 
 PresenterConsoleState * DefaultConsoleState::onToggleNotesView() {
 	delete this;
@@ -134,13 +147,13 @@ void PresenterConsoleControllerImpl::onTimeChanged(TimeChangedEvent * evt) {
 	else
 		this->view->setTimePercentage(100);
 	int hours, minutes, seconds;
-	this->computeTime(time,&hours,&minutes,&seconds);
+	durationToTime(time,&hours,&minutes,&seconds);
 	this->view->setElapsedTime(hours, minutes, seconds);
 	time = evt->getRemainingTime();
 	bool overtime = time < 0;
 	if (overtime)
 		time *= -1;
-	this->computeTime(time,&hours,&minutes,&seconds);
+	durationToTime(time,&hours,&minutes,&seconds);
 	this->view->setRemainingTime(hours, minutes, seconds, overtime);
 }
 
@@ -150,14 +163,6 @@ void PresenterConsoleControllerImpl::onToggleSlideView(ToggleConsoleViewEvent *e
 
 void PresenterConsoleControllerImpl::onToggleNotesView(ToggleConsoleViewEvent *event) {
 	this->onNotesButton();
-}
-
-void PresenterConsoleControllerImpl::computeTime(int time, int *hours, int *minutes, int *seconds) {
-	*hours =  time / 3600;
-	time %= 3600;
-	*minutes = time / 60;
-	time %= 60;
-	*seconds = time;
 }
 
 CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter) :pastLastSlide(QImage(QString(":/presenter/pastlastslide.svg"))) {
@@ -175,7 +180,7 @@ void CurrentNextSlideConsoleViewControllerImpl::refresh() {
 
 	this->view->setCurrentSlide(this->presenter->getSlide(this->currentSlideNumber));
 
-	if (this->currentSlideNumber < this->presenter->getTotalSlides() - 1)
+	if (this->currentSlideNumber < this->presenter->getConfiguration()->getTotalSlides() - 1)
 		this->view->setNextSlide(presenter->getSlide(this->currentSlideNumber + 1));
 	else
 		this->view->setNextSlide(pastLastSlide);
@@ -224,7 +229,7 @@ void CurrentNextSlideNotesConsoleViewControllerImpl::refresh() {
 
 	this->view->setCurrentSlide(this->presenter->getSlide(this->currentSlideNumber));
 
-	if (this->currentSlideNumber < this->presenter->getTotalSlides() - 1)
+	if (this->currentSlideNumber < this->presenter->getConfiguration()->getTotalSlides() - 1)
 		this->view->setNextSlide(presenter->getSlide(this->currentSlideNumber + 1));
 	else
 		this->view->setNextSlide(pastLastSlide);
@@ -265,8 +270,8 @@ SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
 
-	this->view->setTotalNumberOfSlides(this->presenter->getTotalSlides());
-	for (int i = 0 ; i < this->presenter->getTotalSlides() ; i++) {
+	this->view->setTotalNumberOfSlides(this->presenter->getConfiguration()->getTotalSlides());
+	for (int i = 0 ; i < this->presenter->getConfiguration()->getTotalSlides() ; i++) {
 		this->view->setSlide(i,this->presenter->getSlide(i));
 	}
 }
@@ -293,7 +298,7 @@ void SlideGridConsoleViewControllerImpl::onSelectSlide(int slideNumber) {
 
 void SlideGridConsoleViewControllerImpl::setGeometry(int width, int height) {
 	this->view->setGeometry(width, height);
-	for (int i = 0 ; i < this->presenter->getTotalSlides() ; i++)
+	for (int i = 0 ; i < this->presenter->getConfiguration()->getTotalSlides() ; i++)
 		this->view->setSlide(i,this->presenter->getSlide(i));
 }
 
@@ -375,4 +380,74 @@ void MainWindowViewControllerImpl::onKeyWhiteScreen() {
 
 void MainWindowViewControllerImpl::onKeyBlackScreen() {
 	this->bus->fire(new BlackBlankScreenEvent());
+}
+
+StartScreenViewControllerImpl::StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus, PresenterConfiguration * configuration) {
+	this->view = view;
+	this->bus = bus;
+
+	this->configuration = configuration;
+	this->view->setController(this);
+
+	int hours, minutes, seconds;
+
+	durationToTime(this->configuration->getTotalTime(),&hours,&minutes,&seconds);
+
+	this->view->setHours(hours);
+	this->view->setMinutes(minutes);
+	this->view->setSeconds(seconds);
+
+	this->view->setPdfFileName(this->configuration->getPdfFileName());
+	this->view->setNotesFileName(this->configuration->getNotesFileName());
+}
+
+void StartScreenViewControllerImpl::browsePresentation() {
+	QString pdfFileName = QFileDialog::getOpenFileName(this->view->asWidget(),QString("Open Presentation"),QString(this->configuration->getPdfFileName()),QString("Presentation Files (*.pdf)"));
+
+	if (pdfFileName.isNull())
+		return;
+
+	this->configuration->setPdfFileName(pdfFileName);
+	this->view->setPdfFileName(pdfFileName);
+	QString title = this->configuration->getDocument()->info("Title");
+	if (title.isNull() || title.isEmpty())
+		title = pdfFileName;
+
+	this->view->setPdfTitle(title);
+}
+
+void StartScreenViewControllerImpl::browseNotes() {
+	if (this->configuration->getPdfFileName().isEmpty())
+		return;
+
+	QString notesFileName = QFileDialog::getOpenFileName(this->view->asWidget(),QString("Open Notes"),QString(this->configuration->getPdfFileName()),QString("Presentation Files (*.xml *.txt)"));
+
+	if (notesFileName.isNull())
+		return;
+
+	this->configuration->setNotesFileName(notesFileName);
+	this->view->setNotesFileName(notesFileName);
+}
+
+void StartScreenViewControllerImpl::discardNotes() {
+	this->configuration->setNotesFileName("");
+	this->view->setNotesFileName("");
+}
+
+void StartScreenViewControllerImpl::ok() {
+	QString fileName = this->configuration->getPdfFileName();
+
+	if (fileName.isNull() || fileName.isEmpty())
+		return;
+
+	this->configuration->setTotalTime(timeToDuration(
+		this->view->getHours(),
+		this->view->getMinutes(),
+		this->view->getSeconds()));
+
+	this->bus->fire(new StartPresentationEvent());
+}
+
+void StartScreenViewControllerImpl::quit() {
+	this->bus->fire(new StopPresentationEvent());
 }

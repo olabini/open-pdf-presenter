@@ -32,13 +32,56 @@
 #include <QList>
 #include <poppler-qt4.h>
 
+class PresenterConfiguration {
+	private:
+		int totalSlides;
+		int totalTime;
+		int mainScreen, auxScreen;
+		bool rehearseMode;
+
+		QString pdfFileName;
+		QString notesFileName;
+		Poppler::Document * document;
+		NotesParser * parser;
+
+	public: //constructors / destructors
+		PresenterConfiguration(int argc, char ** argv);
+		~PresenterConfiguration();
+
+	public: // getters
+		QString getPdfFileName();
+		QString getNotesFileName();
+		Poppler::Document * getDocument();
+		NotesParser * getParser();
+		int getTotalSlides();
+		int getTotalTime();
+		int getMainScreen();
+		int getAuxScreen();
+		bool isRehearseMode();
+
+	public: // setters
+		void setPdfFileName(QString fileName);
+		void setNotesFileName(QString fileName);
+		void setTotalTime(int totalTime);
+		void setMainScreen(int screen);
+		void setAuxScreen(int screen);
+		void setRehearseMode(bool rehearseMode);
+
+	public: // misc
+		void swapScreens();
+
+	private: // misc
+		void parseArguments(int argc, char ** argv);
+};
+
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler, public SlideRenderedEventHandler, public ResetPresentationEventHandler, public SwapScreensEventHandler {
 	public:
-		OpenPdfPresenter(int argc, char ** argv);
+		OpenPdfPresenter(PresenterConfiguration * configuration);
 		~OpenPdfPresenter();
 		int getCurrentSlide();
 		int getTotalSlides();
 		int getTotalTimeSeconds();
+		PresenterConfiguration * getConfiguration();
 		Slide getSlide(int slideNumber);
 		QString getNotes(int slideNumber);
 		virtual void onNextSlide(RelativeSlideEvent * evt);
@@ -53,25 +96,16 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		int start();
 	private:
 		int currentSlideNumber;
-		int totalSlides;
 		int elapsedTime;
-		int totalTime;
-		int mainScreen, auxScreen;
+		PresenterConfiguration * configuration;
 
-		bool rehearseMode;
-				
-		QString pdfFileName;
 		QEventBus * bus;
 		Timer * timer;
-		Poppler::Document * document;
 
 		ConsoleView * currentConsoleView;
 
 		Renderer * renderer;
 
-		NotesParser * parser;
-
-		void parseArguments(int argc, char ** argv);
 		void fireSlideChangedEvent();
 		void buildViews();
 		void buildControllers();

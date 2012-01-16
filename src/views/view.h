@@ -138,6 +138,8 @@ class SlideGridConsoleView : public ConsoleView, public View<SlideGridConsoleVie
 };
 
 class MainSlideViewController : public Controller {
+	protected:
+		~MainSlideViewController() { }
 };
 
 class MainSlideView : public View<MainSlideViewController> {
@@ -147,6 +149,35 @@ class MainSlideView : public View<MainSlideViewController> {
 		virtual void setWhiteBlankScreen() = 0;
 	protected:
 		~MainSlideView() { }
+};
+
+class StartScreenViewController : public Controller {
+	public:
+		virtual void browsePresentation() = 0;
+		virtual void browseNotes() = 0;
+		virtual void discardNotes() = 0;
+		virtual void ok() = 0;
+		virtual void quit() = 0;
+
+	protected:
+		~StartScreenViewController() { }
+};
+
+class StartScreenView : public View<StartScreenViewController> {
+	public:
+		virtual void setPdfFileName(QString fileName) = 0;
+		virtual void setNotesFileName(QString fileName) = 0;
+		virtual void setHours(int hours) = 0;
+		virtual void setMinutes(int minutes) = 0;
+		virtual void setSeconds(int seconds) = 0;
+		virtual int getHours() = 0;
+		virtual int getMinutes() = 0;
+		virtual int getSeconds() = 0;
+		virtual void setPdfTitle(QString title) = 0;
+		virtual void setPdfTotalPages(int totalPages) = 0;
+
+	protected:
+		~StartScreenView() { }
 };
 
 #endif
