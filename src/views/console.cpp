@@ -43,14 +43,33 @@ PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(p
 	this->innerLayout->setSpacing(0);
 	this->innerLayout->setMargin(0);
 	this->setLayout(this->outerLayout);
-	this->outerLayout->addLayout(this->innerLayout);
+	this->content = new QWidget(this);
+	this->content->setLayout(this->innerLayout);
+	this->outerLayout->addWidget(this->content);
 
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-	this->content = NULL;
+	this->confirmExit = new QLabel(this);
+	this->confirmExit->setText("Really exit?\n\n(Again to confirm, other key to cancel)");
+	this->confirmExit->setVisible(false);
+	this->confirmExit->setStyleSheet("color: #FFFFFF; font-weight: bold; font-size: 32px;");
+	this->confirmExit->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	this->confirmExit->setAlignment(Qt::AlignCenter);
+	this->outerLayout->addWidget(this->confirmExit);
+
 	this->outerLayout->addWidget(this->controlBarWrapper);
 	this->outerLayout->setAlignment(this->controlBarWrapper,Qt::AlignHCenter | Qt::AlignBottom);
+}
 
+void PresenterConsoleViewImpl::setConfirmExitVisible(bool isVisible) {
+	// Always hide one before showing the other to avoid window resizing
+	if (isVisible) {
+		this->content->setVisible(false);
+		this->confirmExit->setVisible(true);
+	} else {
+		this->confirmExit->setVisible(false);
+		this->content->setVisible(true);
+	}
 }
 
 void PresenterConsoleViewImpl::setController(PresenterConsoleViewController * controller) {

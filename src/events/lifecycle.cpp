@@ -100,6 +100,18 @@ void ToggleNotesEvent::dispatch(IEventHandler * handler) {
 	((ToggleConsoleViewEventHandler*)handler)->onToggleNotesView(this);
 }
 
+ConfirmExitEvent::ConfirmExitEvent(bool show) {
+	this->show = show;
+}
+
+bool ConfirmExitEvent::isShow() {
+	return this->show;
+}
+
+void ConfirmExitEvent::dispatch(IEventHandler * handler) {
+	((ToggleConsoleViewEventHandler*)handler)->onConfirmExit(this);
+}
+
 Type SwapScreensEvent::TYPE = Type();
 
 Type * SwapScreensEvent::getAssociatedType() {

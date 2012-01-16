@@ -101,8 +101,11 @@ class MainWindowViewControllerImpl : public MainWindowViewController {
 		virtual void onKeyBlackScreen();
 		virtual void onKeyWhiteScreen();
 	private:
+		bool signalExit(bool isExit);
+	private:
 		MainWindowView * view;
 		IEventBus * bus;
+		bool exit;
 };
 
 class PresenterConsoleState {
@@ -124,6 +127,7 @@ class PresenterConsoleControllerImpl : public PresenterConsoleViewController, pu
 		virtual void onTimeChanged(TimeChangedEvent * evt);
 		virtual void onToggleSlideView(ToggleConsoleViewEvent *event);
 		virtual void onToggleNotesView(ToggleConsoleViewEvent *event);
+		virtual void onConfirmExit(ToggleConsoleViewEvent *event);
 	private:
 		void fireSlideEvent(int delta);
 		PresenterConsoleView * view;

@@ -44,11 +44,13 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 		virtual void setController(PresenterConsoleViewController * controller);
 		virtual QWidget * asWidget();
 		virtual void addContent(QWidget * view);
+		virtual void setConfirmExitVisible(bool isVisible);
 
 	private:
 		PresenterConsoleViewController * controller;
 		QVBoxLayout * innerLayout, * outerLayout;
 		QWidget * content, * controlBarWrapper;
+		QLabel * confirmExit;
 		Ui::ControlBar * controlBarUi;
 
 	private slots:

@@ -73,6 +73,7 @@ class PresenterConsoleView : public View<PresenterConsoleViewController> {
 		virtual void setTotalSlideCount(int count) = 0;
 		virtual void setCurrentSlideNumber(int currentSlide) = 0;
 		virtual void addContent(QWidget * view) = 0;
+		virtual void setConfirmExitVisible(bool isVisible) = 0;
 	protected:
 		~PresenterConsoleView() {}
 };

@@ -165,6 +165,11 @@ void PresenterConsoleControllerImpl::onToggleNotesView(ToggleConsoleViewEvent *e
 	this->onNotesButton();
 }
 
+void PresenterConsoleControllerImpl::onConfirmExit(ToggleConsoleViewEvent *event) {
+	this->view->setConfirmExitVisible(((ConfirmExitEvent*)event)->isShow());
+}
+
+
 CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter) :pastLastSlide(QImage(QString(":/presenter/pastlastslide.svg"))) {
 	this->presenter = presenter;
 	this->bus = bus;
@@ -344,42 +349,69 @@ void MainSlideViewControllerImpl::onWhiteScreen(BlankScreenEvent *evt) {
 MainWindowViewControllerImpl::MainWindowViewControllerImpl(IEventBus * bus, MainWindowView * view) {
 	this->bus = bus;
 	this->view = view;
+	this->exit = false;
+}
+
+bool MainWindowViewControllerImpl::signalExit(bool isExit) {
+	bool ret = true;
+
+	if (isExit && this->exit)
+		this->bus->fire(new StopPresentationEvent());
+
+	if (isExit)
+		this->bus->fire(new ConfirmExitEvent(true));
+	else {
+		this->bus->fire(new ConfirmExitEvent(false));
+		if (this->exit) // Do not process events that hide the exit confirmation
+			ret = false;
+	}
+
+	this->exit = isExit;
+	return ret;
 }
 
 void MainWindowViewControllerImpl::onKeyExit() {
-	this->bus->fire(new StopPresentationEvent());
+	this->signalExit(true);
 }
 
 void MainWindowViewControllerImpl::onKeyPrev() {
-	this->bus->fire(new RelativeSlideEvent(-1));
+	if(this->signalExit(false))
+		this->bus->fire(new RelativeSlideEvent(-1));
 }
 
 void MainWindowViewControllerImpl::onKeyNext() {
-	this->bus->fire(new RelativeSlideEvent(1));
+	if(this->signalExit(false))
+		this->bus->fire(new RelativeSlideEvent(1));
 }
 
 void MainWindowViewControllerImpl::onKeyReset() {
-	this->bus->fire(new ResetPresentationEvent());
+	if(this->signalExit(false))
+		this->bus->fire(new ResetPresentationEvent());
 }
 
 void MainWindowViewControllerImpl::onKeyToggleSlideGrid() {
-	this->bus->fire(new ToggleSlideGridEvent());
+	if(this->signalExit(false))
+		this->bus->fire(new ToggleSlideGridEvent());
 }
 
 void MainWindowViewControllerImpl::onKeyToggleNotes() {
-	this->bus->fire(new ToggleNotesEvent());
+	if(this->signalExit(false))
+		this->bus->fire(new ToggleNotesEvent());
 }
 
 void MainWindowViewControllerImpl::onKeySwapScreens() {
-	this->bus->fire(new SwapScreensEvent());
+	if(this->signalExit(false))
+		this->bus->fire(new SwapScreensEvent());
 }
 
 void MainWindowViewControllerImpl::onKeyWhiteScreen() {
-	this->bus->fire(new WhiteBlankScreenEvent());
+	if(this->signalExit(false))
+		this->bus->fire(new WhiteBlankScreenEvent());
 }
 
 void MainWindowViewControllerImpl::onKeyBlackScreen() {
-	this->bus->fire(new BlackBlankScreenEvent());
+	if(this->signalExit(false))
+		this->bus->fire(new BlackBlankScreenEvent());
 }
 
 StartScreenViewControllerImpl::StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus, PresenterConfiguration * configuration) {
