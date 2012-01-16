@@ -82,15 +82,27 @@ void OpenPdfPresenter::setUpViews() {
 }
 
 int OpenPdfPresenter::start() {
-	StartScreenViewImpl * startScreenView = new StartScreenViewImpl();
-	StartScreenViewControllerImpl * startScreenController = new StartScreenViewControllerImpl(startScreenView,this->bus,this->configuration);
-	startScreenView->setController(startScreenController);
-	startScreenView->show();
+	StartScreenViewImpl * startScreenView;
+	StartScreenViewControllerImpl * startScreenController;
+	if (!this->configuration->isSkipStartScreen()) {
+		startScreenView = new StartScreenViewImpl();
+		startScreenController = new StartScreenViewControllerImpl(startScreenView,this->bus,this->configuration);
+		startScreenView->setController(startScreenController);
+		startScreenView->show();
+	} else {
+		if (this->configuration->getDocument() != NULL)
+			this->bus->fire(new StartPresentationEvent());
+		else
+			// TODO: print error
+			exit(1);
+	}
 
 	int ret = QApplication::instance()->exec();
 
-	delete startScreenController;
-	delete startScreenView;
+	if (!this->configuration->isSkipStartScreen()) {
+		delete startScreenController;
+		delete startScreenView;
+	}
 
 	return ret;
 }
@@ -260,9 +272,11 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
 	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",false,0,"Duration");
 	TCLAP::SwitchArg rehearseSwitch("r","rehearse","Enable rehearse mode");
+	TCLAP::SwitchArg skipStartScreenSwitch("s","skip","Skip start screen");
 	TCLAP::UnlabeledValueArg<std::string> pdfFileArg("Presentation","The PDF file with the presentation's slides",false,"","PDF file");
 
 	cmd.add(rehearseSwitch);
+	cmd.add(skipStartScreenSwitch);
 	cmd.add(durationArg);
 	cmd.add(notesArg);
 	cmd.add(pdfFileArg);
@@ -271,6 +285,7 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 		cmd.parse(QCoreApplication::argc(),QCoreApplication::argv());
 
 		this->setRehearseMode(rehearseSwitch.getValue());
+		this->skipStartScreen = skipStartScreenSwitch.getValue();
 		this->setTotalTime(durationArg.getValue());
 
 		this->document = NULL;
@@ -388,4 +403,8 @@ void PresenterConfiguration::swapScreens() {
 	int tmp = this->mainScreen;
 	this->mainScreen = this->auxScreen;
 	this->auxScreen = tmp;
+}
+
+bool PresenterConfiguration::isSkipStartScreen() {
+	return this->skipStartScreen;
 }

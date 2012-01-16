@@ -38,6 +38,7 @@ class PresenterConfiguration {
 		int totalTime;
 		int mainScreen, auxScreen;
 		bool rehearseMode;
+		bool skipStartScreen;
 
 		QString pdfFileName;
 		QString notesFileName;
@@ -58,6 +59,7 @@ class PresenterConfiguration {
 		int getMainScreen();
 		int getAuxScreen();
 		bool isRehearseMode();
+		bool isSkipStartScreen();
 
 	public: // setters
 		void setPdfFileName(QString fileName);
