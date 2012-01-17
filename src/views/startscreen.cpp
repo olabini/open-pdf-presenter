@@ -101,6 +101,7 @@ void StartScreenViewImpl::setPdfTotalPages(int totalPages) {
 	this->ui.slideSlider->setEnabled(true);
 	this->ui.slideSlider->setSliderPosition(0);
 	this->ui.slideSlider->setMaximum(totalPages-1);
+	this->ui.totalSlideNumberLabel->setText(QString("%1").arg(totalPages));
 }
 
 void StartScreenViewImpl::setSlidePreview(Slide slide) {
@@ -110,6 +111,10 @@ void StartScreenViewImpl::setSlidePreview(Slide slide) {
 		this->ui.previewLabel->setPixmap(QPixmap::fromImage(slide.asImage().scaledToWidth(area.width(), Qt::SmoothTransformation)));
 	else
 		this->ui.previewLabel->setPixmap(QPixmap::fromImage(slide.asImage().scaledToHeight(area.height(), Qt::SmoothTransformation)));
+}
+
+void StartScreenViewImpl::setCurrentSlideNumber(int currentSlide) {
+	this->ui.currentSlideLabel->setText(QString("%1").arg(currentSlide+1));
 }
 
 void StartScreenViewImpl::onSliderMove(int position) {

@@ -449,6 +449,7 @@ void StartScreenViewControllerImpl::browsePresentation() {
 	this->view->setPdfTitle(title);
 	this->view->setPdfTotalPages(this->configuration->getDocument()->numPages());
 	this->currentSlide = 0;
+	this->view->setCurrentSlideNumber(this->currentSlide);
 }
 
 void StartScreenViewControllerImpl::browseNotes() {
@@ -490,6 +491,7 @@ void StartScreenViewControllerImpl::quit() {
 void StartScreenViewControllerImpl::setSlidePreview(int slide) {
 	this->currentSlide = slide;
 	this->view->setSlidePreview(this->configuration->getRenderer()->getSlide(slide));
+	this->view->setCurrentSlideNumber(this->currentSlide);
 }
 
 void StartScreenViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {

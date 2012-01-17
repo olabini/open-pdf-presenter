@@ -177,6 +177,7 @@ class StartScreenView : public View<StartScreenViewController> {
 		virtual int getSeconds() = 0;
 		virtual void setPdfTitle(QString title) = 0;
 		virtual void setPdfTotalPages(int totalPages) = 0;
+		virtual void setCurrentSlideNumber(int currentSlide) = 0;
 		virtual void setSlidePreview(Slide slide) = 0;
 
 	protected:
