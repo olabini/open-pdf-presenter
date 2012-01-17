@@ -168,7 +168,7 @@ class NotesConsoleState : public PresenterConsoleState {
 
 class PresenterConfiguration;
 
-class StartScreenViewControllerImpl : public StartScreenViewController {
+class StartScreenViewControllerImpl : public StartScreenViewController, public SlideRenderedEventHandler {
 	public:
 		StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus, PresenterConfiguration * configuration);
 		virtual void browsePresentation();
@@ -176,11 +176,14 @@ class StartScreenViewControllerImpl : public StartScreenViewController {
 		virtual void ok();
 		virtual void quit();
 		virtual void discardNotes();
+		virtual void setSlidePreview(int slide);
+		virtual void onSlideRendered(SlideRenderedEvent *evt);
 
 	private:
 		StartScreenView * view;
 		IEventBus * bus;
 		PresenterConfiguration * configuration;
+		int currentSlide;
 };
 
 #endif

@@ -28,12 +28,13 @@
 
 OpenPdfPresenter::OpenPdfPresenter(PresenterConfiguration * configuration) {
 
-	this->renderer = NULL;
+	this->hasStarted = false;
 	this->configuration = configuration;
 	
 	this->elapsedTime = 0;
 	this->currentSlideNumber = 0;
 	this->bus = new QEventBus();
+	this->configuration->setEventBus(this->bus);
 	this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
 	this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
 	this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
@@ -109,11 +110,11 @@ int OpenPdfPresenter::start() {
 
 void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
 	QDesktopWidget * desktopWidget = QApplication::desktop();
-	this->renderer = new Renderer(this->bus,this->configuration->getDocument(), desktopWidget->screen(this->configuration->getMainScreen())->geometry());
 
 	this->buildViews();
 	this->buildControllers();
 	this->setUpViews();
+	this->hasStarted = true;
 
 	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
 	this->currentNextController->setGeometry(geometry.width(),geometry.height());
@@ -128,14 +129,11 @@ void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
 	}
 
 	this->bus->fire(new SlideChangedEvent(0));
-	this->renderer->start();
 	this->timer->start();
 }
 
 OpenPdfPresenter::~OpenPdfPresenter() {
-	if (this->renderer) {
-		delete this->renderer;
-
+	if (this->hasStarted) {
 		// Views
 		delete this->currentNextView;
 		delete this->slideGridView;
@@ -151,8 +149,8 @@ OpenPdfPresenter::~OpenPdfPresenter() {
 		delete this->mainSlideController;
 	}
 	delete this->timer;
+
 	delete this->configuration;
-	
 	
 	delete this->bus;
 }
@@ -198,7 +196,7 @@ void OpenPdfPresenter::onTimeout(TimerEvent * evt) {
 }
 
 Slide OpenPdfPresenter::getSlide(int slideNumber) {
-	return this->renderer->getSlide(slideNumber);
+	return this->configuration->getRenderer()->getSlide(slideNumber);
 }
 
 void OpenPdfPresenter::onStopPresentation(StopPresentationEvent * evt) {
@@ -233,7 +231,7 @@ void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 		this->mainSlideWindow->showFullScreen();
 	}
 
-	this->renderer->setGeometry(desktopWidget->screenGeometry(this->configuration->getMainScreen()));
+	this->configuration->getRenderer()->setGeometry(desktopWidget->screenGeometry(this->configuration->getMainScreen()));
 }
 
 QString OpenPdfPresenter::getNotes(int slideNumber) {
@@ -258,12 +256,14 @@ PresenterConfiguration::PresenterConfiguration(int argc, char ** argv) {
 
 	this->parser = NULL;
 	this->document = NULL;
+	this->renderer = NULL;
 	this->parseArguments(argc,argv);
 }
 
 PresenterConfiguration::~PresenterConfiguration() {
-	delete this->parser;
+	delete this->renderer;
 	delete this->document;
+	delete this->parser;
 }
 
 void PresenterConfiguration::parseArguments(int argc, char ** argv) {
@@ -308,6 +308,9 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 }
 
 void PresenterConfiguration::setPdfFileName(QString fileName) {
+	if (this->renderer)
+		delete this->renderer;
+
 	if (this->document)
 		delete this->document;
 
@@ -319,6 +322,9 @@ void PresenterConfiguration::setPdfFileName(QString fileName) {
 	this->pdfFileName = fileName;
 	this->totalSlides = this->document->numPages();
 	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
+
+	this->renderer = new Renderer(this->bus,this->document, QApplication::desktop()->screen(this->mainScreen)->geometry());
+	this->renderer->start();
 	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 
 	if (this->parser)
@@ -407,4 +413,12 @@ void PresenterConfiguration::swapScreens() {
 
 bool PresenterConfiguration::isSkipStartScreen() {
 	return this->skipStartScreen;
+}
+
+Renderer * PresenterConfiguration::getRenderer() {
+	return this->renderer;
+}
+
+void PresenterConfiguration::setEventBus(IEventBus *bus) {
+	this->bus = bus;
 }

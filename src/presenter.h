@@ -44,6 +44,8 @@ class PresenterConfiguration {
 		QString notesFileName;
 		Poppler::Document * document;
 		NotesParser * parser;
+		Renderer * renderer;
+		IEventBus * bus;
 
 	public: //constructors / destructors
 		PresenterConfiguration(int argc, char ** argv);
@@ -54,6 +56,7 @@ class PresenterConfiguration {
 		QString getNotesFileName();
 		Poppler::Document * getDocument();
 		NotesParser * getParser();
+		Renderer * getRenderer();
 		int getTotalSlides();
 		int getTotalTime();
 		int getMainScreen();
@@ -68,6 +71,7 @@ class PresenterConfiguration {
 		void setMainScreen(int screen);
 		void setAuxScreen(int screen);
 		void setRehearseMode(bool rehearseMode);
+		void setEventBus(IEventBus * bus);
 
 	public: // misc
 		void swapScreens();
@@ -100,13 +104,12 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		int currentSlideNumber;
 		int elapsedTime;
 		PresenterConfiguration * configuration;
+		bool hasStarted;
 
 		QEventBus * bus;
 		Timer * timer;
 
 		ConsoleView * currentConsoleView;
-
-		Renderer * renderer;
 
 		void fireSlideChangedEvent();
 		void buildViews();

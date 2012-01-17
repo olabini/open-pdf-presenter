@@ -19,6 +19,7 @@
 
 #include "view.h"
 #include "ui_start-screen.h"
+#include <QRect>
 
 class StartScreenViewImpl : public QWidget, public StartScreenView {
 	Q_OBJECT
@@ -38,10 +39,12 @@ class StartScreenViewImpl : public QWidget, public StartScreenView {
 		virtual int getSeconds();
 		virtual void setPdfTitle(QString title);
 		virtual void setPdfTotalPages(int totalPages);
+		virtual void setSlidePreview(Slide slide);
 
 	private:
 		StartScreenViewController * controller;
 		Ui::StartScreen ui;
+		QRect previewArea;
 
 	private slots:
 		void onStartButtonClick();
@@ -49,6 +52,7 @@ class StartScreenViewImpl : public QWidget, public StartScreenView {
 		void onPdfFileBrowseButtonClick();
 		void onNotesFileBrowseButtonClick();
 		void onNotesFileDiscard();
+		void onSliderMove(int position);
 };
 
 #endif // STARTSCREEN_H

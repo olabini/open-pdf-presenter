@@ -16,8 +16,10 @@
 */
 #include "startscreen.h"
 
-StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent) {
+StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), previewArea(0,0,200,200) {
 	ui.setupUi(this);
+
+	this->setSlidePreview(Slide(QImage(QString(":/presenter/pastlastslide.svg"))));
 
 	connect(this->ui.startButton, SIGNAL(clicked()), this, SLOT(onStartButtonClick()));
 	connect(this->ui.quitButton, SIGNAL(clicked()), this, SLOT(onCancelButtonClick()));
@@ -25,6 +27,10 @@ StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent) {
 	connect(this->ui.openNotesButtonBox, SIGNAL(accepted()), this, SLOT(onNotesFileBrowseButtonClick()));
 	connect(this->ui.openNotesButtonBox, SIGNAL(destroyed()), this, SLOT(onNotesFileDiscard()));
 	connect(this->ui.openNotesButtonBox, SIGNAL(rejected()), this, SLOT(onNotesFileDiscard()));
+	connect(this->ui.slideSlider, SIGNAL(valueChanged(int)), this, SLOT(onSliderMove(int)));
+
+	this->ui.slideSlider->setTracking(true);
+	this->ui.slideSlider->setEnabled(false);
 }
 
 void StartScreenViewImpl::setController(StartScreenViewController * controller) {
@@ -92,5 +98,20 @@ void StartScreenViewImpl::setPdfTitle(QString title) {
 }
 
 void StartScreenViewImpl::setPdfTotalPages(int totalPages) {
+	this->ui.slideSlider->setEnabled(true);
+	this->ui.slideSlider->setSliderPosition(0);
+	this->ui.slideSlider->setMaximum(totalPages-1);
 }
 
+void StartScreenViewImpl::setSlidePreview(Slide slide) {
+	QRect area = slide.computeUsableArea(this->previewArea);
+
+	if (area.width() > area.height())
+		this->ui.previewLabel->setPixmap(QPixmap::fromImage(slide.asImage().scaledToWidth(area.width(), Qt::SmoothTransformation)));
+	else
+		this->ui.previewLabel->setPixmap(QPixmap::fromImage(slide.asImage().scaledToHeight(area.height(), Qt::SmoothTransformation)));
+}
+
+void StartScreenViewImpl::onSliderMove(int position) {
+	this->controller->setSlidePreview(position);
+}

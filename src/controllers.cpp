@@ -417,6 +417,7 @@ void MainWindowViewControllerImpl::onKeyBlackScreen() {
 StartScreenViewControllerImpl::StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus, PresenterConfiguration * configuration) {
 	this->view = view;
 	this->bus = bus;
+	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
 
 	this->configuration = configuration;
 	this->view->setController(this);
@@ -446,6 +447,8 @@ void StartScreenViewControllerImpl::browsePresentation() {
 		title = pdfFileName;
 
 	this->view->setPdfTitle(title);
+	this->view->setPdfTotalPages(this->configuration->getDocument()->numPages());
+	this->currentSlide = 0;
 }
 
 void StartScreenViewControllerImpl::browseNotes() {
@@ -482,4 +485,14 @@ void StartScreenViewControllerImpl::ok() {
 
 void StartScreenViewControllerImpl::quit() {
 	this->bus->fire(new StopPresentationEvent());
+}
+
+void StartScreenViewControllerImpl::setSlidePreview(int slide) {
+	this->currentSlide = slide;
+	this->view->setSlidePreview(this->configuration->getRenderer()->getSlide(slide));
+}
+
+void StartScreenViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
+	if (evt->getSlideNumber() == this->currentSlide)
+		this->view->setSlidePreview(evt->getSlide());
 }
