@@ -28,6 +28,7 @@
 #include "renderer.h"
 #include "controllers.h"
 #include "parser.h"
+#include "powermanagement.h"
 
 #include <QList>
 #include <poppler-qt4.h>
@@ -107,6 +108,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		Timer * timer;
 
 		ConsoleView * currentConsoleView;
+		PowerManagement * powerManagement;
 
 		void fireSlideChangedEvent();
 		void buildViews();

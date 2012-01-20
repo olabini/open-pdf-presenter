@@ -30,6 +30,18 @@ QT += xml xmlpatterns
 INCLUDEPATH += /usr/include/poppler/qt4
 LIBS += -lpoppler-qt4
 
+# SOLID (KDE Power Management)
+# Inspired by http://www.qtcentre.org/threads/36521-configuring-optional-dependencies-in-qmake-or-cmake
+# Check for KDE Solid headers and for libsolid
+KDEPATH = /usr/include/KDE/
+exists($$KDEPATH/Solid/PowerManagement) system("ld -lsolid -o /dev/null 2> /dev/null") {
+  message("KDE Power Management FOUND")
+  DEFINES += ENABLE_SOLID
+  INCLUDEPATH += /usr/include/KDE/
+  LIBS += -lsolid
+} else {
+  message("KDE Power Management DISABLED")
+}
 
 # Input
 HEADERS += src/events/event.h \
@@ -45,6 +57,7 @@ HEADERS += src/events/event.h \
            src/presenter.h \
     src/renderer.h \
     src/parser.h \
+    src/powermanagement.h \
     src/views/startscreen.h
 FORMS += \
     ui/controlbar.ui \
@@ -65,6 +78,7 @@ SOURCES += src/main.cpp \
            src/presenter.cpp \
     src/renderer.cpp \
     src/parser.cpp \
+    src/powermanagement.cpp \
     src/views/startscreen.cpp
 
 RESOURCES += \

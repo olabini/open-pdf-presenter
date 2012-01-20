@@ -47,6 +47,8 @@ OpenPdfPresenter::OpenPdfPresenter() {
 	this->timer = new Timer(this->bus);
 
 	this->currentConsoleView = this->currentNextView;
+
+	this->powerManagement = new PowerManagement(this->bus);
 }
 
 void OpenPdfPresenter::buildViews() {
@@ -153,6 +155,7 @@ OpenPdfPresenter::~OpenPdfPresenter() {
 		delete this->mainSlideController;
 	}
 	delete this->timer;
+	delete this->powerManagement;
 
 	delete this->configuration;
 	
