@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=open-pdf-presenter
+GenericName=PDF Presentation Viewer
+Exec=open-pdf-presenter %f
+Icon=application-pdf
+Type=Application
+Categories=Qt;Graphics;Viewer;
+MimeType=application/pdf;

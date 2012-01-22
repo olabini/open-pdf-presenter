@@ -14,7 +14,7 @@
 #    along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 
 TEMPLATE = app
-TARGET = 
+TARGET = open-pdf-presenter
 DEPENDPATH += . src ui src/events src/views
 INCLUDEPATH += . src/events src/views
 INCLUDEPATH += include
@@ -89,7 +89,16 @@ RESOURCES += \
 OTHER_FILES += \
     resources/notes/notes.xsd
 
+# Suport for make install
+unix {
+  isEmpty(PREFIX) {
+    PREFIX=/usr/local/
+  }
+  message("Install prefix is $$PREFIX")
 
+  desktop.files += open-pdf-presenter.desktop
+  desktop.path = $$PREFIX/share/applications/
 
-
-
+  target.path += $$PREFIX/bin/
+  INSTALLS += desktop target
+}
