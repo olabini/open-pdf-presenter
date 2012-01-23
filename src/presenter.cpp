@@ -26,15 +26,14 @@
 
 #include <tclap/CmdLine.h>
 
-OpenPdfPresenter::OpenPdfPresenter(PresenterConfiguration * configuration) {
+OpenPdfPresenter::OpenPdfPresenter() {
 
 	this->hasStarted = false;
-	this->configuration = configuration;
 	
 	this->elapsedTime = 0;
 	this->currentSlideNumber = 0;
 	this->bus = new QEventBus();
-	this->configuration->setEventBus(this->bus);
+	this->configuration = new PresenterConfiguration(this->bus);
 	this->bus->subscribe(&RelativeSlideEvent::TYPE,(SlideEventHandler*)this);
 	this->bus->subscribe(&AbsoluteSlideEvent::TYPE,(SlideEventHandler*)this);
 	this->bus->subscribe(&TimerEvent::TYPE,(ITimerEventHandler*)this);
@@ -82,13 +81,18 @@ void OpenPdfPresenter::setUpViews() {
 	this->mainSlideWindow->setContent(this->mainSlideView->asWidget());
 }
 
-int OpenPdfPresenter::start() {
+int OpenPdfPresenter::start(int argc, char ** argv) {
 	StartScreenViewImpl * startScreenView;
 	StartScreenViewControllerImpl * startScreenController;
+
+	startScreenView = new StartScreenViewImpl();
+	startScreenController = new StartScreenViewControllerImpl(startScreenView,this->bus);
+	startScreenView->setController(startScreenController);
+
+	this->configuration->parseArguments(argc, argv);
+	startScreenController->setConfiguration(this->configuration);
+
 	if (!this->configuration->isSkipStartScreen()) {
-		startScreenView = new StartScreenViewImpl();
-		startScreenController = new StartScreenViewControllerImpl(startScreenView,this->bus,this->configuration);
-		startScreenView->setController(startScreenController);
 		startScreenView->show();
 	} else {
 		if (this->configuration->getDocument() != NULL)
@@ -98,12 +102,11 @@ int OpenPdfPresenter::start() {
 			exit(1);
 	}
 
+
 	int ret = QApplication::instance()->exec();
 
-	if (!this->configuration->isSkipStartScreen()) {
-		delete startScreenController;
-		delete startScreenView;
-	}
+	delete startScreenController;
+	delete startScreenView;
 
 	return ret;
 }
@@ -242,7 +245,7 @@ PresenterConfiguration * OpenPdfPresenter::getConfiguration() {
 	return this->configuration;
 }
 
-PresenterConfiguration::PresenterConfiguration(int argc, char ** argv) {
+PresenterConfiguration::PresenterConfiguration(IEventBus * bus) {
 	QDesktopWidget * desktopWidget = QApplication::desktop();
 	this->mainScreen = desktopWidget->primaryScreen();
 	this->auxScreen = desktopWidget->primaryScreen();
@@ -257,7 +260,7 @@ PresenterConfiguration::PresenterConfiguration(int argc, char ** argv) {
 	this->parser = NULL;
 	this->document = NULL;
 	this->renderer = NULL;
-	this->parseArguments(argc,argv);
+	this->bus = bus;
 }
 
 PresenterConfiguration::~PresenterConfiguration() {
@@ -321,11 +324,11 @@ void PresenterConfiguration::setPdfFileName(QString fileName) {
 
 	this->pdfFileName = fileName;
 	this->totalSlides = this->document->numPages();
+	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
 
 	this->renderer = new Renderer(this->bus,this->document, QApplication::desktop()->screen(this->mainScreen)->geometry());
 	this->renderer->start();
-	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 
 	if (this->parser)
 		delete this->parser;
@@ -417,8 +420,4 @@ bool PresenterConfiguration::isSkipStartScreen() {
 
 Renderer * PresenterConfiguration::getRenderer() {
 	return this->renderer;
-}
-
-void PresenterConfiguration::setEventBus(IEventBus *bus) {
-	this->bus = bus;
 }

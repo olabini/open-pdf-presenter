@@ -170,7 +170,7 @@ class PresenterConfiguration;
 
 class StartScreenViewControllerImpl : public StartScreenViewController, public SlideRenderedEventHandler {
 	public:
-		StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus, PresenterConfiguration * configuration);
+		StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus);
 		virtual void browsePresentation();
 		virtual void browseNotes();
 		virtual void ok();
@@ -178,6 +178,10 @@ class StartScreenViewControllerImpl : public StartScreenViewController, public S
 		virtual void discardNotes();
 		virtual void setSlidePreview(int slide);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
+		void setConfiguration(PresenterConfiguration * configuration);
+
+	private:
+		void setPdfDetails();
 
 	private:
 		StartScreenView * view;

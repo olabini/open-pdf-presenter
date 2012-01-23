@@ -21,5 +21,5 @@
 int main(int argc, char ** argv) {
 	QApplication app(argc, argv);
 
-	return OpenPdfPresenter(new PresenterConfiguration(argc,argv)).start();
+	return OpenPdfPresenter().start(argc, argv);
 }

@@ -414,13 +414,18 @@ void MainWindowViewControllerImpl::onKeyBlackScreen() {
 		this->bus->fire(new BlackBlankScreenEvent());
 }
 
-StartScreenViewControllerImpl::StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus, PresenterConfiguration * configuration) {
+StartScreenViewControllerImpl::StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus) {
 	this->view = view;
 	this->bus = bus;
 	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
 
-	this->configuration = configuration;
+	this->configuration = NULL;
 	this->view->setController(this);
+	this->currentSlide = 0;
+}
+
+void StartScreenViewControllerImpl::setConfiguration(PresenterConfiguration * configuration) {
+	this->configuration = configuration;
 
 	int hours, minutes, seconds;
 
@@ -432,6 +437,20 @@ StartScreenViewControllerImpl::StartScreenViewControllerImpl(StartScreenView * v
 
 	this->view->setPdfFileName(this->configuration->getPdfFileName());
 	this->view->setNotesFileName(this->configuration->getNotesFileName());
+
+	if (this->configuration->getDocument() != NULL)
+		this->setPdfDetails();
+}
+
+void StartScreenViewControllerImpl::setPdfDetails() {
+	QString title = this->configuration->getDocument()->info("Title");
+	if (title.isNull() || title.isEmpty())
+		title = this->configuration->getPdfFileName();
+
+	this->view->setPdfTitle(title);
+	this->view->setPdfTotalPages(this->configuration->getDocument()->numPages());
+	this->currentSlide = 0;
+	this->view->setCurrentSlideNumber(this->currentSlide);
 }
 
 void StartScreenViewControllerImpl::browsePresentation() {
@@ -442,14 +461,7 @@ void StartScreenViewControllerImpl::browsePresentation() {
 
 	this->configuration->setPdfFileName(pdfFileName);
 	this->view->setPdfFileName(pdfFileName);
-	QString title = this->configuration->getDocument()->info("Title");
-	if (title.isNull() || title.isEmpty())
-		title = pdfFileName;
-
-	this->view->setPdfTitle(title);
-	this->view->setPdfTotalPages(this->configuration->getDocument()->numPages());
-	this->currentSlide = 0;
-	this->view->setCurrentSlideNumber(this->currentSlide);
+	this->setPdfDetails();
 }
 
 void StartScreenViewControllerImpl::browseNotes() {

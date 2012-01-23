@@ -48,7 +48,7 @@ class PresenterConfiguration {
 		IEventBus * bus;
 
 	public: //constructors / destructors
-		PresenterConfiguration(int argc, char ** argv);
+		PresenterConfiguration(IEventBus * bus);
 		~PresenterConfiguration();
 
 	public: // getters
@@ -71,18 +71,15 @@ class PresenterConfiguration {
 		void setMainScreen(int screen);
 		void setAuxScreen(int screen);
 		void setRehearseMode(bool rehearseMode);
-		void setEventBus(IEventBus * bus);
 
 	public: // misc
 		void swapScreens();
-
-	private: // misc
 		void parseArguments(int argc, char ** argv);
 };
 
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler, public SlideRenderedEventHandler, public ResetPresentationEventHandler, public SwapScreensEventHandler {
 	public:
-		OpenPdfPresenter(PresenterConfiguration * configuration);
+		OpenPdfPresenter();
 		~OpenPdfPresenter();
 		int getCurrentSlide();
 		int getTotalSlides();
@@ -99,7 +96,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		virtual void onSlideRendered(SlideRenderedEvent * evt);
 		virtual void onResetPresentation(ResetPresentationEvent * evt);
 		virtual void onSwapScreens(SwapScreensEvent * evt);
-		int start();
+		int start(int argc, char ** argv);
 	private:
 		int currentSlideNumber;
 		int elapsedTime;
