@@ -22,7 +22,6 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QCursor>
 #include <iostream>
 
 #include <tclap/CmdLine.h>
@@ -198,10 +197,6 @@ void OpenPdfPresenter::onGotoSlide(AbsoluteSlideEvent * evt) {
 }
 
 void OpenPdfPresenter::onTimeout(TimerEvent * evt) {
-	QPoint cursorPosition = QCursor::pos();
-	QCursor::setPos(cursorPosition.x(),cursorPosition.y()+1);
-	QCursor::setPos(cursorPosition.x(),cursorPosition.y());
-
 	this->elapsedTime++;
 	this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->configuration->getTotalTime() - this->elapsedTime));
 }

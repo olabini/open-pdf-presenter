@@ -20,12 +20,13 @@
 #include "events/lifecycle.h"
 
 /** Class that disables display and system power management during a presentation **/
-class PowerManagement : public StartStopPresentationEventHandler {
+class PowerManagement : public StartStopPresentationEventHandler, public ITimeChangedEventHandler {
 	public:
 		PowerManagement(IEventBus * bus);
 		~PowerManagement();
 		virtual void onStartPresentation(StartPresentationEvent * evt = 0);
 		virtual void onStopPresentation(StopPresentationEvent * evt = 0);
+		virtual void onTimeChanged(TimeChangedEvent *evt = 0);
 
 	private:
 		int screenSupressCookie;
