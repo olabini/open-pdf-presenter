@@ -21,7 +21,7 @@
 #include "ui_start-screen.h"
 #include <QRect>
 
-class StartScreenViewImpl : public QWidget, public StartScreenView {
+class StartScreenViewImpl : public QMainWindow, public StartScreenView {
 	Q_OBJECT
 
 	public:
@@ -54,6 +54,7 @@ class StartScreenViewImpl : public QWidget, public StartScreenView {
 		void onNotesFileBrowseButtonClick();
 		void onNotesFileDiscard();
 		void onSliderMove(int position);
+		void onAboutClick();
 };
 
 #endif // STARTSCREEN_H

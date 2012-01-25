@@ -16,7 +16,7 @@
 */
 #include "startscreen.h"
 
-StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), previewArea(0,0,200,200) {
+StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QMainWindow(parent), previewArea(0,0,200,200) {
 	ui.setupUi(this);
 
 	this->setSlidePreview(Slide(QImage(QString(":/presenter/pastlastslide.svg"))));
@@ -28,6 +28,11 @@ StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), pre
 	connect(this->ui.openNotesButtonBox, SIGNAL(destroyed()), this, SLOT(onNotesFileDiscard()));
 	connect(this->ui.openNotesButtonBox, SIGNAL(rejected()), this, SLOT(onNotesFileDiscard()));
 	connect(this->ui.slideSlider, SIGNAL(valueChanged(int)), this, SLOT(onSliderMove(int)));
+
+	// Menubar
+	connect(this->ui.actionOpen_presentation, SIGNAL(triggered()), this, SLOT(onPdfFileBrowseButtonClick()));
+	connect(this->ui.actionExit, SIGNAL(triggered()), this, SLOT(onCancelButtonClick()));
+	connect(this->ui.actionAbout, SIGNAL(triggered()), this, SLOT(onAboutClick()));
 
 	this->ui.slideSlider->setTracking(true);
 	this->ui.slideSlider->setEnabled(false);
@@ -119,4 +124,8 @@ void StartScreenViewImpl::setCurrentSlideNumber(int currentSlide) {
 
 void StartScreenViewImpl::onSliderMove(int position) {
 	this->controller->setSlidePreview(position);
+}
+
+void StartScreenViewImpl::onAboutClick() {
+	this->controller->about();
 }

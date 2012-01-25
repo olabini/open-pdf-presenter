@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <QFileDialog>
+#include <QMessageBox>
 #include "events/slide.h"
 #include "presenter.h"
 
@@ -509,4 +510,8 @@ void StartScreenViewControllerImpl::setSlidePreview(int slide) {
 void StartScreenViewControllerImpl::onSlideRendered(SlideRenderedEvent *evt) {
 	if (evt->getSlideNumber() == this->currentSlide)
 		this->view->setSlidePreview(evt->getSlide());
+}
+
+void StartScreenViewControllerImpl::about() {
+	QMessageBox::about(this->view->asWidget(),"About",QString("Open-PDF-Presenter version %1").arg(OPP_VERSION));
 }

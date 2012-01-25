@@ -273,7 +273,7 @@ PresenterConfiguration::~PresenterConfiguration() {
 }
 
 void PresenterConfiguration::parseArguments(int argc, char ** argv) {
-	TCLAP::CmdLine cmd("open-pdf-presenter",' ');
+	TCLAP::CmdLine cmd("open-pdf-presenter",' ',OPP_VERSION);
 
 	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
 	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",false,0,"Duration");

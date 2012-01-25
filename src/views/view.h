@@ -159,6 +159,7 @@ class StartScreenViewController : public Controller {
 		virtual void discardNotes() = 0;
 		virtual void ok() = 0;
 		virtual void quit() = 0;
+		virtual void about() = 0;
 		virtual void setSlidePreview(int slide) = 0;
 
 	protected:

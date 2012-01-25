@@ -176,6 +176,7 @@ class StartScreenViewControllerImpl : public StartScreenViewController, public S
 		virtual void ok();
 		virtual void quit();
 		virtual void discardNotes();
+		virtual void about();
 		virtual void setSlidePreview(int slide);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		void setConfiguration(PresenterConfiguration * configuration);

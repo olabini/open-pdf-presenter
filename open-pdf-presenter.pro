@@ -26,6 +26,9 @@ RCC_DIR = $$OBJECTS_DIR
 CONFIG += qt debug
 QT += xml xmlpatterns
 
+# Version
+DEFINES += 'OPP_VERSION=\'\"Development Build\"\''
+
 # POPPLER
 INCLUDEPATH += /usr/include/poppler/qt4
 LIBS += -lpoppler-qt4
@@ -102,3 +105,5 @@ unix {
   target.path += $$PREFIX/bin/
   INSTALLS += desktop target
 }
+
+
