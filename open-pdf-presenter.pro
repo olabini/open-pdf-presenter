@@ -27,7 +27,7 @@ CONFIG += qt debug
 QT += xml xmlpatterns
 
 # Version
-DEFINES += 'OPP_VERSION=\'\"Development Build\"\''
+DEFINES += 'OPP_VERSION=\'\"0.2\"\''
 
 # POPPLER
 INCLUDEPATH += /usr/include/poppler/qt4
