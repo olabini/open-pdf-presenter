@@ -16,7 +16,7 @@
 */
 #include "startscreen.h"
 
-StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QMainWindow(parent), previewArea(0,0,200,200) {
+StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), previewArea(0,0,200,200) {
 	ui.setupUi(this);
 
 	this->setSlidePreview(Slide(QImage(QString(":/presenter/pastlastslide.svg"))));
@@ -29,9 +29,9 @@ StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QMainWindow(parent),
 	connect(this->ui.openNotesButtonBox, SIGNAL(rejected()), this, SLOT(onNotesFileDiscard()));
 	connect(this->ui.slideSlider, SIGNAL(valueChanged(int)), this, SLOT(onSliderMove(int)));
 
-	// Menubar
-	connect(this->ui.actionOpen_presentation, SIGNAL(triggered()), this, SLOT(onPdfFileBrowseButtonClick()));
-	connect(this->ui.actionExit, SIGNAL(triggered()), this, SLOT(onCancelButtonClick()));
+	this->ui.optionsButton->addAction(this->ui.actionRehearse_Mode);
+	this->ui.optionsButton->addAction(this->ui.actionAbout);
+
 	connect(this->ui.actionAbout, SIGNAL(triggered()), this, SLOT(onAboutClick()));
 
 	this->ui.slideSlider->setTracking(true);
@@ -128,4 +128,12 @@ void StartScreenViewImpl::onSliderMove(int position) {
 
 void StartScreenViewImpl::onAboutClick() {
 	this->controller->about();
+}
+
+void StartScreenViewImpl::setRehearse(bool isRehearse) {
+	this->ui.actionRehearse_Mode->setChecked(isRehearse);
+}
+
+bool StartScreenViewImpl::isRehearse() {
+	return this->ui.actionRehearse_Mode->isChecked();
 }

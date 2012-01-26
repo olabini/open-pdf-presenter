@@ -439,6 +439,8 @@ void StartScreenViewControllerImpl::setConfiguration(PresenterConfiguration * co
 	this->view->setPdfFileName(this->configuration->getPdfFileName());
 	this->view->setNotesFileName(this->configuration->getNotesFileName());
 
+	this->view->setRehearse(this->configuration->isRehearseMode());
+
 	if (this->configuration->getDocument() != NULL)
 		this->setPdfDetails();
 }
@@ -493,6 +495,8 @@ void StartScreenViewControllerImpl::ok() {
 		this->view->getHours(),
 		this->view->getMinutes(),
 		this->view->getSeconds()));
+
+	this->configuration->setRehearseMode(this->view->isRehearse());
 
 	this->bus->fire(new StartPresentationEvent());
 }

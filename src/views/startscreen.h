@@ -21,7 +21,7 @@
 #include "ui_start-screen.h"
 #include <QRect>
 
-class StartScreenViewImpl : public QMainWindow, public StartScreenView {
+class StartScreenViewImpl : public QWidget, public StartScreenView {
 	Q_OBJECT
 
 	public:
@@ -37,10 +37,12 @@ class StartScreenViewImpl : public QMainWindow, public StartScreenView {
 		virtual int getHours();
 		virtual int getMinutes();
 		virtual int getSeconds();
+		virtual bool isRehearse();
 		virtual void setPdfTitle(QString title);
 		virtual void setPdfTotalPages(int totalPages);
 		virtual void setCurrentSlideNumber(int currentSlide);
 		virtual void setSlidePreview(Slide slide);
+		virtual void setRehearse(bool isRehearse);
 
 	private:
 		StartScreenViewController * controller;
