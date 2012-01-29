@@ -30,8 +30,11 @@ QT += xml xmlpatterns
 DEFINES += 'OPP_VERSION=\'\"Development Build\"\''
 
 # POPPLER
-INCLUDEPATH += /usr/include/poppler/qt4
-LIBS += -lpoppler-qt4
+#INCLUDEPATH += /usr/include/poppler/qt4
+#LIBS += -lpoppler-qt4
+# Use pkg-config to get the correct include and link flags for poppler
+CONFIG += link_pkgconfig
+PKGCONFIG += poppler-qt4
 
 # SOLID (KDE Power Management)
 # Inspired by http://www.qtcentre.org/threads/36521-configuring-optional-dependencies-in-qmake-or-cmake
