@@ -39,13 +39,15 @@ PKGCONFIG += poppler-qt4
 # SOLID (KDE Power Management)
 # Inspired by http://www.qtcentre.org/threads/36521-configuring-optional-dependencies-in-qmake-or-cmake
 # Check for KDE Solid headers and for libsolid
-KDEPATH = /usr/include/KDE/
+KDEPATH_OPTIONS = /usr/include/KDE/ /usr/include/kde4/KDE
+for(dir, KDEPATH_OPTIONS):exists($${dir}):KDEPATH=$${dir}
+
 exists($$KDEPATH/Solid/PowerManagement) \
 system("grep beginSuppressingScreenPowerManagement $$KDEPATH/../solid/powermanagement.h >> /dev/null") \
 system("ld -lsolid -o /dev/null 2> /dev/null") {
   message("KDE Power Management FOUND")
   DEFINES += ENABLE_SOLID
-  INCLUDEPATH += /usr/include/KDE/
+  INCLUDEPATH += $$KDEPATH
   LIBS += -lsolid
 } else {
   message("KDE Power Management DISABLED (not found/too old)")
