@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDesktopWidget>
+#include <QDebug>
 #include "events/slide.h"
 #include "presenter.h"
 
@@ -327,6 +329,7 @@ void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 		pixmap = pixmap.scaled(usableArea.width(), usableArea.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	}
 
+	qDebug() << "Showing slide number " << evt->getCurrentSlideNumber() << " at " << pixmap.width() << "x" << pixmap.height();
 	this->view->setCurrentSlide(pixmap);
 	this->currentSlide = evt->getCurrentSlideNumber();
 	this->blackBlank = this->whiteBlank = false;
