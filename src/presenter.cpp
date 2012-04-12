@@ -324,7 +324,7 @@ void PresenterConfiguration::setPdfFileName(QString fileName) {
 	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
 
-	this->renderer = new Renderer(this->bus,this->document, QApplication::desktop()->screen(this->mainScreen)->geometry());
+	this->renderer = new Renderer(this->bus,this->document, QApplication::desktop()->screenGeometry(this->mainScreen));
 	this->renderer->start();
 
 	if (this->parser)
