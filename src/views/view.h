@@ -145,7 +145,7 @@ class MainSlideViewController : public Controller {
 
 class MainSlideView : public View<MainSlideViewController> {
 	public:
-		virtual void setCurrentSlide(QPixmap slide, bool scale = false) = 0;
+		virtual void setCurrentSlide(QPixmap slide) = 0;
 		virtual void setBlackBlankScreen() = 0;
 		virtual void setWhiteBlankScreen() = 0;
 	protected:

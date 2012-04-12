@@ -319,8 +319,15 @@ MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSl
 }
 
 void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
-	QPixmap slide = this->presenter->getSlide(evt->getCurrentSlideNumber()).asPixmap();
-	this->view->setCurrentSlide(slide);
+	Slide slide = this->presenter->getSlide(evt->getCurrentSlideNumber());
+	QPixmap pixmap = slide.asPixmap();
+	QRect currentGeometry = QApplication::desktop()->screenGeometry(this->presenter->getConfiguration()->getMainScreen());
+	if (currentGeometry != slide.getGeometry()) {
+		QRect usableArea = slide.computeUsableArea(currentGeometry);
+		pixmap = pixmap.scaled(usableArea.width(), usableArea.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	}
+
+	this->view->setCurrentSlide(pixmap);
 	this->currentSlide = evt->getCurrentSlideNumber();
 	this->blackBlank = this->whiteBlank = false;
 }

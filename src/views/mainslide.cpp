@@ -42,15 +42,12 @@ MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidge
 	this->slideLabel->setAlignment(Qt::AlignCenter);
 }
 
-void MainSlideViewImpl::setCurrentSlide(QPixmap slide, bool scale) {
+void MainSlideViewImpl::setCurrentSlide(QPixmap slide) {
 	this->blackBlankScreen->setVisible(false);
 	this->whiteBlankScreen->setVisible(false);
 	this->slideLabel->setVisible(true);
 
-	if (scale)
-		this->slideLabel->setPixmap(slide.scaledToWidth(this->usableWidth, Qt::SmoothTransformation));
-	else
-		this->slideLabel->setPixmap(slide);
+	this->slideLabel->setPixmap(slide);
 }
 
 void MainSlideViewImpl::setBlackBlankScreen() {
