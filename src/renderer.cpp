@@ -17,6 +17,7 @@
 #include "renderer.h"
 
 #include <QPointF>
+#include <QDebug>
 
 #define TEST_DPI 96.0
 
@@ -135,6 +136,7 @@ Renderer::~Renderer() {
 void Renderer::setGeometry(QRect geometry) {
 	this->mutex->lock();
 	this->currentGeometry = geometry;
+	qDebug() << "Main slide geometry " << this->currentGeometry.width() << "x" << this->currentGeometry.height();
 	this->loadedSlides->clear();
 	for (int i = 0 ; i < this->document->numPages() ; i++)
 		this->loadedSlides->append(false);
@@ -167,6 +169,7 @@ void Renderer::run() {
 					this->mutex->unlock();
 					renderedAny = true;
 					newSlide = this->renderSlide(i, geometry);
+					qDebug() << "Rendered slide number " << i << " at " << newSlide.asImage().size().width() << "x" << newSlide.asImage().size().height();
 					this->mutex->lock();
 					if (this->currentGeometry == geometry)
 						break;

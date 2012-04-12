@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QDebug>
 #include <iostream>
 
 #include <tclap/CmdLine.h>
@@ -224,10 +225,13 @@ void OpenPdfPresenter::updateWindowPositions() {
 	this->currentNextNotesController->setGeometry(geometry.width(),geometry.height());
 	this->slideGridController->setGeometry(geometry.width(),geometry.height());
 	this->mainConsoleWindow->move(geometry.topLeft());
+	qDebug() << "Moved aux window to position " << geometry.topLeft().x() << "," << geometry.topLeft().y();
 	this->mainConsoleWindow->showFullScreen();
 	if (!this->configuration->isRehearseMode()) {
 		this->mainSlideWindow->showNormal();
-		this->mainSlideWindow->move(desktopWidget->screenGeometry(this->configuration->getMainScreen()).topLeft());
+		geometry = desktopWidget->screenGeometry(this->configuration->getMainScreen());
+		this->mainSlideWindow->move(geometry.topLeft());
+		qDebug() << "Moved main window to position " << geometry.topLeft().x() << "," << geometry.topLeft().y();
 		this->mainSlideWindow->showFullScreen();
 	}
 
