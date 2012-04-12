@@ -90,7 +90,6 @@ Slide SlideRenderedEvent::getSlide() {
 Renderer::Renderer(IEventBus * bus, Poppler::Document * document, QRect geometry) :loadingSlide(QImage(QString(":/presenter/loadingslide.svg"))) {
 	this->bus = bus;
 	this->document = document;
-	this->currentGeometry = geometry;
 
 	this->slides = new QList<Slide>();
 	this->testSlides = new QList<Slide>();
@@ -109,6 +108,8 @@ Renderer::Renderer(IEventBus * bus, Poppler::Document * document, QRect geometry
 
 	this->thread = new RendererThread(this);
 	this->stopThread = false;
+
+	this->setGeometry(geometry);
 }
 
 void Renderer::start() {
@@ -165,7 +166,7 @@ void Renderer::run() {
 					QRect geometry = this->currentGeometry;
 					this->mutex->unlock();
 					renderedAny = true;
-					newSlide = this->renderSlide(i);
+					newSlide = this->renderSlide(i, geometry);
 					this->mutex->lock();
 					if (this->currentGeometry == geometry)
 						break;
@@ -180,16 +181,17 @@ void Renderer::run() {
 	}
 }
 
-Slide Renderer::renderSlide(int slideNumber) {
+Slide Renderer::renderSlide(int slideNumber, QRect geometry) {
 	this->fillTestSlideSize(slideNumber);
 
 	Slide testSlide =  this->testSlides->at(slideNumber);
 
-	QPoint scaleFactor = testSlide.computeScaleFactor(this->currentGeometry,TEST_DPI);
+	QPoint scaleFactor = testSlide.computeScaleFactor(geometry, TEST_DPI);
 
 	Poppler::Page * pdfPage = this->document->page(slideNumber);
 	QImage image = pdfPage->renderToImage(scaleFactor.x(),scaleFactor.y());
 	delete pdfPage;
+
 
 	return Slide(image);
 }

@@ -75,7 +75,7 @@ class Renderer {
 		void run();
 
 	private:
-		Slide renderSlide(int slideNumber);
+		Slide renderSlide(int slideNumber, QRect geometry);
 		void fillTestSlideSize(int slideNumber);
 
 	private:
