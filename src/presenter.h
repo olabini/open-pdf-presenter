@@ -114,6 +114,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		void buildViews();
 		void buildControllers();
 		void setUpViews();
+		void updateWindowPositions();
 
 	private: // views
 		PresenterConsoleViewImpl * presenterConsoleView;
