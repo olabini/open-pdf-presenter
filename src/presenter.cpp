@@ -215,6 +215,7 @@ void OpenPdfPresenter::onResetPresentation(ResetPresentationEvent * evt) {
 void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 	this->configuration->swapScreens();
 	this->updateWindowPositions();
+	this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
 }
 
 void OpenPdfPresenter::updateWindowPositions() {
@@ -224,14 +225,14 @@ void OpenPdfPresenter::updateWindowPositions() {
 	this->currentNextController->setGeometry(geometry.width(),geometry.height());
 	this->currentNextNotesController->setGeometry(geometry.width(),geometry.height());
 	this->slideGridController->setGeometry(geometry.width(),geometry.height());
-	this->mainConsoleWindow->move(geometry.topLeft());
-	qDebug() << "Moved aux window to position " << geometry.topLeft().x() << "," << geometry.topLeft().y();
+	this->mainConsoleWindow->setGeometry(geometry);
+	qDebug() << "Moved aux window to position " << this->mainConsoleWindow ->geometry();
 	this->mainConsoleWindow->showFullScreen();
 	if (!this->configuration->isRehearseMode()) {
 		this->mainSlideWindow->showNormal();
 		geometry = desktopWidget->screenGeometry(this->configuration->getMainScreen());
-		this->mainSlideWindow->move(geometry.topLeft());
-		qDebug() << "Moved main window to position " << geometry.topLeft().x() << "," << geometry.topLeft().y();
+		this->mainSlideWindow->setGeometry(geometry);
+		qDebug() << "Moved main window to position " << this->mainSlideWindow->geometry();
 		this->mainSlideWindow->showFullScreen();
 	}
 
