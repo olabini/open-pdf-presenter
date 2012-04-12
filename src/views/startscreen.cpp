@@ -19,7 +19,7 @@
 StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), previewArea(0,0,200,200) {
 	ui.setupUi(this);
 
-	this->setSlidePreview(Slide(QImage(QString(":/presenter/pastlastslide.svg"))));
+	this->setSlidePreview(Slide(QImage(QString(":/presenter/pastlastslide.svg")), QRect()));
 
 	connect(this->ui.startButton, SIGNAL(clicked()), this, SLOT(onStartButtonClick()));
 	connect(this->ui.quitButton, SIGNAL(clicked()), this, SLOT(onCancelButtonClick()));

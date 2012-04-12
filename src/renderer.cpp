@@ -21,8 +21,9 @@
 
 #define TEST_DPI 96.0
 
-Slide::Slide(QImage image) {
+Slide::Slide(QImage image, QRect geometry) {
 	this->image = image;
+	this->geometry = geometry;
 }
 
 QImage Slide::asImage() {
@@ -66,6 +67,10 @@ QPoint Slide::computeScaleFactor(QRect geometry, int multiplier) {
 	return QPoint(xScaleFactor,yScaleFactor);
 }
 
+QRect Slide::getGeometry() {
+	return this->geometry;
+}
+
 Type SlideRenderedEvent::TYPE = Type();
 
 SlideRenderedEvent::SlideRenderedEvent(int slideNumber, Slide slide) : slide(slide) {
@@ -88,7 +93,7 @@ Slide SlideRenderedEvent::getSlide() {
 	return this->slide;
 }
 
-Renderer::Renderer(IEventBus * bus, Poppler::Document * document, QRect geometry) :loadingSlide(QImage(QString(":/presenter/loadingslide.svg"))) {
+Renderer::Renderer(IEventBus * bus, Poppler::Document * document, QRect geometry) :loadingSlide(QImage(QString(":/presenter/loadingslide.svg")), QRect()) {
 	this->bus = bus;
 	this->document = document;
 
@@ -196,13 +201,14 @@ Slide Renderer::renderSlide(int slideNumber, QRect geometry) {
 	delete pdfPage;
 
 
-	return Slide(image);
+
+	return Slide(image, geometry);
 }
 
 void Renderer::fillTestSlideSize(int slideNumber) {
 	if (!this->loadedTestSlides->at(slideNumber)) {
 		Poppler::Page * testPage = this->document->page(slideNumber);
-		Slide testSlide = Slide(testPage->renderToImage(TEST_DPI, TEST_DPI));
+		Slide testSlide = Slide(testPage->renderToImage(TEST_DPI, TEST_DPI), QRect());
 		this->testSlides->replace(slideNumber,testSlide);
 		this->loadedTestSlides->replace(slideNumber,true);
 		delete testPage;

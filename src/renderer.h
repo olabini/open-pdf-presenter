@@ -32,13 +32,15 @@
 
 class Slide {
 	public:
-		Slide(QImage image);
+		Slide(QImage image, QRect geometry);
 		QPixmap asPixmap();
 		QImage asImage();
 		QRect computeUsableArea(QRect geometry);
 		QPoint computeScaleFactor(QRect geometry, int multiplier = 1);
+		QRect getGeometry();
 	private:
 		QImage image;
+		QRect geometry;
 };
 
 class SlideRenderedEventHandler;
