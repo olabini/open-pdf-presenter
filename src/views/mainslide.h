@@ -23,6 +23,7 @@
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QBasicTimer>
 
 class MainSlideViewImpl : public QWidget, public MainSlideView {
 	public:
@@ -33,12 +34,19 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 		virtual void setController(MainSlideViewController * controller) { }
 		virtual QWidget * asWidget();
 
+		void timerEvent(QTimerEvent * event);
+
 	private:
 		int usableWidth;
 		QVBoxLayout * layout;
 		QLabel * slideLabel;
 		QWidget * blackBlankScreen;
 		QWidget * whiteBlankScreen;
+
+		QPixmap previous;
+		QPixmap current;
+		int i;
+		QBasicTimer timer;
 };
 
 #endif
