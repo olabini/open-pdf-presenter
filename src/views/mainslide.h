@@ -23,9 +23,12 @@
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QBasicTimer>
+#include <QTimeLine>
 
 class MainSlideViewImpl : public QWidget, public MainSlideView {
+
+	Q_OBJECT
+
 	public:
 		MainSlideViewImpl(int usableWidth, QWidget * parent = NULL);
 		virtual void setCurrentSlide(QPixmap slide);
@@ -33,8 +36,6 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 		virtual void setWhiteBlankScreen();
 		virtual void setController(MainSlideViewController * controller) { }
 		virtual QWidget * asWidget();
-
-		void timerEvent(QTimerEvent * event);
 
 	private:
 		int usableWidth;
@@ -45,8 +46,10 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 
 		QPixmap previous;
 		QPixmap current;
-		int i;
-		QBasicTimer timer;
+		QTimeLine crossFadeTimeLine;
+
+	private slots:
+		void frameChanged (int frame);
 };
 
 #endif

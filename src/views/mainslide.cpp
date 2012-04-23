@@ -18,7 +18,10 @@
 #include "mainslide.h"
 #include <QPainter>
 
-MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidget(parent) {
+// Number of frames per transition
+#define N_FRAMES 10
+
+MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidget(parent) , crossFadeTimeLine(200,this) {
 	this->usableWidth = usableWidth;
 	this->layout = new QVBoxLayout(this);
 	this->setLayout(this->layout);
@@ -44,9 +47,23 @@ MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidge
 
 	this->previous = NULL;
 	this->current = NULL;
-	this->i = 0;
-	this->timer = QBasicTimer();
-	this->timer.start(5,this);
+	this->crossFadeTimeLine.setFrameRange(0,N_FRAMES);
+	this->crossFadeTimeLine.setCurveShape(QTimeLine::LinearCurve);
+
+	connect(&(this->crossFadeTimeLine), SIGNAL(frameChanged(int)), this, SLOT(frameChanged(int)));
+}
+
+void MainSlideViewImpl::frameChanged(int frame) {
+	QPixmap result(this->current.size());
+	result.fill(Qt::transparent);
+	QPainter painter;
+	painter.begin(&result);
+	painter.drawPixmap(0, 0, this->previous);
+	painter.setOpacity((double(frame))/((double)N_FRAMES));
+	painter.drawPixmap(0, 0, this->current);
+	painter.end();
+
+	this->slideLabel->setPixmap(result);
 }
 
 void MainSlideViewImpl::setCurrentSlide(QPixmap slide) {
@@ -54,29 +71,9 @@ void MainSlideViewImpl::setCurrentSlide(QPixmap slide) {
 	this->whiteBlankScreen->setVisible(false);
 	this->slideLabel->setVisible(true);
 
+	this->previous = this->current;
 	this->current = slide;
-}
-
-void MainSlideViewImpl::timerEvent(QTimerEvent *event) {
-	if (!this->current.isNull()) {
-		QPixmap result(this->current.size());
-		result.fill(Qt::transparent);
-		QPainter painter;
-		painter.begin(&result);
-		painter.drawPixmap(0, 0, this->previous);
-		painter.setOpacity((double(this->i))/10.0);
-		painter.drawPixmap(0, 0, this->current);
-		painter.end();
-
-		this->slideLabel->setPixmap(result);
-
-		this->i = this->i + 1;
-		if (this->i > 10) {
-			this->i = 0;
-			this->previous = this->current;
-			this->current = NULL;
-		}
-	}
+	this->crossFadeTimeLine.start();
 }
 
 void MainSlideViewImpl::setBlackBlankScreen() {
