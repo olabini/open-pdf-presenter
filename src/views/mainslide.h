@@ -30,7 +30,7 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 	Q_OBJECT
 
 	public:
-		MainSlideViewImpl(int usableWidth, QWidget * parent = NULL);
+		MainSlideViewImpl(int usableWidth, int transitionDuration, QWidget * parent = NULL);
 		virtual void setCurrentSlide(QPixmap slide);
 		virtual void setBlackBlankScreen();
 		virtual void setWhiteBlankScreen();

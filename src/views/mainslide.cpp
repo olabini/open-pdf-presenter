@@ -21,7 +21,7 @@
 // Number of frames per transition
 #define N_FRAMES 10
 
-MainSlideViewImpl::MainSlideViewImpl(int usableWidth, QWidget * parent) : QWidget(parent) , crossFadeTimeLine(200,this) {
+MainSlideViewImpl::MainSlideViewImpl(int usableWidth, int transitionDuration, QWidget * parent) : QWidget(parent) , crossFadeTimeLine(transitionDuration,this) {
 	this->usableWidth = usableWidth;
 	this->layout = new QVBoxLayout(this);
 	this->setLayout(this->layout);

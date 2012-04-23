@@ -40,6 +40,7 @@ class PresenterConfiguration {
 		int mainScreen, auxScreen;
 		bool rehearseMode;
 		bool skipStartScreen;
+		int transitionDuration;
 
 		QString pdfFileName;
 		QString notesFileName;
@@ -64,6 +65,7 @@ class PresenterConfiguration {
 		int getAuxScreen();
 		bool isRehearseMode();
 		bool isSkipStartScreen();
+		int getTransitionDuration();
 
 	public: // setters
 		void setPdfFileName(QString fileName);
@@ -72,7 +74,7 @@ class PresenterConfiguration {
 		void setMainScreen(int screen);
 		void setAuxScreen(int screen);
 		void setRehearseMode(bool rehearseMode);
-
+		void setTransitionDuration(int duration);
 	public: // misc
 		void swapScreens();
 		void parseArguments(int argc, char ** argv);

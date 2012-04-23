@@ -58,7 +58,7 @@ void OpenPdfPresenter::buildViews() {
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
 	this->mainSlideWindow = new MainWindowViewImpl();
-	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->configuration->getMainScreen())->geometry().width());
+	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->configuration->getMainScreen())->geometry().width(), this->configuration->getTransitionDuration());
 }
 
 void OpenPdfPresenter::buildControllers() {
@@ -276,6 +276,7 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 
 	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
 	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",false,0,"Duration");
+	TCLAP::ValueArg<int> transitionDuration("t","transition","Duration of the transition effect between slides, in mseconds",false,200,"Transition duration");
 	TCLAP::SwitchArg rehearseSwitch("r","rehearse","Enable rehearse mode");
 	TCLAP::SwitchArg skipStartScreenSwitch("s","skip","Skip start screen");
 	TCLAP::UnlabeledValueArg<std::string> pdfFileArg("Presentation","The PDF file with the presentation's slides",false,"","PDF file");
@@ -283,6 +284,7 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 	cmd.add(rehearseSwitch);
 	cmd.add(skipStartScreenSwitch);
 	cmd.add(durationArg);
+	cmd.add(transitionDuration);
 	cmd.add(notesArg);
 	cmd.add(pdfFileArg);
 
@@ -292,6 +294,7 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 		this->setRehearseMode(rehearseSwitch.getValue());
 		this->skipStartScreen = skipStartScreenSwitch.getValue();
 		this->setTotalTime(durationArg.getValue());
+		this->setTransitionDuration(transitionDuration.getValue());
 
 		this->document = NULL;
 		this->pdfFileName = QString::fromLocal8Bit(pdfFileArg.getValue().c_str());
@@ -310,6 +313,14 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 	}
 
 
+}
+
+void PresenterConfiguration::setTransitionDuration(int duration) {
+	this->transitionDuration = duration;
+}
+
+int PresenterConfiguration::getTransitionDuration() {
+	return this->transitionDuration;
 }
 
 void PresenterConfiguration::setPdfFileName(QString fileName) {
