@@ -59,7 +59,7 @@ void OpenPdfPresenter::buildViews() {
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
 	this->mainSlideWindow = new MainWindowViewImpl();
-	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->configuration->getMainScreen())->geometry().width(), new CrossFadingTransition(this->configuration->getTransitionDuration()));
+	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->configuration->getMainScreen())->geometry().width(), TransitionFactory::getInstance()->getTransition(this->configuration->getTransitionEffect()));
 }
 
 void OpenPdfPresenter::buildControllers() {
@@ -94,6 +94,23 @@ int OpenPdfPresenter::start(int argc, char ** argv) {
 	startScreenView->setController(startScreenController);
 
 	this->configuration->parseArguments(argc, argv);
+
+	TransitionFactory::getInstance()->registerTransition(new NoTransition());
+	TransitionFactory::getInstance()->registerTransition(new CrossFadingTransition(this->configuration->getTransitionDuration()));
+
+	if (this->configuration->isListTransitions()) {
+		this->printAvailableTransitions();
+		return 0;
+	}
+
+	SlideTransition * transition = TransitionFactory::getInstance()->getTransition(this->configuration->getTransitionEffect());
+
+	if (transition == NULL) {
+		std::cout << "Unknown transition : \"" << this->configuration->getTransitionEffect().toStdString() << "\"\n";
+		this->printAvailableTransitions();
+		exit(1);
+	}
+
 	startScreenController->setConfiguration(this->configuration);
 
 	if (!this->configuration->isSkipStartScreen()) {
@@ -113,6 +130,13 @@ int OpenPdfPresenter::start(int argc, char ** argv) {
 	delete startScreenView;
 
 	return ret;
+}
+
+void OpenPdfPresenter::printAvailableTransitions() {
+	std::cout << "Possible transitions:\n";
+
+	foreach(SlideTransition* transition, TransitionFactory::getInstance()->getAllTransitions())
+		std::cout << "\t" << transition->getName().toStdString() << "\t" << transition->getDesc().toStdString() << "\n";
 }
 
 void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
@@ -278,6 +302,8 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
 	TCLAP::ValueArg<int> durationArg("d","duration","Presentation's duration, in seconds",false,0,"Duration");
 	TCLAP::ValueArg<int> transitionDuration("t","transition","Duration of the transition effect between slides, in mseconds",false,200,"Transition duration");
+	TCLAP::ValueArg<std::string> transitionEffect("e","effect","Transition effect to use during presentation",false,"crossfade","Transition Effect");
+	TCLAP::SwitchArg listAvailableTransitions("l","list","List available transitions and exit");
 	TCLAP::SwitchArg rehearseSwitch("r","rehearse","Enable rehearse mode");
 	TCLAP::SwitchArg skipStartScreenSwitch("s","skip","Skip start screen");
 	TCLAP::UnlabeledValueArg<std::string> pdfFileArg("Presentation","The PDF file with the presentation's slides",false,"","PDF file");
@@ -286,16 +312,20 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 	cmd.add(skipStartScreenSwitch);
 	cmd.add(durationArg);
 	cmd.add(transitionDuration);
+	cmd.add(transitionEffect);
+	cmd.add(listAvailableTransitions);
 	cmd.add(notesArg);
 	cmd.add(pdfFileArg);
 
 	try {
 		cmd.parse(QCoreApplication::argc(),QCoreApplication::argv());
 
+		this->setListTransitions(listAvailableTransitions.getValue());
 		this->setRehearseMode(rehearseSwitch.getValue());
 		this->skipStartScreen = skipStartScreenSwitch.getValue();
 		this->setTotalTime(durationArg.getValue());
 		this->setTransitionDuration(transitionDuration.getValue());
+		this->setTransitionEffect(QString::fromLocal8Bit(transitionEffect.getValue().c_str()));
 
 		this->document = NULL;
 		this->pdfFileName = QString::fromLocal8Bit(pdfFileArg.getValue().c_str());
@@ -314,6 +344,22 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 	}
 
 
+}
+void PresenterConfiguration::setListTransitions(bool list) {
+	this->listTransitions = list;
+}
+
+bool PresenterConfiguration::isListTransitions() {
+	return this->listTransitions;
+}
+
+
+void PresenterConfiguration::setTransitionEffect(QString effect) {
+	this->transitionEffect = effect;
+}
+
+QString PresenterConfiguration::getTransitionEffect() {
+	return this->transitionEffect;
 }
 
 void PresenterConfiguration::setTransitionDuration(int duration) {

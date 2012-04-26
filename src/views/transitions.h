@@ -3,6 +3,7 @@
 
 #include <QTimeLine>
 #include <QPixmap>
+#include <QMap>
 
 class SlideTransition : public QObject {
 
@@ -16,6 +17,21 @@ class SlideTransition : public QObject {
 
 	signals:
 		void frameChanged(QPixmap frame);
+};
+
+/*singleton*/ class TransitionFactory {
+	private:
+		TransitionFactory();
+		TransitionFactory(TransitionFactory const&);
+		void operator=(TransitionFactory const&);
+
+		QMap<QString, SlideTransition*> map;
+
+	public:
+		static TransitionFactory * getInstance();
+		void registerTransition(SlideTransition * transition);
+		SlideTransition * getTransition(QString name);
+		QList<SlideTransition*> getAllTransitions();
 };
 
 class NoTransition : public SlideTransition {

@@ -41,7 +41,9 @@ class PresenterConfiguration {
 		bool rehearseMode;
 		bool skipStartScreen;
 		int transitionDuration;
+		bool listTransitions;
 
+		QString transitionEffect;
 		QString pdfFileName;
 		QString notesFileName;
 		Poppler::Document * document;
@@ -66,6 +68,8 @@ class PresenterConfiguration {
 		bool isRehearseMode();
 		bool isSkipStartScreen();
 		int getTransitionDuration();
+		QString getTransitionEffect();
+		bool isListTransitions();
 
 	public: // setters
 		void setPdfFileName(QString fileName);
@@ -75,6 +79,9 @@ class PresenterConfiguration {
 		void setAuxScreen(int screen);
 		void setRehearseMode(bool rehearseMode);
 		void setTransitionDuration(int duration);
+		void setTransitionEffect(QString duration);
+		void setListTransitions(bool list);
+
 	public: // misc
 		void swapScreens();
 		void parseArguments(int argc, char ** argv);
@@ -117,6 +124,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		void buildControllers();
 		void setUpViews();
 		void updateWindowPositions();
+		void printAvailableTransitions();
 
 	private: // views
 		PresenterConsoleViewImpl * presenterConsoleView;

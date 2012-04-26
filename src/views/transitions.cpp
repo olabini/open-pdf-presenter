@@ -5,6 +5,30 @@
 // Number of frames per transition
 #define N_FRAMES 10
 
+TransitionFactory * TransitionFactory::getInstance() {
+	static TransitionFactory instance;
+
+	return &instance;
+}
+
+TransitionFactory::TransitionFactory() : map() {
+}
+
+void TransitionFactory::registerTransition(SlideTransition *transition) {
+	this->map.insert(transition->getName(), transition);
+}
+
+SlideTransition * TransitionFactory::getTransition(QString name) {
+	if (!this->map.contains(name))
+		return NULL;
+
+	return this->map.value(name);
+}
+
+QList<SlideTransition*> TransitionFactory::getAllTransitions() {
+	return this->map.values();
+}
+
 QString NoTransition::getName() {
 	return "no-transition";
 }
@@ -56,7 +80,7 @@ QPixmap CrossFadingTransition::animateFrame(int frame, QPixmap from, QPixmap to)
 }
 
 QString CrossFadingTransition::getName() {
-	return "crossfading";
+	return "crossfade";
 }
 
 QString CrossFadingTransition::getDesc() {
