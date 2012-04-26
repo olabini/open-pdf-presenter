@@ -18,6 +18,7 @@
 
 #include "events/lifecycle.h"
 #include "views/startscreen.h"
+#include "views/transitions.h"
 
 #include <QCoreApplication>
 #include <QApplication>
@@ -58,7 +59,7 @@ void OpenPdfPresenter::buildViews() {
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
 	this->mainSlideWindow = new MainWindowViewImpl();
-	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->configuration->getMainScreen())->geometry().width(), this->configuration->getTransitionDuration());
+	this->mainSlideView = new MainSlideViewImpl(QApplication::desktop()->screen(this->configuration->getMainScreen())->geometry().width(), new CrossFadingTransition(this->configuration->getTransitionDuration()));
 }
 
 void OpenPdfPresenter::buildControllers() {

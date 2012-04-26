@@ -18,6 +18,7 @@
 #define _MAINSLIDE_H_
 
 #include "view.h"
+#include "transitions.h"
 
 #include <QWidget>
 #include <QPixmap>
@@ -30,7 +31,8 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 	Q_OBJECT
 
 	public:
-		MainSlideViewImpl(int usableWidth, int transitionDuration, QWidget * parent = NULL);
+		MainSlideViewImpl(int usableWidth, SlideTransition * transition, QWidget * parent = NULL);
+		~MainSlideViewImpl();
 		virtual void setCurrentSlide(QPixmap slide);
 		virtual void setBlackBlankScreen();
 		virtual void setWhiteBlankScreen();
@@ -44,12 +46,10 @@ class MainSlideViewImpl : public QWidget, public MainSlideView {
 		QWidget * blackBlankScreen;
 		QWidget * whiteBlankScreen;
 
-		QPixmap previous;
-		QPixmap current;
-		QTimeLine crossFadeTimeLine;
+		SlideTransition * transition;
 
 	private slots:
-		void frameChanged (int frame);
+		void frameChanged (QPixmap frame);
 };
 
 #endif

@@ -68,7 +68,8 @@ HEADERS += src/events/event.h \
     src/renderer.h \
     src/parser.h \
     src/powermanagement.h \
-    src/views/startscreen.h
+    src/views/startscreen.h \
+    src/views/transitions.h
 FORMS += \
     ui/controlbar.ui \
     ui/currentnextslide.ui \
@@ -89,7 +90,8 @@ SOURCES += src/main.cpp \
     src/renderer.cpp \
     src/parser.cpp \
     src/powermanagement.cpp \
-    src/views/startscreen.cpp
+    src/views/startscreen.cpp \
+    src/views/transitions.cpp
 
 RESOURCES += \
     resources/controlbar/controlbar.qrc \
@@ -112,5 +114,7 @@ unix {
   target.path += $$PREFIX/bin/
   INSTALLS += desktop target
 }
+
+
 
 

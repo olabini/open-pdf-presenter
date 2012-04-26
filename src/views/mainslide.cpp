@@ -21,7 +21,7 @@
 // Number of frames per transition
 #define N_FRAMES 10
 
-MainSlideViewImpl::MainSlideViewImpl(int usableWidth, int transitionDuration, QWidget * parent) : QWidget(parent) , crossFadeTimeLine(transitionDuration,this) {
+MainSlideViewImpl::MainSlideViewImpl(int usableWidth, SlideTransition * transition , QWidget * parent) : QWidget(parent) {
 	this->usableWidth = usableWidth;
 	this->layout = new QVBoxLayout(this);
 	this->setLayout(this->layout);
@@ -45,25 +45,17 @@ MainSlideViewImpl::MainSlideViewImpl(int usableWidth, int transitionDuration, QW
 	this->slideLabel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	this->slideLabel->setAlignment(Qt::AlignCenter);
 
-	this->previous = NULL;
-	this->current = NULL;
-	this->crossFadeTimeLine.setFrameRange(0,N_FRAMES);
-	this->crossFadeTimeLine.setCurveShape(QTimeLine::LinearCurve);
+	this->transition = transition;
 
-	connect(&(this->crossFadeTimeLine), SIGNAL(frameChanged(int)), this, SLOT(frameChanged(int)));
+	connect(this->transition, SIGNAL(frameChanged(QPixmap)), this, SLOT(frameChanged(QPixmap)));
 }
 
-void MainSlideViewImpl::frameChanged(int frame) {
-	QPixmap result(this->current.size());
-	result.fill(Qt::transparent);
-	QPainter painter;
-	painter.begin(&result);
-	painter.drawPixmap(0, 0, this->previous);
-	painter.setOpacity((double(frame))/((double)N_FRAMES));
-	painter.drawPixmap(0, 0, this->current);
-	painter.end();
+MainSlideViewImpl::~MainSlideViewImpl() {
+	delete this->transition;
+}
 
-	this->slideLabel->setPixmap(result);
+void MainSlideViewImpl::frameChanged(QPixmap frame) {
+	this->slideLabel->setPixmap(frame);
 }
 
 void MainSlideViewImpl::setCurrentSlide(QPixmap slide) {
@@ -71,9 +63,7 @@ void MainSlideViewImpl::setCurrentSlide(QPixmap slide) {
 	this->whiteBlankScreen->setVisible(false);
 	this->slideLabel->setVisible(true);
 
-	this->previous = this->current;
-	this->current = slide;
-	this->crossFadeTimeLine.start();
+	this->transition->setSlide(slide);
 }
 
 void MainSlideViewImpl::setBlackBlankScreen() {
