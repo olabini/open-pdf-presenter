@@ -384,7 +384,7 @@ void PresenterConfiguration::setPdfFileName(QString fileName) {
 
 	this->pdfFileName = fileName;
 	this->totalSlides = this->document->numPages();
-	//this->document->setRenderHint(Poppler::Document::Antialiasing, true);
+	this->document->setRenderHint(Poppler::Document::Antialiasing, true);
 	this->document->setRenderHint(Poppler::Document::TextAntialiasing, true);
 
 	this->renderer = new Renderer(this->bus,this->document, QApplication::desktop()->screenGeometry(this->mainScreen));
