@@ -98,9 +98,6 @@ RESOURCES += \
     resources/presenterscreen/presenterscreen.qrc \
     resources/notes/notes.qrc
 
-OTHER_FILES += \
-    resources/notes/notes.xsd
-
 # Suport for make install
 unix {
   isEmpty(PREFIX) {
