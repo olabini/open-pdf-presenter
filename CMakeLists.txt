@@ -24,7 +24,7 @@ macro(FIND_HEADERS_TO_MOC return_list header_list)
 endmacro()
 
 # Libraries
-find_package(Qt4 COMPONENTS QtGui QtXmlPatterns REQUIRED)
+find_package(Qt4 COMPONENTS QtGui QtXml QtXmlPatterns REQUIRED)
 include(UseQt4)
 include_directories(${QT_INCLUDES})
 
