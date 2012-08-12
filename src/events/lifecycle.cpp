@@ -86,6 +86,23 @@ void ResetPresentationEvent::dispatch(IEventHandler * handler) {
 	((ResetPresentationEventHandler*)handler)->onResetPresentation(this);
 }
 
+Type ChangeNoteFontSizeEvent::TYPE = Type();
+
+Type * ChangeNoteFontSizeEvent::getAssociatedType() {
+	return &ChangeNoteFontSizeEvent::TYPE;
+}
+
+void ChangeNoteFontSizeEvent::dispatch(IEventHandler * handler) {
+	((ChangeNoteFontSizeEventHandler*)handler)->onChangeNoteFontSize(this);
+}
+
+ChangeNoteFontSizeEvent::ChangeNoteFontSizeEvent(bool isIncrease) : increase(isIncrease) {
+}
+
+bool ChangeNoteFontSizeEvent::isIncrease() {
+	return this->increase;
+}
+
 Type ToggleConsoleViewEvent::TYPE = Type();
 
 Type * ToggleConsoleViewEvent::getAssociatedType() {

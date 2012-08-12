@@ -227,6 +227,7 @@ CurrentNextSlideNotesConsoleViewControllerImpl::CurrentNextSlideNotesConsoleView
 	this->bus = bus;
 	this->bus->subscribe(&SlideChangedEvent::TYPE, (SlideChangedEventHandler*)this);
 	this->bus->subscribe(&SlideRenderedEvent::TYPE, (SlideRenderedEventHandler*)this);
+	this->bus->subscribe(&ChangeNoteFontSizeEvent::TYPE, (ChangeNoteFontSizeEventHandler*)this);
 	this->view = view;
 	this->currentSlideNumber = 0;
 }
@@ -269,6 +270,18 @@ void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideRendered(SlideRender
 void CurrentNextSlideNotesConsoleViewControllerImpl::setGeometry(int width, int height) {
 	this->view->setGeometry(width, height);
 	this->refresh();
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::onIncNoteFontSizeButton() {
+	this->bus->fire(new ChangeNoteFontSizeEvent(true));
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::onDecNoteFontSizeButton() {
+	this->bus->fire(new ChangeNoteFontSizeEvent(false));
+}
+
+void CurrentNextSlideNotesConsoleViewControllerImpl::onChangeNoteFontSize(ChangeNoteFontSizeEvent *event) {
+	this->view->setNotesFontSize(this->view->getNotesFontSize()+(event->isIncrease() ? 2 : -2));
 }
 
 SlideGridConsoleViewControllerImpl::SlideGridConsoleViewControllerImpl(IEventBus *bus, SlideGridConsoleView *view, OpenPdfPresenter *presenter) {
@@ -423,6 +436,16 @@ void MainWindowViewControllerImpl::onKeyWhiteScreen() {
 void MainWindowViewControllerImpl::onKeyBlackScreen() {
 	if(this->signalExit(false))
 		this->bus->fire(new BlackBlankScreenEvent());
+}
+
+void MainWindowViewControllerImpl::onKeyIncFontSize() {
+	if(this->signalExit(false))
+		this->bus->fire(new ChangeNoteFontSizeEvent(true));
+}
+
+void MainWindowViewControllerImpl::onKeyDecFontSize() {
+	if(this->signalExit(false))
+		this->bus->fire(new ChangeNoteFontSizeEvent(false));
 }
 
 StartScreenViewControllerImpl::StartScreenViewControllerImpl(StartScreenView * view, IEventBus * bus) {

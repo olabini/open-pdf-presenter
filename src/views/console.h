@@ -89,6 +89,8 @@ class CurrentNextSlideNotesConsoleViewImpl : public QWidget, public CurrentNextS
 		virtual void setNotes(QString notes);
 		virtual void setController(CurrentNextSlideNotesConsoleViewController * controller);
 		virtual QWidget * asWidget();
+		virtual int getNotesFontSize();
+		virtual void setNotesFontSize(int size);
 
 	private:
 		SlideFrame * currentSlideFrame;

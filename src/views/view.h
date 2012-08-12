@@ -43,6 +43,8 @@ class MainWindowViewController : public Controller {
 		virtual void onKeySwapScreens() = 0;
 		virtual void onKeyBlackScreen() = 0;
 		virtual void onKeyWhiteScreen() = 0;
+		virtual void onKeyIncFontSize() = 0;
+		virtual void onKeyDecFontSize() = 0;
 	protected:
 		~MainWindowViewController() {}
 };
@@ -104,6 +106,8 @@ class CurrentNextSlideConsoleView : public ConsoleView, public View<CurrentNextS
 class CurrentNextSlideNotesConsoleViewController : public Controller {
 	public:
 		virtual void setGeometry(int width, int height) = 0;
+		virtual void onIncNoteFontSizeButton() = 0;
+		virtual void onDecNoteFontSizeButton() = 0;
 	protected:
 		~CurrentNextSlideNotesConsoleViewController() { }
 };
@@ -115,6 +119,8 @@ class CurrentNextSlideNotesConsoleView : public ConsoleView, public View<Current
 		virtual void setCurrentSlide(Slide slide) = 0;
 		virtual void setNextSlide(Slide slide) = 0;
 		virtual void setNotes(QString notes) = 0;
+		virtual int getNotesFontSize() = 0;
+		virtual void setNotesFontSize(int size) = 0;
 
 	protected:
 		~CurrentNextSlideNotesConsoleView() { }

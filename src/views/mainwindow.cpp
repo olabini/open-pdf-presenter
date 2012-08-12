@@ -100,5 +100,11 @@ void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
 		case Qt::Key_Period:
 			this->controller->onKeyBlackScreen();
 			break;
+		case Qt::Key_Plus:
+			this->controller->onKeyIncFontSize();
+			break;
+		case Qt::Key_Minus:
+			this->controller->onKeyDecFontSize();
+			break;
 	}
 }

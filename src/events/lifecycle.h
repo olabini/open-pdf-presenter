@@ -95,6 +95,26 @@ class ResetPresentationEventHandler : public IEventHandler {
 		~ResetPresentationEventHandler() { }
 };
 
+class ChangeNoteFontSizeEvent : public Event {
+	private:
+		bool increase;
+	public:
+
+		ChangeNoteFontSizeEvent(bool isIncrease);
+		bool isIncrease();
+
+		virtual Type * getAssociatedType();
+		virtual void dispatch(IEventHandler * handler);
+		static Type TYPE;
+};
+
+class ChangeNoteFontSizeEventHandler : public IEventHandler {
+	public:
+		virtual void onChangeNoteFontSize(ChangeNoteFontSizeEvent * event) = 0;
+	protected:
+		~ChangeNoteFontSizeEventHandler() { }
+};
+
 class ToggleConsoleViewEvent : public Event {
 	public:
 		virtual Type * getAssociatedType();

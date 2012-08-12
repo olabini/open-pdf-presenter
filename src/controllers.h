@@ -41,7 +41,7 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 		int currentSlideNumber;
 };
 
-class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNotesConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
+class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNotesConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler, public ChangeNoteFontSizeEventHandler {
 	public:
 		CurrentNextSlideNotesConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideNotesConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
@@ -49,6 +49,9 @@ class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNo
 		virtual void setGeometry(int width, int height);
 		virtual void setVisible(bool isVisible);
 		QWidget * content();
+		virtual void onIncNoteFontSizeButton();
+		virtual void onDecNoteFontSizeButton();
+		virtual void onChangeNoteFontSize(ChangeNoteFontSizeEvent *event);
 	private:
 		void refresh();
 	private:
@@ -100,6 +103,8 @@ class MainWindowViewControllerImpl : public MainWindowViewController {
 		virtual void onKeySwapScreens();
 		virtual void onKeyBlackScreen();
 		virtual void onKeyWhiteScreen();
+		virtual void onKeyIncFontSize();
+		virtual void onKeyDecFontSize();
 	private:
 		bool signalExit(bool isExit);
 	private:

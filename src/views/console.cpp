@@ -190,16 +190,20 @@ QWidget * CurrentNextSlideNotesConsoleViewImpl::asWidget() {
 }
 
 void CurrentNextSlideNotesConsoleViewImpl::onZoomInButtonClick() {
-	QFont font;
-	font.setPointSize(this->currentNextSlideNotesUi.notesLabel->font().pointSize()+2);
-	font.setBold(true);
-	font.setWeight(75);
-	this->currentNextSlideNotesUi.notesLabel->setFont(font);
+	this->controller->onIncNoteFontSizeButton();
 }
 
 void CurrentNextSlideNotesConsoleViewImpl::onZoomOutButtonClick() {
+	this->controller->onDecNoteFontSizeButton();
+}
+
+int CurrentNextSlideNotesConsoleViewImpl::getNotesFontSize() {
+	return this->currentNextSlideNotesUi.notesLabel->font().pointSize();
+}
+
+void CurrentNextSlideNotesConsoleViewImpl::setNotesFontSize(int size) {
 	QFont font;
-	font.setPointSize(this->currentNextSlideNotesUi.notesLabel->font().pointSize()-2);
+	font.setPointSize(size);
 	font.setBold(true);
 	font.setWeight(75);
 	this->currentNextSlideNotesUi.notesLabel->setFont(font);
