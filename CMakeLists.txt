@@ -28,7 +28,7 @@ find_package(Qt4 COMPONENTS QtGui QtXml QtXmlPatterns REQUIRED)
 include(UseQt4)
 include_directories(${QT_INCLUDES})
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmakemodules/)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules/)
 find_package(PopplerQt4 REQUIRED)
 include_directories(${POPPLER_QT4_INCLUDE_DIR})
 
