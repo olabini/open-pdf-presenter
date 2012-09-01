@@ -45,8 +45,8 @@ InterpolationTransition::InterpolationTransition(int transitionDuration) : anima
 	this->animationTimeLine.setFrameRange(0,N_FRAMES);
 	this->animationTimeLine.setCurveShape(QTimeLine::LinearCurve);
 
-	this->from = NULL;
-	this->to = NULL;
+	this->from = QPixmap();
+	this->to = QPixmap();
 
 	connect(&(this->animationTimeLine), SIGNAL(frameChanged(int)), this, SLOT(timeLineFrameChanged(int)));
 }
