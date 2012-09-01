@@ -5,8 +5,6 @@
 
 #include <QList>
 
-#include <iostream>
-
 NotesParser::NotesParser(int slideCount) {
 	this->notes = new QList<QString>();
 	for (int i = 0 ; i < slideCount ; i++)

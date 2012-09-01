@@ -17,7 +17,6 @@
 #include "mainwindow.h"
 
 #include <QKeyEvent>
-#include <iostream>
 
 MainWindowViewImpl::MainWindowViewImpl(QWidget * parent)  : QWidget(parent) {
 	this->layout = new QVBoxLayout(this);

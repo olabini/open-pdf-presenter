@@ -24,11 +24,13 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QDebug>
-#include <iostream>
 
 #include <vector>
 
 #include <tclap/CmdLine.h>
+
+QTextStream cout(stdout);
+QTextStream cerr(stderr);
 
 OpenPdfPresenter::OpenPdfPresenter() {
 
@@ -108,7 +110,7 @@ int OpenPdfPresenter::start() {
 	SlideTransition * transition = TransitionFactory::getInstance()->getTransition(this->configuration->getTransitionEffect());
 
 	if (transition == NULL) {
-		std::cout << "Unknown transition : \"" << this->configuration->getTransitionEffect().toStdString() << "\"\n";
+		cout << "Unknown transition : \"" << this->configuration->getTransitionEffect() << "\"\n";
 		this->printAvailableTransitions();
 		exit(1);
 	}
@@ -135,10 +137,10 @@ int OpenPdfPresenter::start() {
 }
 
 void OpenPdfPresenter::printAvailableTransitions() {
-	std::cout << "Possible transitions:\n";
+	cout << "Possible transitions:\n";
 
 	foreach(SlideTransition* transition, TransitionFactory::getInstance()->getAllTransitions())
-		std::cout << "\t" << transition->getName().toStdString() << "\t" << transition->getDesc().toStdString() << "\n";
+		cout << "\t" << transition->getName() << "\t" << transition->getDesc() << "\n";
 }
 
 void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
@@ -348,7 +350,7 @@ void PresenterConfiguration::parseArguments() {
 		}
 
 	} catch (TCLAP::ArgException &e) {
-		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+		cerr << "error: " << QString::fromStdString(e.error()) << " for arg " << QString::fromStdString(e.argId()) << endl;
 	}
 
 

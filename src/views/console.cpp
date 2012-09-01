@@ -16,7 +16,6 @@
 */
 #include "console.h"
 
-#include <iostream>
 #include <math.h>
 #include <QLabel>
 #include <QPushButton>
