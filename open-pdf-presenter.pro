@@ -26,6 +26,12 @@ RCC_DIR = $$OBJECTS_DIR
 CONFIG += qt debug
 QT += xml xmlpatterns
 
+# Support for Qt5
+greaterThan(QT_MAJOR_VERSION, 4) {
+  message("Building with Qt5 is currently broken due to missing poppler-qt5")
+  QT += widgets
+}
+
 # Version
 DEFINES += 'OPP_VERSION=\'\"0.2\"\''
 
@@ -42,6 +48,7 @@ PKGCONFIG += poppler-qt4
 KDEPATH_OPTIONS = /usr/include/KDE/ /usr/include/kde4/KDE
 for(dir, KDEPATH_OPTIONS):exists($${dir}):KDEPATH=$${dir}
 
+lessThan(QT_MAJOR_VERSION, 5) \ # KDE is not expected to have a stable release with Qt5 anytime soon
 exists($$KDEPATH/Solid/PowerManagement) \
 system("grep beginSuppressingScreenPowerManagement $$KDEPATH/../solid/powermanagement.h >> /dev/null") \
 system("ld -lsolid -o /dev/null 2> /dev/null") {
