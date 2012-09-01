@@ -84,7 +84,7 @@ class PresenterConfiguration {
 
 	public: // misc
 		void swapScreens();
-		void parseArguments(int argc, char ** argv);
+		void parseArguments();
 };
 
 class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, public StartStopPresentationEventHandler, public SlideRenderedEventHandler, public ResetPresentationEventHandler, public SwapScreensEventHandler {
@@ -106,7 +106,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		virtual void onSlideRendered(SlideRenderedEvent * evt);
 		virtual void onResetPresentation(ResetPresentationEvent * evt);
 		virtual void onSwapScreens(SwapScreensEvent * evt);
-		int start(int argc, char ** argv);
+		int start();
 	private:
 		int currentSlideNumber;
 		int elapsedTime;

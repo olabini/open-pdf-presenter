@@ -26,6 +26,8 @@
 #include <QDebug>
 #include <iostream>
 
+#include <vector>
+
 #include <tclap/CmdLine.h>
 
 OpenPdfPresenter::OpenPdfPresenter() {
@@ -85,7 +87,7 @@ void OpenPdfPresenter::setUpViews() {
 	this->mainSlideWindow->setContent(this->mainSlideView->asWidget());
 }
 
-int OpenPdfPresenter::start(int argc, char ** argv) {
+int OpenPdfPresenter::start() {
 	StartScreenViewImpl * startScreenView;
 	StartScreenViewControllerImpl * startScreenController;
 
@@ -93,7 +95,7 @@ int OpenPdfPresenter::start(int argc, char ** argv) {
 	startScreenController = new StartScreenViewControllerImpl(startScreenView,this->bus);
 	startScreenView->setController(startScreenController);
 
-	this->configuration->parseArguments(argc, argv);
+	this->configuration->parseArguments();
 
 	TransitionFactory::getInstance()->registerTransition(new NoTransition());
 	TransitionFactory::getInstance()->registerTransition(new CrossFadingTransition(this->configuration->getTransitionDuration()));
@@ -296,7 +298,7 @@ PresenterConfiguration::~PresenterConfiguration() {
 	delete this->parser;
 }
 
-void PresenterConfiguration::parseArguments(int argc, char ** argv) {
+void PresenterConfiguration::parseArguments() {
 	TCLAP::CmdLine cmd("open-pdf-presenter",' ',OPP_VERSION);
 
 	TCLAP::ValueArg<std::string> notesArg("n","notes","Notes file",false,"","XML file");
@@ -317,23 +319,29 @@ void PresenterConfiguration::parseArguments(int argc, char ** argv) {
 	cmd.add(notesArg);
 	cmd.add(pdfFileArg);
 
+	// Convert arguments from QStringList to std::vector<std::string>
+	std::vector<std::string> arguments;
+	foreach (QString s, QCoreApplication::arguments()) {
+		arguments.push_back(s.toStdString());
+	}
+
 	try {
-		cmd.parse(QCoreApplication::argc(),QCoreApplication::argv());
+		cmd.parse(arguments);
 
 		this->setListTransitions(listAvailableTransitions.getValue());
 		this->setRehearseMode(rehearseSwitch.getValue());
 		this->skipStartScreen = skipStartScreenSwitch.getValue();
 		this->setTotalTime(durationArg.getValue());
 		this->setTransitionDuration(transitionDuration.getValue());
-		this->setTransitionEffect(QString::fromLocal8Bit(transitionEffect.getValue().c_str()));
+		this->setTransitionEffect(QString::fromStdString(transitionEffect.getValue()));
 
 		this->document = NULL;
-		this->pdfFileName = QString::fromLocal8Bit(pdfFileArg.getValue().c_str());
+		this->pdfFileName = QString::fromStdString(pdfFileArg.getValue());
 		if (pdfFileArg.isSet()) {
 			// Trigger PDF parsing
 			this->setPdfFileName(this->pdfFileName);
 
-			this->notesFileName = QString::fromLocal8Bit(notesArg.getValue().c_str());
+			this->notesFileName = QString::fromStdString(notesArg.getValue());
 			if (notesArg.isSet())
 				// Trigger notes parsing
 				this->setNotesFileName(this->notesFileName);
