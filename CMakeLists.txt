@@ -3,7 +3,12 @@ project (open-pdf-presenter)
 cmake_minimum_required(VERSION 2.6)
 
 # Project Definitions
-set(PROJECT_VERSION "0.2.99")
+set(PROJECT_VERSION_MAJOR 0)
+set(PROJECT_VERSION_MINOR 2)
+set(PROJECT_VERSION_PATCH 99)
+set(PROJECT_WEBSITE "https://code.google.com/p/open-pdf-presenter/")
+
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 
 add_definitions(-DOPP_VERSION=\"${PROJECT_VERSION}\")
 
@@ -53,3 +58,62 @@ qt4_add_resources(RESOURCES ${OPP_RESOURCES}) # process resources
 
 add_executable(open-pdf-presenter ${MOC_SOURCES} ${OPP_SOURCES} ${RESOURCES} ${FORMS})
 target_link_libraries(open-pdf-presenter ${QT_LIBRARIES} ${POPPLER_QT4_LIBRARIES})
+
+# Install
+install(TARGETS open-pdf-presenter DESTINATION bin)
+
+# Packaging
+if(WIN32)
+	set(MING_BIN_PATH "${CMAKE_FIND_ROOT_PATH}/bin") # CMAKE_FIND_ROOT_PATH is set by the toolchain file
+
+	# Include needed libraries in "make install"
+	install (FILES
+		# Qt4
+		${MING_BIN_PATH}/QtCore4.dll
+		${MING_BIN_PATH}/QtGui4.dll
+		${MING_BIN_PATH}/QtXml4.dll
+		${MING_BIN_PATH}/QtXmlPatterns4.dll
+		${MING_BIN_PATH}/QtNetwork4.dll
+		${MING_BIN_PATH}/QtSvg4.dll
+		# mingw/c++ runtimes
+		${MING_BIN_PATH}/libgcc_s_sjlj-1.dll
+		${MING_BIN_PATH}/libstdc++-6.dll
+		# Qt4/poppler dependencies
+		${MING_BIN_PATH}/libfreetype-6.dll
+		${MING_BIN_PATH}/libjpeg-8.dll
+		${MING_BIN_PATH}/liblcms-1.dll
+		${MING_BIN_PATH}/libopenjpeg-1.dll
+		${MING_BIN_PATH}/libpng15-15.dll
+		${MING_BIN_PATH}/libtiff-5.dll
+		${MING_BIN_PATH}/zlib1.dll
+		${MING_BIN_PATH}/liblzma-5.dll
+		${MING_BIN_PATH}/libtiff-5.dll
+		# poppler
+		${MING_BIN_PATH}/libpoppler-26.dll
+		${MING_BIN_PATH}/libpoppler-qt4-4.dll
+		DESTINATION bin)
+
+	include(InstallRequiredSystemLibraries)
+	set(CPACK_GENERATOR NSIS)
+
+	set(CPACK_NSIS_PACKAGE_NAME            ${PROJECT_NAME})
+	set(CPACK_NSIS_DISPLAY_NAME            ${PROJECT_NAME})
+	set(CPACK_NSIS_CONTACT                 ${PROJECT_WEBSITE})
+	set(CPACK_NSIS_MENU_LINKS              ${PROJECT_WEBSITE} "${PROJECT_NAME} Homepage")
+	set(CPACK_NSIS_URL_INFO_ABOUT          ${PROJECT_WEBSITE})
+	set(CPACK_NSIS_HELP_LINK               ${PROJECT_WEBSITE})
+	set(CPACK_NSIS_COMPRESSOR              "/SOLID lzma")
+
+	set(CPACK_PACKAGE_INSTALL_DIRECTORY    ${PROJECT_NAME})
+	set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY ${PROJECT_NAME}-${PROJECT_VERSION})
+
+	set(CPACK_RESOURCE_FILE_LICENSE        "${CMAKE_SOURCE_DIR}/COPYING")
+	set(CPACK_PACKAGE_VERSION_MAJOR        ${PROJECT_VERSION_MAJOR})
+	set(CPACK_PACKAGE_VERSION_MINOR        ${PROJECT_VERSION_MINOR})
+	set(CPACK_PACKAGE_VERSION_PATCH        ${PROJECT_VERSION_PATCH})
+	set(CPACK_PACKAGE_EXECUTABLES          "${PROJECT_NAME};${PROJECT_NAME}")
+
+	set(CPACK_STRIP_FILES                  TRUE) # remove debug information from deployed files
+
+	include(CPack)
+ENDIF( WIN32 )

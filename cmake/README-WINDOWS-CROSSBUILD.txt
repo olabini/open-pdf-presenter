@@ -33,3 +33,6 @@ git clone https://code.google.com/p/open-pdf-presenter/ && cd open-pdf-presenter
 mkdir build && cd build
 cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain/Toolchain-mingw32-openSUSE.cmake ..
 make
+
+= Packaging
+make package
