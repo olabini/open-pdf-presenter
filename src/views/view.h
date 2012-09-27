@@ -52,6 +52,7 @@ class MainWindowViewController : public Controller {
 class MainWindowView : public View<MainWindowViewController> {
 	public:
 		virtual void setContent(QWidget * content) = 0;
+		virtual void clearContent() = 0;
 	protected:
 		~MainWindowView() {}
 };

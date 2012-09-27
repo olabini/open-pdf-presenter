@@ -28,6 +28,7 @@ class MainWindowViewImpl : public QWidget, public MainWindowView {
 	public:
 		MainWindowViewImpl(QWidget * parent = 0);
 		virtual void setContent(QWidget * content);
+		virtual void clearContent();
 		virtual void setController(MainWindowViewController * controller);
 		virtual QWidget * asWidget();
 

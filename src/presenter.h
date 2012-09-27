@@ -31,6 +31,7 @@
 #include "powermanagement.h"
 
 #include <QList>
+#include <QWidget>
 #include <poppler-qt4.h>
 
 class PresenterConfiguration {
@@ -119,12 +120,15 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		ConsoleView * currentConsoleView;
 		PowerManagement * powerManagement;
 
+		QWidget * widgets[2];
+
 		void fireSlideChangedEvent();
 		void buildViews();
 		void buildControllers();
 		void setUpViews();
-		void updateWindowPositions();
+		void setWindowPositions();
 		void printAvailableTransitions();
+		void updateWidgetSizes();
 
 	private: // views
 		PresenterConsoleViewImpl * presenterConsoleView;

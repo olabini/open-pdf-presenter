@@ -38,6 +38,11 @@ void MainWindowViewImpl::setContent(QWidget * content) {
 	this->layout->addWidget(this->content);
 }
 
+void MainWindowViewImpl::clearContent() {
+	this->layout->removeWidget(this->content);
+	this->content = NULL;
+}
+
 void MainWindowViewImpl::setController(MainWindowViewController * controller) {
 	this->controller = controller;
 }

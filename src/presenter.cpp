@@ -29,6 +29,9 @@
 
 #include <tclap/CmdLine.h>
 
+#define MAIN_WINDOW_IDX 0
+#define AUX_WINDOW_IDX 1
+
 QTextStream cout(stdout);
 QTextStream cerr(stderr);
 
@@ -84,9 +87,6 @@ void OpenPdfPresenter::setUpViews() {
 	
 	this->mainConsoleWindow->setController(this->mainConsoleWindowController);
 	this->mainSlideWindow->setController(this->mainSlideWindowController);
-	
-	this->mainConsoleWindow->setContent(this->presenterConsoleView->asWidget());
-	this->mainSlideWindow->setContent(this->mainSlideView->asWidget());
 }
 
 int OpenPdfPresenter::start() {
@@ -151,7 +151,14 @@ void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
 	this->setUpViews();
 	this->hasStarted = true;
 
-	this->updateWindowPositions();
+	// Assign widgets to windows
+	this->widgets[MAIN_WINDOW_IDX] = this->mainSlideView->asWidget();
+	this->widgets[AUX_WINDOW_IDX] = this->presenterConsoleView->asWidget();
+
+	this->mainSlideWindow->setContent(this->widgets[MAIN_WINDOW_IDX]);
+	this->mainConsoleWindow->setContent(this->widgets[AUX_WINDOW_IDX]);
+
+	this->setWindowPositions();
 
 	this->bus->fire(new SlideChangedEvent(0));
 	this->timer->start();
@@ -243,17 +250,45 @@ void OpenPdfPresenter::onResetPresentation(ResetPresentationEvent * evt) {
 
 void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 	this->configuration->swapScreens();
-	this->updateWindowPositions();
-	this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
+	QDesktopWidget * desktopWidget = QApplication::desktop();
+	this->configuration->getRenderer()->setGeometry(desktopWidget->screenGeometry(this->configuration->getMainScreen()));
+	this->updateWidgetSizes();
 }
 
-void OpenPdfPresenter::updateWindowPositions() {
+void OpenPdfPresenter::updateWidgetSizes() {
+
+	// Clear windows from widgets to avoid them to grow
+	this->mainSlideWindow->clearContent();
+	this->mainConsoleWindow->clearContent();
+
+	// Resize widgets using controllers
 	QDesktopWidget * desktopWidget = QApplication::desktop();
-	this->mainConsoleWindow->showNormal();
 	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
 	this->currentNextController->setGeometry(geometry.width(),geometry.height());
 	this->currentNextNotesController->setGeometry(geometry.width(),geometry.height());
 	this->slideGridController->setGeometry(geometry.width(),geometry.height());
+
+	// Fire slide changed event so that all widgets resize accordingly
+	this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
+
+
+	qDebug() << "Main widget size " << this->mainSlideView->size();
+	qDebug() << "Console widget size " << this->presenterConsoleView->size();
+
+	// Swap widgets
+	QWidget * tmp = this->widgets[0];
+	this->widgets[0] = this->widgets[1];
+	this->widgets[1] = tmp;
+
+	// Reassign widgets to windows
+	this->mainSlideWindow->setContent(this->widgets[MAIN_WINDOW_IDX]);
+	this->mainConsoleWindow->setContent(this->widgets[AUX_WINDOW_IDX]);
+}
+
+void OpenPdfPresenter::setWindowPositions() {
+	QDesktopWidget * desktopWidget = QApplication::desktop();
+	this->mainConsoleWindow->showNormal();
+	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
 	this->mainConsoleWindow->setGeometry(geometry);
 	qDebug() << "Moved aux window to position " << this->mainConsoleWindow ->geometry();
 	this->mainConsoleWindow->showFullScreen();
@@ -264,8 +299,6 @@ void OpenPdfPresenter::updateWindowPositions() {
 		qDebug() << "Moved main window to position " << this->mainSlideWindow->geometry();
 		this->mainSlideWindow->showFullScreen();
 	}
-
-	this->configuration->getRenderer()->setGeometry(desktopWidget->screenGeometry(this->configuration->getMainScreen()));
 }
 
 QString OpenPdfPresenter::getNotes(int slideNumber) {
