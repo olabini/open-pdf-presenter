@@ -289,12 +289,14 @@ void OpenPdfPresenter::setWindowPositions() {
 	QDesktopWidget * desktopWidget = QApplication::desktop();
 	this->mainConsoleWindow->showNormal();
 	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
+	this->mainConsoleWindow->move(geometry.x(), geometry.y());
 	this->mainConsoleWindow->setGeometry(geometry);
 	qDebug() << "Moved aux window to position " << this->mainConsoleWindow ->geometry();
 	this->mainConsoleWindow->showFullScreen();
 	if (!this->configuration->isRehearseMode()) {
 		this->mainSlideWindow->showNormal();
 		geometry = desktopWidget->screenGeometry(this->configuration->getMainScreen());
+		this->mainSlideWindow->move(geometry.x(), geometry.y());
 		this->mainSlideWindow->setGeometry(geometry);
 		qDebug() << "Moved main window to position " << this->mainSlideWindow->geometry();
 		this->mainSlideWindow->showFullScreen();
