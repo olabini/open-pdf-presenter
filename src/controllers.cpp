@@ -333,12 +333,16 @@ MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSl
 	this->blackBlank = this->whiteBlank = false;
 }
 
+void MainSlideViewControllerImpl::setGeometry(int width, int height) {
+	this->currentGeometry = QRect(0, 0, width, height);
+}
+
 void MainSlideViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
 	Slide slide = this->presenter->getSlide(evt->getCurrentSlideNumber());
 	QPixmap pixmap = slide.asPixmap();
-	QRect currentGeometry = QApplication::desktop()->screenGeometry(this->presenter->getConfiguration()->getMainScreen());
-	if (currentGeometry != slide.getGeometry()) {
-		QRect usableArea = slide.computeUsableArea(currentGeometry);
+	if (this->currentGeometry.width() != slide.getGeometry().width() ||
+					this->currentGeometry.height() != slide.getGeometry().height()) {
+		QRect usableArea = slide.computeUsableArea(this->currentGeometry);
 		pixmap = pixmap.scaled(usableArea.width(), usableArea.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	}
 

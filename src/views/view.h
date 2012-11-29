@@ -146,6 +146,8 @@ class SlideGridConsoleView : public ConsoleView, public View<SlideGridConsoleVie
 };
 
 class MainSlideViewController : public Controller {
+	public:
+		virtual void setGeometry(int width, int height) = 0;
 	protected:
 		~MainSlideViewController() { }
 };

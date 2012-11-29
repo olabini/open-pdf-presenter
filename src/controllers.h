@@ -83,12 +83,14 @@ class MainSlideViewControllerImpl : public MainSlideViewController, public Slide
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onBlackScreen(BlankScreenEvent *evt);
 		virtual void onWhiteScreen(BlankScreenEvent *evt);
+		virtual void setGeometry(int width, int height);
 	private:
 		OpenPdfPresenter * presenter;
 		MainSlideView * view;
 		IEventBus * bus;
 		int currentSlide;
 		bool blackBlank, whiteBlank;
+		QRect currentGeometry;
 };
 
 class MainWindowViewControllerImpl : public MainWindowViewController {

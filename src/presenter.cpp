@@ -24,6 +24,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QDebug>
+#include <QApplication>
 
 #include <vector>
 
@@ -257,23 +258,19 @@ void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 
 void OpenPdfPresenter::updateWidgetSizes() {
 
-	// Clear windows from widgets to avoid them to grow
-	this->mainSlideWindow->clearContent();
-	this->mainConsoleWindow->clearContent();
-
-	// Resize widgets using controllers
-	QDesktopWidget * desktopWidget = QApplication::desktop();
-	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
-	this->currentNextController->setGeometry(geometry.width(),geometry.height());
-	this->currentNextNotesController->setGeometry(geometry.width(),geometry.height());
-	this->slideGridController->setGeometry(geometry.width(),geometry.height());
+	// Set minimal widget size to avoid windows from growing
+	this->currentNextController->setGeometry(10, 10);
+	this->currentNextNotesController->setGeometry(10, 10);
+	this->slideGridController->setGeometry(10, 10);
+	this->mainSlideController->setGeometry(10, 10);
 
 	// Fire slide changed event so that all widgets resize accordingly
 	this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
 
-
-	qDebug() << "Main widget size " << this->mainSlideView->size();
-	qDebug() << "Console widget size " << this->presenterConsoleView->size();
+	// Allow windows to resize
+	// If this line is ommitted, the smaller window will grow larger than the screen
+	// Later, it will not shrink the the right size and will display with incorrect placement
+	qApp->processEvents();
 
 	// Swap widgets
 	QWidget * tmp = this->widgets[0];
@@ -283,6 +280,24 @@ void OpenPdfPresenter::updateWidgetSizes() {
 	// Reassign widgets to windows
 	this->mainSlideWindow->setContent(this->widgets[MAIN_WINDOW_IDX]);
 	this->mainConsoleWindow->setContent(this->widgets[AUX_WINDOW_IDX]);
+
+	// Fire slide changed event so that all widgets resize accordingly
+	this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
+
+	// Resize widgets using controllers
+	QDesktopWidget * desktopWidget = QApplication::desktop();
+	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
+	this->currentNextController->setGeometry(geometry.width(),geometry.height());
+	this->currentNextNotesController->setGeometry(geometry.width(),geometry.height());
+	this->slideGridController->setGeometry(geometry.width(),geometry.height());
+	geometry = desktopWidget->screenGeometry(this->configuration->getMainScreen());
+	this->mainSlideController->setGeometry(geometry.width(),geometry.height());
+
+	// Fire slide changed event so that all widgets resize accordingly
+	this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
+
+	qDebug() << "Main widget size " << this->mainSlideView->size();
+	qDebug() << "Console widget size " << this->presenterConsoleView->size();
 }
 
 void OpenPdfPresenter::setWindowPositions() {
