@@ -258,6 +258,11 @@ void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 
 void OpenPdfPresenter::updateWidgetSizes() {
 
+	this->widgets[0]->hide();
+	this->widgets[1]->hide();
+
+	qApp->processEvents();
+
 	// Set minimal widget size to avoid windows from growing
 	this->currentNextController->setGeometry(10, 10);
 	this->currentNextNotesController->setGeometry(10, 10);
@@ -298,6 +303,11 @@ void OpenPdfPresenter::updateWidgetSizes() {
 
 	qDebug() << "Main widget size " << this->mainSlideView->size();
 	qDebug() << "Console widget size " << this->presenterConsoleView->size();
+
+	qApp->processEvents();
+
+	this->widgets[0]->show();
+	this->widgets[1]->show();
 }
 
 void OpenPdfPresenter::setWindowPositions() {
