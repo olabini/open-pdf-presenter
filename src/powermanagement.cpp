@@ -19,18 +19,16 @@
 #include <QtDebug>
 #include <QCursor>
 #include <QApplication>
+#include <QDir>
+#include <QPluginLoader>
 
-#ifdef ENABLE_SOLID
-#include <Solid/PowerManagement>
-#endif
-
-PowerManagement::PowerManagement(IEventBus * bus) : screenSupressCookie(-1), sleepSupressCookie(-1) {
+PowerManagement::PowerManagement(IEventBus * bus) : pmpInstance(0) {
 	bus->subscribe(&StartPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
 	bus->subscribe(&StopPresentationEvent::TYPE,(StartStopPresentationEventHandler*)this);
 	bus->subscribe(&TimeChangedEvent::TYPE,(ITimeChangedEventHandler*)this);
 
-#ifndef ENABLE_SOLID
-	qDebug() << "No power management compiled-in. Don't forget to disable your screensaver and computer sleep!";
+#if defined(Q_OS_LINUX) // There is currently only one pm plugin: KDE
+	loadPlugin();
 #endif
 }
 
@@ -40,26 +38,19 @@ PowerManagement::~PowerManagement() {
 
 void PowerManagement::onStartPresentation(StartPresentationEvent * evt) {
 	Q_UNUSED (evt);
-	QString reason = "Ongoing presentation in open-pdf-presenter";
 
-#ifdef ENABLE_SOLID // On a KDE machine near you
-	screenSupressCookie = Solid::PowerManagement::beginSuppressingScreenPowerManagement(reason);
-	sleepSupressCookie = Solid::PowerManagement::beginSuppressingSleep(reason);
-#endif
+	if (pmpInstance) pmpInstance->onStartPresentation();
 }
 
 void PowerManagement::onStopPresentation(StopPresentationEvent * evt) {
 	Q_UNUSED (evt);
 
-#ifdef ENABLE_SOLID // On a KDE machine near you
-	Solid::PowerManagement::stopSuppressingScreenPowerManagement(screenSupressCookie);
-	Solid::PowerManagement::stopSuppressingSleep(sleepSupressCookie);
-#endif
+	if (pmpInstance) pmpInstance->onStopPresentation();
 }
 
 void PowerManagement::onTimeChanged(TimeChangedEvent *evt) {
-	if (this->screenSupressCookie == -1 && this->sleepSupressCookie == -1) {
-		// Solid was not able to disable screensaver / sleep
+	if (!pmpInstance || !pmpInstance->isActive()) {
+		// No power management plugin was provided, or plugin not working for some reason
 		// Falling back to moving mouse around
 		QPoint cursorPosition = QCursor::pos();
 		int direction = cursorPosition.y() == 0 ? 1 : -1;
@@ -68,4 +59,25 @@ void PowerManagement::onTimeChanged(TimeChangedEvent *evt) {
 		QCursor::setPos(cursorPosition.x(),cursorPosition.y());
 	}
 
+}
+
+// Attempt to load a power management plugin
+void PowerManagement::loadPlugin() {
+	QFileInfoList possiblePluginFiles = QDir(qApp->applicationDirPath()).entryInfoList(QDir::Files);
+
+#if defined(OPP_PLUGIN_PATH)
+	possiblePluginFiles = QDir(OPP_PLUGIN_PATH).entryInfoList(QDir::Files) + possiblePluginFiles;
+#endif
+
+	foreach (QFileInfo fileName, possiblePluginFiles) {
+		QPluginLoader pluginLoader(fileName.absoluteFilePath());
+		QObject *plugin = pluginLoader.instance();
+		if (plugin) {
+			PMPluginInterface *instance = qobject_cast<PMPluginInterface *>(plugin);
+			if (instance) {
+				pmpInstance = instance;
+				return;
+			}
+		}
+	}
 }

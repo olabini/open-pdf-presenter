@@ -42,22 +42,8 @@ DEFINES += 'OPP_VERSION=\'\"0.2\"\''
 CONFIG += link_pkgconfig
 PKGCONFIG += poppler-qt4
 
-# SOLID (KDE Power Management)
-# Inspired by http://www.qtcentre.org/threads/36521-configuring-optional-dependencies-in-qmake-or-cmake
-# Check for KDE Solid headers and for libsolid
-KDEPATH_OPTIONS = /usr/include/KDE/ /usr/include/kde4/KDE
-for(dir, KDEPATH_OPTIONS):exists($${dir}):KDEPATH=$${dir}
-
-lessThan(QT_MAJOR_VERSION, 5) \ # KDE is not expected to have a stable release with Qt5 anytime soon
-exists($$KDEPATH/Solid/PowerManagement) \
-system("grep beginSuppressingScreenPowerManagement $$KDEPATH/../solid/powermanagement.h >> /dev/null") \
-system("ld -lsolid -o /dev/null 2> /dev/null") {
-  message("KDE Power Management FOUND")
-  DEFINES += ENABLE_SOLID
-  INCLUDEPATH += $$KDEPATH
-  LIBS += -lsolid
-} else {
-  message("KDE Power Management DISABLED (not found/too old)")
+unix {
+  message("Note: KDE power management has been moved into a plugin that must be built separately (kdepm subdirectory)")
 }
 
 # Input
@@ -75,6 +61,7 @@ HEADERS += src/events/event.h \
     src/renderer.h \
     src/parser.h \
     src/powermanagement.h \
+    src/powermanagementplugin.h \
     src/views/startscreen.h \
     src/views/transitions.h
 FORMS += \
@@ -111,6 +98,10 @@ unix {
     PREFIX=/usr/local/
   }
   message("Install prefix is $$PREFIX")
+
+  PLUGIN_PATH=$$PREFIX/lib/open-pdf-presenter/
+
+  DEFINES += 'OPP_PLUGIN_PATH=\'\"$$PLUGIN_PATH\"\''
 
   desktop.files += open-pdf-presenter.desktop
   desktop.path = $$PREFIX/share/applications/

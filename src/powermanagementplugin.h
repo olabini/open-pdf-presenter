@@ -14,26 +14,20 @@
     You should have received a copy of the GNU General Public License
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _POWERMANAGEMENT_H_
-#define _POWERMANAGEMENT_H_
+#ifndef _POWERMANAGEMENTPLUGIN_H_
+#define _POWERMANAGEMENTPLUGIN_H_
 
-#include "events/lifecycle.h"
-#include "powermanagementplugin.h"
+#include <QtPlugin>
 
-/** Class that disables display and system power management during a presentation **/
-class PowerManagement : public StartStopPresentationEventHandler, public ITimeChangedEventHandler {
+/** Interface used by Power Management plugins **/
+class PMPluginInterface {
 	public:
-		PowerManagement(IEventBus * bus);
-		~PowerManagement();
-		virtual void onStartPresentation(StartPresentationEvent * evt = 0);
-		virtual void onStopPresentation(StopPresentationEvent * evt = 0);
-		virtual void onTimeChanged(TimeChangedEvent *evt = 0);
-
-	private:
-		void loadPlugin();
-
-	private:
-		PMPluginInterface * pmpInstance;
+		virtual ~PMPluginInterface() {}
+		virtual void onStartPresentation() = 0;
+		virtual void onStopPresentation() = 0;
+		virtual bool isActive() = 0;
 };
+
+Q_DECLARE_INTERFACE(PMPluginInterface, "com.open-pdf-presenter.Plugin.PMPluginInterface/1.0");
 
 #endif

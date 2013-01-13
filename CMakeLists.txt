@@ -12,6 +12,9 @@ set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT
 
 add_definitions(-DOPP_VERSION=\"${PROJECT_VERSION}\")
 
+set(PLUGIN_PATH "${CMAKE_INSTALL_PREFIX}/lib/open-pdf-presenter/")
+add_definitions(-DOPP_PLUGIN_PATH=\"${PLUGIN_PATH}\")
+
 # Macros
 # Find header files with Q_OBJECT macros
 macro(FIND_HEADERS_TO_MOC return_list header_list)
