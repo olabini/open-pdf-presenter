@@ -16,6 +16,8 @@
 */
 #include "startscreen.h"
 
+#include <QMenu>
+
 StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), previewArea(0,0,200,200) {
 	ui.setupUi(this);
 
@@ -29,8 +31,11 @@ StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), pre
 	connect(this->ui.openNotesButtonBox, SIGNAL(rejected()), this, SLOT(onNotesFileDiscard()));
 	connect(this->ui.slideSlider, SIGNAL(valueChanged(int)), this, SLOT(onSliderMove(int)));
 
-	this->ui.optionsButton->addAction(this->ui.actionRehearse_Mode);
-	this->ui.optionsButton->addAction(this->ui.actionAbout);
+	QMenu * optionsMenu = new QMenu();
+	optionsMenu->addAction(this->ui.actionRehearse_Mode);
+	optionsMenu->addAction(this->ui.actionAbout);
+
+	this->ui.optionsButton->setMenu(optionsMenu);
 
 	connect(this->ui.actionAbout, SIGNAL(triggered()), this, SLOT(onAboutClick()));
 
