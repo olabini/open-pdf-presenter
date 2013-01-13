@@ -18,6 +18,7 @@
 #include "powermanagement.h"
 #include <QtDebug>
 #include <QCursor>
+#include <QApplication>
 
 #ifdef ENABLE_SOLID
 #include <Solid/PowerManagement>
@@ -57,11 +58,13 @@ void PowerManagement::onStopPresentation(StopPresentationEvent * evt) {
 }
 
 void PowerManagement::onTimeChanged(TimeChangedEvent *evt) {
-	if (this->screenSupressCookie == this->sleepSupressCookie == -1) {
+	if (this->screenSupressCookie == -1 && this->sleepSupressCookie == -1) {
 		// Solid was not able to disable screensaver / sleep
 		// Falling back to moving mouse around
 		QPoint cursorPosition = QCursor::pos();
-		QCursor::setPos(cursorPosition.x(),cursorPosition.y()+1);
+		int direction = cursorPosition.y() == 0 ? 1 : -1;
+		QCursor::setPos(cursorPosition.x(),cursorPosition.y() + direction);
+		qApp->processEvents();
 		QCursor::setPos(cursorPosition.x(),cursorPosition.y());
 	}
 
