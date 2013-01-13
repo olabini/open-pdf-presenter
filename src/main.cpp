@@ -15,11 +15,18 @@
     along with open-pdf-presenter.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QApplication>
+#include <QIcon>
 
 #include "presenter.h"
 
 int main(int argc, char ** argv) {
 	QApplication app(argc, argv);
+
+	// Borrow PDF icon from system
+	QIcon icon = QIcon::fromTheme("application-pdf");
+	if (!icon.isNull()) {
+		app.setWindowIcon(icon);
+	}
 
 	return OpenPdfPresenter().start();
 }
