@@ -91,6 +91,23 @@ void SlideGridConsoleState::apply(CurrentNextSlideConsoleViewControllerImpl *cur
 	grid->setVisible(true);
 }
 
+ConsoleViewControllerImpl::ConsoleViewControllerImpl() {
+	this->visible = false;
+}
+
+void ConsoleViewControllerImpl::refresh() {
+	if (!this->visible)
+		return;
+
+	this->doRefresh();
+}
+
+void ConsoleViewControllerImpl::setVisible(bool isVisible) {
+	this->visible = isVisible;
+	this->doSetVisible(isVisible);
+	this->refresh();
+}
+
 PresenterConsoleControllerImpl::PresenterConsoleControllerImpl(IEventBus * bus, PresenterConsoleView * view, CurrentNextSlideConsoleViewControllerImpl * currentNext, SlideGridConsoleViewControllerImpl * slideGrid, CurrentNextSlideNotesConsoleViewControllerImpl * currentNextNotes, OpenPdfPresenter * presenter, int totalSlideCount, int durationSeconds) {
 	this->duration = durationSeconds;
 	this->presenter = presenter;
@@ -182,7 +199,7 @@ CurrentNextSlideConsoleViewControllerImpl::CurrentNextSlideConsoleViewController
 	this->currentSlideNumber = 0;
 }
 
-void CurrentNextSlideConsoleViewControllerImpl::refresh() {
+void CurrentNextSlideConsoleViewControllerImpl::doRefresh() {
 	if (!this->view->asWidget()->isVisible())
 		return;
 
@@ -198,10 +215,8 @@ QWidget * CurrentNextSlideConsoleViewControllerImpl::content() {
 	return this->view->asWidget();
 }
 
-void CurrentNextSlideConsoleViewControllerImpl::setVisible(bool isVisible) {
+void CurrentNextSlideConsoleViewControllerImpl::doSetVisible(bool isVisible) {
 	this->view->asWidget()->setVisible(isVisible);
-	if (isVisible)
-		this->refresh();
 }
 
 void CurrentNextSlideConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
@@ -232,7 +247,7 @@ CurrentNextSlideNotesConsoleViewControllerImpl::CurrentNextSlideNotesConsoleView
 	this->currentSlideNumber = 0;
 }
 
-void CurrentNextSlideNotesConsoleViewControllerImpl::refresh() {
+void CurrentNextSlideNotesConsoleViewControllerImpl::doRefresh() {
 	if (!this->view->asWidget()->isVisible())
 		return;
 
@@ -250,10 +265,8 @@ QWidget * CurrentNextSlideNotesConsoleViewControllerImpl::content() {
 	return this->view->asWidget();
 }
 
-void CurrentNextSlideNotesConsoleViewControllerImpl::setVisible(bool isVisible) {
+void CurrentNextSlideNotesConsoleViewControllerImpl::doSetVisible(bool isVisible) {
 	this->view->asWidget()->setVisible(isVisible);
-	if (isVisible)
-		this->refresh();
 }
 
 void CurrentNextSlideNotesConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent * evt) {
@@ -301,10 +314,15 @@ QWidget * SlideGridConsoleViewControllerImpl::content() {
 	return this->view->asWidget();
 }
 
-void SlideGridConsoleViewControllerImpl::setVisible(bool isVisible) {
+void SlideGridConsoleViewControllerImpl::doSetVisible(bool isVisible) {
 	this->view->asWidget()->setVisible(isVisible);
 }
 
+
+void SlideGridConsoleViewControllerImpl::doRefresh() {
+	for (int i = 0 ; i < this->presenter->getConfiguration()->getTotalSlides() ; i++)
+		this->view->setSlide(i,this->presenter->getSlide(i));
+}
 
 void SlideGridConsoleViewControllerImpl::onSlideChanged(SlideChangedEvent *evt) {
 }
@@ -319,8 +337,7 @@ void SlideGridConsoleViewControllerImpl::onSelectSlide(int slideNumber) {
 
 void SlideGridConsoleViewControllerImpl::setGeometry(int width, int height) {
 	this->view->setGeometry(width, height);
-	for (int i = 0 ; i < this->presenter->getConfiguration()->getTotalSlides() ; i++)
-		this->view->setSlide(i,this->presenter->getSlide(i));
+	this->refresh();
 }
 
 MainSlideViewControllerImpl::MainSlideViewControllerImpl(IEventBus * bus, MainSlideView * view, OpenPdfPresenter * presenter) {

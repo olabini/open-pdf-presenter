@@ -23,16 +23,30 @@
 
 class OpenPdfPresenter;
 
-class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
+class ConsoleViewControllerImpl {
+	private:
+		bool visible;
+
+	public:
+		void setVisible(bool isVisible);
+	
+	protected:
+		ConsoleViewControllerImpl();
+		void refresh();
+		virtual void doRefresh() = 0;
+		virtual void doSetVisible(bool isVisible) = 0;
+};
+
+class CurrentNextSlideConsoleViewControllerImpl : public ConsoleViewControllerImpl, public CurrentNextSlideConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
 	public:
 		CurrentNextSlideConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		virtual void setGeometry(int width, int height);
-		virtual void setVisible(bool isVisible);
 		QWidget * content();
-	private:
-		void refresh();
+	protected:
+		virtual void doRefresh();
+		virtual void doSetVisible(bool isVisible);
 	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideConsoleView * view;
@@ -41,19 +55,19 @@ class CurrentNextSlideConsoleViewControllerImpl : public CurrentNextSlideConsole
 		int currentSlideNumber;
 };
 
-class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNotesConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler, public ChangeNoteFontSizeEventHandler {
+class CurrentNextSlideNotesConsoleViewControllerImpl : public ConsoleViewControllerImpl, public CurrentNextSlideNotesConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler, public ChangeNoteFontSizeEventHandler {
 	public:
 		CurrentNextSlideNotesConsoleViewControllerImpl(IEventBus * bus, CurrentNextSlideNotesConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		virtual void setGeometry(int width, int height);
-		virtual void setVisible(bool isVisible);
 		QWidget * content();
 		virtual void onIncNoteFontSizeButton();
 		virtual void onDecNoteFontSizeButton();
 		virtual void onChangeNoteFontSize(ChangeNoteFontSizeEvent *event);
-	private:
-		void refresh();
+	protected:
+		virtual void doRefresh();
+		virtual void doSetVisible(bool isVisible);
 	private:
 		OpenPdfPresenter * presenter;
 		CurrentNextSlideNotesConsoleView * view;
@@ -62,15 +76,17 @@ class CurrentNextSlideNotesConsoleViewControllerImpl : public CurrentNextSlideNo
 		int currentSlideNumber;
 };
 
-class SlideGridConsoleViewControllerImpl : public SlideGridConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
+class SlideGridConsoleViewControllerImpl : public ConsoleViewControllerImpl, public SlideGridConsoleViewController, public SlideChangedEventHandler, public SlideRenderedEventHandler {
 	public:
 		SlideGridConsoleViewControllerImpl(IEventBus * bus, SlideGridConsoleView * view, OpenPdfPresenter * presenter);
 		virtual void onSlideChanged(SlideChangedEvent * evt);
 		virtual void onSlideRendered(SlideRenderedEvent *evt);
 		virtual void onSelectSlide(int slideNumber);
 		virtual void setGeometry(int width, int height);
-		virtual void setVisible(bool isVisible);
 		QWidget * content();
+	protected:
+		virtual void doRefresh();
+		virtual void doSetVisible(bool isVisible);
 	private:
 		OpenPdfPresenter * presenter;
 		SlideGridConsoleView * view;

@@ -263,12 +263,6 @@ void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 }
 
 void OpenPdfPresenter::updateWidgetSizes() {
-
-	this->widgets[0]->hide();
-	this->widgets[1]->hide();
-
-	qApp->processEvents();
-
 	// Set minimal widget size to avoid windows from growing
 	this->currentNextController->setGeometry(10, 10);
 	this->currentNextNotesController->setGeometry(10, 10);
@@ -287,9 +281,6 @@ void OpenPdfPresenter::updateWidgetSizes() {
 	this->mainSlideWindow->setContent(this->widgets[MAIN_WINDOW_IDX]);
 	this->mainConsoleWindow->setContent(this->widgets[AUX_WINDOW_IDX]);
 
-	// Fire slide changed event so that all widgets resize accordingly
-	this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
-
 	// Resize widgets using controllers
 	QDesktopWidget * desktopWidget = QApplication::desktop();
 	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
@@ -299,16 +290,15 @@ void OpenPdfPresenter::updateWidgetSizes() {
 	geometry = desktopWidget->screenGeometry(this->configuration->getMainScreen());
 	this->mainSlideController->setGeometry(geometry.width(),geometry.height());
 
+	// Hack to make the screen swap operation faster
+	this->widgets[0]->show();
+	this->widgets[1]->show();
+
 	// Fire slide changed event so that all widgets resize accordingly
 	this->bus->fire(new SlideChangedEvent(this->currentSlideNumber));
 
 	qDebug() << "Main widget size " << this->mainSlideView->size();
 	qDebug() << "Console widget size " << this->presenterConsoleView->size();
-
-	qApp->processEvents();
-
-	this->widgets[0]->show();
-	this->widgets[1]->show();
 }
 
 void OpenPdfPresenter::setWindowPositions() {
