@@ -163,6 +163,8 @@ void OpenPdfPresenter::onStartPresentation(StartPresentationEvent * evt) {
 
 	this->bus->fire(new SlideChangedEvent(0));
 	this->timer->start();
+
+	this->updateWidgetSizes();
 }
 
 OpenPdfPresenter::~OpenPdfPresenter() {
@@ -251,8 +253,12 @@ void OpenPdfPresenter::onResetPresentation(ResetPresentationEvent * evt) {
 
 void OpenPdfPresenter::onSwapScreens(SwapScreensEvent *evt) {
 	this->configuration->swapScreens();
-	QDesktopWidget * desktopWidget = QApplication::desktop();
-	this->configuration->getRenderer()->setGeometry(desktopWidget->screenGeometry(this->configuration->getMainScreen()));
+
+	// Swap widgets
+	QWidget * tmp = this->widgets[0];
+	this->widgets[0] = this->widgets[1];
+	this->widgets[1] = tmp;
+
 	this->updateWidgetSizes();
 }
 
@@ -276,11 +282,6 @@ void OpenPdfPresenter::updateWidgetSizes() {
 	// If this line is ommitted, the smaller window will grow larger than the screen
 	// Later, it will not shrink the the right size and will display with incorrect placement
 	qApp->processEvents();
-
-	// Swap widgets
-	QWidget * tmp = this->widgets[0];
-	this->widgets[0] = this->widgets[1];
-	this->widgets[1] = tmp;
 
 	// Reassign widgets to windows
 	this->mainSlideWindow->setContent(this->widgets[MAIN_WINDOW_IDX]);
@@ -542,6 +543,9 @@ void PresenterConfiguration::swapScreens() {
 	int tmp = this->mainScreen;
 	this->mainScreen = this->auxScreen;
 	this->auxScreen = tmp;
+
+	QDesktopWidget * desktopWidget = QApplication::desktop();
+	this->renderer->setGeometry(desktopWidget->screenGeometry(this->mainScreen));
 }
 
 bool PresenterConfiguration::isSkipStartScreen() {
