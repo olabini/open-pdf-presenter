@@ -139,6 +139,12 @@
        <property name="text">
         <string>Start</string>
        </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item row="0" column="3">
@@ -559,6 +565,17 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>startButton</tabstop>
+  <tabstop>optionsButton</tabstop>
+  <tabstop>quitButton</tabstop>
+  <tabstop>slideSlider</tabstop>
+  <tabstop>openPresentationButtonBox</tabstop>
+  <tabstop>openNotesButtonBox</tabstop>
+  <tabstop>hoursBox</tabstop>
+  <tabstop>minutesBox</tabstop>
+  <tabstop>secondsBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
