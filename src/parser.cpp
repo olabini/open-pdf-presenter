@@ -5,14 +5,30 @@
 
 #include <QList>
 
-NotesParser::NotesParser(int slideCount) {
-	this->notes = new QList<QString>();
+ParserError::ParserError(QString description, QSourceLocation location) : description(description), location(location) {
+}
+
+QString ParserError::getDescription() {
+	return this->description;
+}
+
+QSourceLocation ParserError::getLocation() {
+	return this->location;
+}
+
+ParserException::ParserException(QList<ParserError> errors) : errors(QList<ParserError>(errors)) {
+}
+
+QList<ParserError> ParserException::getErrors() {
+	return this->errors;
+}
+
+NotesParser::NotesParser(int slideCount) : notes(QList<QString>()), errors(QList<ParserError>()) {
 	for (int i = 0 ; i < slideCount ; i++)
-		this->notes->append("");
+		this->notes.append("");
 }
 
 NotesParser::~NotesParser() {
-	delete this->notes;
 }
 
 bool NotesParser::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts) {
@@ -47,28 +63,29 @@ bool NotesParser::endElement(const QString &namespaceURI, const QString &localNa
 bool NotesParser::characters(const QString &ch) {
 	for (int i = 0 ; i < this->current->size() ; i++) {
 		int idx = this->current->at(i);
-		if (idx < 0 || idx > this->notes->size())
+		if (idx < 0 || idx > this->notes.size())
 			continue;
 
-		if (this->notes->at(idx) == "")
-			this->notes->replace(idx,ch);
+		if (this->notes.at(idx) == "")
+			this->notes.replace(idx,ch);
 	}
 
 	return true;
 }
 
-bool NotesParser::validateAndParse(QString resource) {
+void NotesParser::validateAndParse(QString resource) {
 	QXmlSchema schema;
 	schema.load( QUrl::fromLocalFile(":/notes/notes.xsd"));
 
 	if (!schema.isValid())
 		//TODO: print error
-		return false;
+		throw ParserException(this->errors);
 
 	QXmlSchemaValidator validator(schema);
-	if (!validator.validate(QUrl(resource)))
-		//TODO: print error
-		return false;
+	validator.setMessageHandler(this);
+	if (!validator.validate(QUrl(resource))) {
+		throw ParserException(this->errors);
+	}
 
 	QFile file(resource);
 	QXmlInputSource source(&file);
@@ -80,9 +97,13 @@ bool NotesParser::validateAndParse(QString resource) {
 	reader.parse(source);
 	delete this->current;
 
-	return true;
+	return;
+}
+
+void NotesParser::handleMessage ( QtMsgType type, const QString & description, const QUrl & identifier, const QSourceLocation & sourceLocation ) {
+	this->errors.append(ParserError(description, sourceLocation));
 }
 
 QString NotesParser::getNotes(int slideNumber) {
-	return this->notes->at(slideNumber);
+	return this->notes.at(slideNumber);
 }

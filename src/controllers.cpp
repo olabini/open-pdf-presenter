@@ -530,7 +530,19 @@ void StartScreenViewControllerImpl::browseNotes() {
 	if (notesFileName.isNull())
 		return;
 
-	this->configuration->setNotesFileName(notesFileName);
+	try {
+		this->configuration->setNotesFileName(notesFileName);
+	} catch(ParserException e) {
+		foreach (ParserError error, e.getErrors()) {
+			QMessageBox msgBox;
+			msgBox.setText(QString("Error parsing notes file at line %1").arg(error.getLocation().line()));
+			msgBox.setInformativeText(error.getDescription());
+			msgBox.exec();
+		}
+
+		return;
+	}
+
 	this->view->setNotesFileName(notesFileName);
 }
 

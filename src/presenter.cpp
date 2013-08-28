@@ -25,6 +25,8 @@
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QApplication>
+#include <QTextDocument>
+#include <QDebug>
 
 #include <vector>
 
@@ -396,8 +398,25 @@ void PresenterConfiguration::parseArguments() {
 
 			this->notesFileName = QString::fromStdString(notesArg.getValue());
 			if (notesArg.isSet())
-				// Trigger notes parsing
+			// Trigger notes parsing
+			try {
 				this->setNotesFileName(this->notesFileName);
+			} catch(ParserException e) {
+				QTextStream cerr(stderr);
+				cerr << QString("Notes file has errors:") << endl;
+				foreach (ParserError error, e.getErrors()) {
+					QTextDocument doc;
+					doc.setHtml(error.getDescription());
+
+					cerr << QString("\tLine %1 : %2")
+							.arg(error.getLocation().line())
+							.arg(doc.toPlainText())
+						 << endl;
+				}
+
+				cerr.flush();
+				exit(1);
+			}
 		}
 
 	} catch (TCLAP::ArgException &e) {
@@ -443,6 +462,13 @@ void PresenterConfiguration::setPdfFileName(QString fileName) {
 		// TODO: print error
 		exit(1);
 
+	while (this->document->page(this->document->numPages() - 1) == NULL) {
+		this->document = Poppler::Document::load(fileName);
+		if (!this->document)
+			// TODO: print error
+			exit(1);
+	}
+
 	this->pdfFileName = fileName;
 	this->totalSlides = this->document->numPages();
 	this->document->setRenderHint(Poppler::Document::Antialiasing, true);
@@ -466,10 +492,7 @@ void PresenterConfiguration::setNotesFileName(QString fileName) {
 		delete this->parser;
 
 	this->parser = new NotesParser(this->document->numPages());
-
-	if (!this->parser->validateAndParse(fileName))
-		// TODO: print error
-		exit(1);
+	this->parser->validateAndParse(fileName);
 
 	this->notesFileName = fileName;
 }
