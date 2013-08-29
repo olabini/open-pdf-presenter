@@ -310,14 +310,16 @@ void OpenPdfPresenter::setWindowPositions() {
 	this->mainConsoleWindow->move(geometry.x(), geometry.y());
 	this->mainConsoleWindow->setGeometry(geometry);
 	qDebug() << "Moved aux window to position " << this->mainConsoleWindow ->geometry();
-	this->mainConsoleWindow->showFullScreen();
+	if (!this->configuration->isWindowedMode())
+		this->mainConsoleWindow->showFullScreen();
 	if (!this->configuration->isRehearseMode()) {
 		this->mainSlideWindow->showNormal();
 		geometry = desktopWidget->screenGeometry(this->configuration->getMainScreen());
 		this->mainSlideWindow->move(geometry.x(), geometry.y());
 		this->mainSlideWindow->setGeometry(geometry);
 		qDebug() << "Moved main window to position " << this->mainSlideWindow->geometry();
-		this->mainSlideWindow->showFullScreen();
+		if (!this->configuration->isWindowedMode())
+			this->mainSlideWindow->showFullScreen();
 	}
 }
 
@@ -362,10 +364,12 @@ void PresenterConfiguration::parseArguments() {
 	TCLAP::ValueArg<std::string> transitionEffect("e","effect","Transition effect to use during presentation",false,"crossfade","Transition Effect");
 	TCLAP::SwitchArg listAvailableTransitions("l","list","List available transitions and exit");
 	TCLAP::SwitchArg rehearseSwitch("r","rehearse","Enable rehearse mode");
+	TCLAP::SwitchArg windowedSwitch("w","windowed","Run in windowed mode");
 	TCLAP::SwitchArg skipStartScreenSwitch("s","skip","Skip start screen");
 	TCLAP::UnlabeledValueArg<std::string> pdfFileArg("Presentation","The PDF file with the presentation's slides",false,"","PDF file");
 
 	cmd.add(rehearseSwitch);
+	cmd.add(windowedSwitch);
 	cmd.add(skipStartScreenSwitch);
 	cmd.add(durationArg);
 	cmd.add(transitionDuration);
@@ -385,6 +389,7 @@ void PresenterConfiguration::parseArguments() {
 
 		this->setListTransitions(listAvailableTransitions.getValue());
 		this->setRehearseMode(rehearseSwitch.getValue());
+		this->setWindowedMode(windowedSwitch.getValue());
 		this->skipStartScreen = skipStartScreenSwitch.getValue();
 		this->setTotalTime(durationArg.getValue());
 		this->setTransitionDuration(transitionDuration.getValue());
@@ -501,6 +506,10 @@ void PresenterConfiguration::setRehearseMode(bool rehearseMode) {
 	this->rehearseMode = rehearseMode;
 }
 
+void PresenterConfiguration::setWindowedMode(bool windowedMode) {
+	this->windowedMode = windowedMode;
+}
+
 void PresenterConfiguration::setTotalTime(int totalTime) {
 	this->totalTime = totalTime;
 	if (this->totalTime < 0)
@@ -550,6 +559,10 @@ NotesParser * PresenterConfiguration::getParser() {
 
 bool PresenterConfiguration::isRehearseMode() {
 	return this->rehearseMode;
+}
+
+bool PresenterConfiguration::isWindowedMode() {
+	return this->windowedMode;
 }
 
 void PresenterConfiguration::swapScreens() {

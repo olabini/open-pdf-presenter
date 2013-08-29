@@ -38,11 +38,13 @@ class StartScreenViewImpl : public QWidget, public StartScreenView {
 		virtual int getMinutes();
 		virtual int getSeconds();
 		virtual bool isRehearse();
+		virtual bool isWindowed();
 		virtual void setPdfTitle(QString title);
 		virtual void setPdfTotalPages(int totalPages);
 		virtual void setCurrentSlideNumber(int currentSlide);
 		virtual void setSlidePreview(Slide slide);
 		virtual void setRehearse(bool isRehearse);
+		virtual void setWindowed(bool isWindowed);
 
 	private:
 		StartScreenViewController * controller;

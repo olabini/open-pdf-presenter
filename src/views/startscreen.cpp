@@ -33,6 +33,7 @@ StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), pre
 
 	QMenu * optionsMenu = new QMenu();
 	optionsMenu->addAction(this->ui.actionRehearse_Mode);
+	optionsMenu->addAction(this->ui.actionWindowed_Mode);
 	optionsMenu->addAction(this->ui.actionAbout);
 
 	this->ui.optionsButton->setMenu(optionsMenu);
@@ -141,4 +142,12 @@ void StartScreenViewImpl::setRehearse(bool isRehearse) {
 
 bool StartScreenViewImpl::isRehearse() {
 	return this->ui.actionRehearse_Mode->isChecked();
+}
+
+void StartScreenViewImpl::setWindowed(bool isWindowed) {
+	this->ui.actionWindowed_Mode->setChecked(isWindowed);
+}
+
+bool StartScreenViewImpl::isWindowed() {
+	return this->ui.actionWindowed_Mode->isChecked();
 }

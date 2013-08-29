@@ -564,6 +564,17 @@
     <string>About</string>
    </property>
   </action>
+  <action name="actionWindowed_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Windowed Mode</string>
+   </property>
+   <property name="toolTip">
+    <string>Run in windowed mode</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>startButton</tabstop>

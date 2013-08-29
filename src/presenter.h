@@ -39,7 +39,7 @@ class PresenterConfiguration {
 		int totalSlides;
 		int totalTime;
 		int mainScreen, auxScreen;
-		bool rehearseMode;
+		bool rehearseMode, windowedMode;
 		bool skipStartScreen;
 		int transitionDuration;
 		bool listTransitions;
@@ -67,6 +67,7 @@ class PresenterConfiguration {
 		int getMainScreen();
 		int getAuxScreen();
 		bool isRehearseMode();
+		bool isWindowedMode();
 		bool isSkipStartScreen();
 		int getTransitionDuration();
 		QString getTransitionEffect();
@@ -79,6 +80,7 @@ class PresenterConfiguration {
 		void setMainScreen(int screen);
 		void setAuxScreen(int screen);
 		void setRehearseMode(bool rehearseMode);
+		void setWindowedMode(bool windowedMode);
 		void setTransitionDuration(int duration);
 		void setTransitionEffect(QString duration);
 		void setListTransitions(bool list);
