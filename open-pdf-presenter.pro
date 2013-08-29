@@ -33,7 +33,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 
 # Version
-DEFINES += 'OPP_VERSION=\'\"0.2\"\''
+DEFINES += 'OPP_VERSION=\'\"0.3.0\"\''
 
 # POPPLER
 #INCLUDEPATH += /usr/include/poppler/qt4
