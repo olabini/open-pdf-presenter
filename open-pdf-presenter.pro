@@ -99,7 +99,11 @@ unix {
   }
   message("Install prefix is $$PREFIX")
 
-  PLUGIN_PATH=$$PREFIX/lib/open-pdf-presenter/
+  isEmpty(PLUGIN_PATH) {
+    PLUGIN_PATH=$$PREFIX/lib/open-pdf-presenter/
+  }
+
+  message("Plugin path is $$PLUGIN_PATH")
 
   DEFINES += 'OPP_PLUGIN_PATH=\'\"$$PLUGIN_PATH\"\''
 
