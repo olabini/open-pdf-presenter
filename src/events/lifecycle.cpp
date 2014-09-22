@@ -109,10 +109,6 @@ Type * ToggleConsoleViewEvent::getAssociatedType() {
 	return &ToggleConsoleViewEvent::TYPE;
 }
 
-void ToggleSlideGridEvent::dispatch(IEventHandler * handler) {
-	((ToggleConsoleViewEventHandler*)handler)->onToggleSlideView(this);
-}
-
 void ToggleNotesEvent::dispatch(IEventHandler * handler) {
 	((ToggleConsoleViewEventHandler*)handler)->onToggleNotesView(this);
 }
@@ -152,4 +148,3 @@ void BlackBlankScreenEvent::dispatch(IEventHandler *handler) {
 void WhiteBlankScreenEvent::dispatch(IEventHandler *handler) {
 	((ShowBlankScreenEventHandler*)handler)->onWhiteScreen(this);
 }
-

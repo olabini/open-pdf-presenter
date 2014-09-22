@@ -121,11 +121,6 @@ class ToggleConsoleViewEvent : public Event {
 		static Type TYPE;
 };
 
-class ToggleSlideGridEvent : public ToggleConsoleViewEvent {
-	public:
-		virtual void dispatch(IEventHandler * handler);
-};
-
 class ToggleNotesEvent : public ToggleConsoleViewEvent {
 	public:
 		virtual void dispatch(IEventHandler * handler);
@@ -142,7 +137,6 @@ class ConfirmExitEvent : public ToggleConsoleViewEvent {
 
 class ToggleConsoleViewEventHandler : public IEventHandler {
 	public:
-		virtual void onToggleSlideView(ToggleConsoleViewEvent * event) = 0;
 		virtual void onToggleNotesView(ToggleConsoleViewEvent * event) = 0;
 		virtual void onConfirmExit(ToggleConsoleViewEvent * event) = 0;
 	protected:

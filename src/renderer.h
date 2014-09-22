@@ -29,10 +29,12 @@
 #include <poppler-qt4.h>
 
 #include "events/event.h"
+#include "events/lifecycle.h"
 
 class Slide {
 	public:
 		Slide(QImage image, QRect geometry);
+		~Slide();
 		QPixmap asPixmap();
 		QImage asImage();
 		QRect computeUsableArea(QRect geometry);
@@ -47,15 +49,15 @@ class SlideRenderedEventHandler;
 
 class SlideRenderedEvent : public Event {
 	public:
-		SlideRenderedEvent(int slideNumber, Slide slide);
+		SlideRenderedEvent(int slideNumber, Slide *slide);
 		virtual Type * getAssociatedType();
 		virtual void dispatch(IEventHandler * handler);
 		static Type TYPE;
 		int getSlideNumber();
-		Slide getSlide();
+		Slide *getSlide();
 	private:
 		int slideNumber;
-		Slide slide;
+		Slide *slide;
 };
 
 class SlideRenderedEventHandler : public IEventHandler {
@@ -67,35 +69,41 @@ class SlideRenderedEventHandler : public IEventHandler {
 
 class RendererThread;
 
-class Renderer {
+class Renderer : public SlideChangedEventHandler {
 	public:
 		Renderer(IEventBus * bus, Poppler::Document * document, QRect geometry);
 		~Renderer();
 		void setGeometry(QRect geometry);
-		Slide getSlide(int slideNumber);
+		Slide *getSlide(int slideNumber);
 		void start();
 		void run();
+		virtual void onSlideChanged(SlideChangedEvent * evt);
 
 	private:
-		Slide renderSlide(int slideNumber, QRect geometry);
+		Slide *renderSlide(int slideNumber, QRect geometry);
 		void fillTestSlideSize(int slideNumber);
+		void runThatRendersAll();
+		void runThatRendersSome();
+		void ensureRendered(int from, int to, bool rerender);
+		void ensureFreedOutside(int from, int to);
 
 	private:
-		Slide loadingSlide;
+		Slide *loadingSlide;
 		IEventBus * bus;
 		Poppler::Document * document;
 		QRect currentGeometry;
-		QList<Slide> * slides;
-		QList<Slide> * testSlides;
+		QList<Slide *> * slides;
+		QList<Slide *> * testSlides;
 		QList<bool> * loadedSlides;
 		QList<bool> * loadedTestSlides;
 
 		RendererThread * thread;
 
 		QMutex * mutex;
-		QWaitCondition * geometryChanged;
+		QWaitCondition * somethingChanged;
 		bool stopThread;
-
+        int currentSlide;
+        bool slideChange;
 };
 
 class RendererThread : public QThread {

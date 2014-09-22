@@ -88,9 +88,6 @@ void MainWindowViewImpl::keyPressEvent(QKeyEvent *event) {
 		case Qt::Key_R:
 			this->controller->onKeyReset();
 			break;
-		case Qt::Key_Tab:
-			this->controller->onKeyToggleSlideGrid();
-			break;
 		case Qt::Key_S:
 			this->controller->onKeySwapScreens();
 			break;

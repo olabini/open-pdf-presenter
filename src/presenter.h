@@ -98,7 +98,7 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		int getTotalSlides();
 		int getTotalTimeSeconds();
 		PresenterConfiguration * getConfiguration();
-		Slide getSlide(int slideNumber);
+		Slide *getSlide(int slideNumber);
 		QString getNotes(int slideNumber);
 		virtual void onNextSlide(RelativeSlideEvent * evt);
 		virtual void onPrevSlide(RelativeSlideEvent * evt);
@@ -136,7 +136,6 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		PresenterConsoleViewImpl * presenterConsoleView;
 		CurrentNextSlideConsoleViewImpl * currentNextView;
 		CurrentNextSlideNotesConsoleViewImpl * currentNextNotesView;
-		SlideGridConsoleViewImpl * slideGridView;
 		MainSlideViewImpl * mainSlideView;
 		MainWindowViewImpl * mainConsoleWindow, * mainSlideWindow;
 
@@ -144,7 +143,6 @@ class OpenPdfPresenter : public SlideEventHandler, public ITimerEventHandler, pu
 		PresenterConsoleControllerImpl * presenterConsoleController;
 		CurrentNextSlideConsoleViewControllerImpl * currentNextController;
 		CurrentNextSlideNotesConsoleViewControllerImpl * currentNextNotesController;
-		SlideGridConsoleViewControllerImpl * slideGridController;
 		MainSlideViewControllerImpl * mainSlideController;
 		MainWindowViewControllerImpl * mainConsoleWindowController, * mainSlideWindowController;
 

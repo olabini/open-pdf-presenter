@@ -38,7 +38,6 @@ class MainWindowViewController : public Controller {
 		virtual void onKeyNext() = 0;
 		virtual void onKeyPrev() = 0;
 		virtual void onKeyReset() = 0;
-		virtual void onKeyToggleSlideGrid() = 0;
 		virtual void onKeyToggleNotes() = 0;
 		virtual void onKeySwapScreens() = 0;
 		virtual void onKeyBlackScreen() = 0;
@@ -61,7 +60,6 @@ class PresenterConsoleViewController : public Controller {
 	public:
 		virtual void onNextSlideButton() = 0;
 		virtual void onPrevSlideButton() = 0;
-		virtual void onSlideGridButton() = 0;
 		virtual void onNotesButton() = 0;
 	protected:
 		~PresenterConsoleViewController() {}
@@ -97,8 +95,8 @@ class CurrentNextSlideConsoleView : public ConsoleView, public View<CurrentNextS
 
 	public:
 		virtual void setGeometry(int width, int height) = 0;
-		virtual void setCurrentSlide(Slide slide) = 0;
-		virtual void setNextSlide(Slide slide) = 0;
+		virtual void setCurrentSlide(Slide *slide) = 0;
+		virtual void setNextSlide(Slide *slide) = 0;
 
 	protected:
 		~CurrentNextSlideConsoleView() { }
@@ -117,32 +115,14 @@ class CurrentNextSlideNotesConsoleView : public ConsoleView, public View<Current
 
 	public:
 		virtual void setGeometry(int width, int height) = 0;
-		virtual void setCurrentSlide(Slide slide) = 0;
-		virtual void setNextSlide(Slide slide) = 0;
+		virtual void setCurrentSlide(Slide *slide) = 0;
+		virtual void setNextSlide(Slide *slide) = 0;
 		virtual void setNotes(QString notes) = 0;
 		virtual int getNotesFontSize() = 0;
 		virtual void setNotesFontSize(int size) = 0;
 
 	protected:
 		~CurrentNextSlideNotesConsoleView() { }
-};
-
-class SlideGridConsoleViewController {
-	public:
-		virtual void setGeometry(int width, int height) = 0;
-		virtual void onSelectSlide(int slideNumber) = 0;
-	protected:
-		~SlideGridConsoleViewController() { }
-};
-
-class SlideGridConsoleView : public ConsoleView, public View<SlideGridConsoleViewController> {
-	public:
-		virtual void setGeometry(int width, int height) = 0;
-		virtual void setTotalNumberOfSlides(int total) = 0;
-		virtual void setCurrentSlide(int slideNumber) = 0;
-		virtual void setSlide(int slideNumber, Slide slide) = 0;
-	protected:
-		~SlideGridConsoleView() { }
 };
 
 class MainSlideViewController : public Controller {
@@ -192,7 +172,7 @@ class StartScreenView : public View<StartScreenViewController> {
 		virtual void setPdfTitle(QString title) = 0;
 		virtual void setPdfTotalPages(int totalPages) = 0;
 		virtual void setCurrentSlideNumber(int currentSlide) = 0;
-		virtual void setSlidePreview(Slide slide) = 0;
+		virtual void setSlidePreview(Slide *slide) = 0;
 
 	protected:
 		~StartScreenView() { }

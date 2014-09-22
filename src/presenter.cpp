@@ -41,7 +41,7 @@ QTextStream cerr(stderr);
 OpenPdfPresenter::OpenPdfPresenter() {
 
 	this->hasStarted = false;
-	
+
 	this->elapsedTime = 0;
 	this->currentSlideNumber = 0;
 	this->bus = new QEventBus();
@@ -65,7 +65,6 @@ OpenPdfPresenter::OpenPdfPresenter() {
 void OpenPdfPresenter::buildViews() {
 	this->currentNextView = new CurrentNextSlideConsoleViewImpl();
 	this->currentNextNotesView = new CurrentNextSlideNotesConsoleViewImpl();
-	this->slideGridView = new SlideGridConsoleViewImpl();
 	this->presenterConsoleView = new PresenterConsoleViewImpl();
 	this->mainConsoleWindow = new MainWindowViewImpl();
 	this->mainSlideWindow = new MainWindowViewImpl();
@@ -75,8 +74,7 @@ void OpenPdfPresenter::buildViews() {
 void OpenPdfPresenter::buildControllers() {
 	this->currentNextController = new CurrentNextSlideConsoleViewControllerImpl(this->bus,this->currentNextView,this);
 	this->currentNextNotesController = new CurrentNextSlideNotesConsoleViewControllerImpl(this->bus,this->currentNextNotesView,this);
-	this->slideGridController = new SlideGridConsoleViewControllerImpl(this->bus,this->slideGridView,this);
-	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this->currentNextController, this->slideGridController, this->currentNextNotesController, this, this->configuration->getTotalSlides(), this->configuration->getTotalTime());
+	this->presenterConsoleController = new PresenterConsoleControllerImpl(this->bus, this->presenterConsoleView, this->currentNextController, this->currentNextNotesController, this, this->configuration->getTotalSlides(), this->configuration->getTotalTime());
 	this->mainConsoleWindowController = new MainWindowViewControllerImpl(this->bus,this->mainConsoleWindow);
 	this->mainSlideWindowController = new MainWindowViewControllerImpl(this->bus,this->mainSlideWindow);
 	this->mainSlideController = new MainSlideViewControllerImpl(this->bus, this->mainSlideView, this);
@@ -86,8 +84,7 @@ void OpenPdfPresenter::setUpViews() {
 	this->presenterConsoleView->setController(this->presenterConsoleController);
 	this->currentNextView->setController(this->currentNextController);
 	this->currentNextNotesView->setController(this->currentNextNotesController);
-	this->slideGridView->setController(this->slideGridController);
-	
+
 	this->mainConsoleWindow->setController(this->mainConsoleWindowController);
 	this->mainSlideWindow->setController(this->mainSlideWindowController);
 }
@@ -173,7 +170,6 @@ OpenPdfPresenter::~OpenPdfPresenter() {
 	if (this->hasStarted) {
 		// Views
 		delete this->currentNextView;
-		delete this->slideGridView;
 		delete this->presenterConsoleView;
 		delete this->mainSlideView;
 		delete this->mainConsoleWindow;
@@ -189,7 +185,7 @@ OpenPdfPresenter::~OpenPdfPresenter() {
 	delete this->powerManagement;
 
 	delete this->configuration;
-	
+
 	delete this->bus;
 }
 
@@ -233,7 +229,7 @@ void OpenPdfPresenter::onTimeout(TimerEvent * evt) {
 	this->bus->fire(new TimeChangedEvent(this->elapsedTime,this->configuration->getTotalTime() - this->elapsedTime));
 }
 
-Slide OpenPdfPresenter::getSlide(int slideNumber) {
+Slide *OpenPdfPresenter::getSlide(int slideNumber) {
 	return this->configuration->getRenderer()->getSlide(slideNumber);
 }
 
@@ -268,7 +264,6 @@ void OpenPdfPresenter::updateWidgetSizes() {
 	// Set minimal widget size to avoid windows from growing
 	this->currentNextController->setGeometry(10, 10);
 	this->currentNextNotesController->setGeometry(10, 10);
-	this->slideGridController->setGeometry(10, 10);
 	this->mainSlideController->setGeometry(10, 10);
 
 	// Fire slide changed event so that all widgets resize accordingly
@@ -288,7 +283,6 @@ void OpenPdfPresenter::updateWidgetSizes() {
 	QRect geometry = desktopWidget->screenGeometry(this->configuration->getAuxScreen());
 	this->currentNextController->setGeometry(geometry.width(),geometry.height());
 	this->currentNextNotesController->setGeometry(geometry.width(),geometry.height());
-	this->slideGridController->setGeometry(geometry.width(),geometry.height());
 	geometry = desktopWidget->screenGeometry(this->configuration->getMainScreen());
 	this->mainSlideController->setGeometry(geometry.width(),geometry.height());
 

@@ -9,7 +9,6 @@
         <file>ButtonSlideNextNormal.png</file>
         <file>ButtonSlidePreviousNormal.png</file>
         <file>Background.png</file>
-        <file>ButtonSlideSorterNormal.png</file>
         <file>ButtonNotesNormal.png</file>
     </qresource>
 </RCC>

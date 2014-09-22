@@ -56,7 +56,6 @@ class PresenterConsoleViewImpl: public QWidget, public PresenterConsoleView {
 	private slots:
 		void onNextButtonClick();
 		void onPrevButtonClick();
-		void onSlideGridButtonClick();
 		void onNotesButtonClick();
 };
 
@@ -66,8 +65,8 @@ class CurrentNextSlideConsoleViewImpl : public QWidget, public CurrentNextSlideC
 	public:
 		CurrentNextSlideConsoleViewImpl(QWidget * parent = 0);
 		virtual void setGeometry(int width, int height);
-		virtual void setCurrentSlide(Slide slide);
-		virtual void setNextSlide(Slide slide);
+		virtual void setCurrentSlide(Slide *slide);
+		virtual void setNextSlide(Slide *slide);
 		virtual void setController(CurrentNextSlideConsoleViewController * controller);
 		virtual QWidget * asWidget();
 
@@ -84,8 +83,8 @@ class CurrentNextSlideNotesConsoleViewImpl : public QWidget, public CurrentNextS
 	public:
 		CurrentNextSlideNotesConsoleViewImpl(QWidget * parent = 0);
 		virtual void setGeometry(int width, int height);
-		virtual void setCurrentSlide(Slide slide);
-		virtual void setNextSlide(Slide slide);
+		virtual void setCurrentSlide(Slide *slide);
+		virtual void setNextSlide(Slide *slide);
 		virtual void setNotes(QString notes);
 		virtual void setController(CurrentNextSlideNotesConsoleViewController * controller);
 		virtual QWidget * asWidget();
@@ -104,32 +103,5 @@ class CurrentNextSlideNotesConsoleViewImpl : public QWidget, public CurrentNextS
 		void onZoomOutButtonClick();
 };
 
-class SlideGridConsoleViewImpl : public Frame, public SlideGridConsoleView {
-	Q_OBJECT
-
-	public:
-		SlideGridConsoleViewImpl(QWidget * parent = 0);
-		~SlideGridConsoleViewImpl();
-		virtual void setGeometry(int width, int height);
-		virtual void setTotalNumberOfSlides(int total);
-		virtual void setCurrentSlide(int slideNumber);
-		virtual void setSlide(int slideNumber, Slide slide);
-		virtual void setController(SlideGridConsoleViewController * controller);
-		virtual QWidget * asWidget();
-
-	private:
-		void deleteSlides();
-
-	private slots:
-		void onSlideClick();
-
-	private:
-		QGridLayout * layout;
-		QList<QPushButton*> * slides;
-		int selectedSlide;
-		int rows, cols;
-		SlideGridConsoleViewController * controller;
-		int width, height;
-};
 
 #endif

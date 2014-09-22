@@ -32,7 +32,6 @@ PresenterConsoleViewImpl::PresenterConsoleViewImpl(QWidget * parent) : QWidget(p
 	this->controlBarUi->setupUi(this->controlBarWrapper);
 	connect(this->controlBarUi->nextButtonLabel, SIGNAL(clicked()), this, SLOT(onNextButtonClick()));
 	connect(this->controlBarUi->prevButtonLabel, SIGNAL(clicked()), this, SLOT(onPrevButtonClick()));
-	connect(this->controlBarUi->slideGridButton, SIGNAL(clicked()), this, SLOT(onSlideGridButtonClick()));
 	connect(this->controlBarUi->notesButton, SIGNAL(clicked()), this, SLOT(onNotesButtonClick()));
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	this->innerLayout = new QVBoxLayout();
@@ -91,10 +90,6 @@ void PresenterConsoleViewImpl::onPrevButtonClick() {
 	this->controller->onPrevSlideButton();
 }
 
-void PresenterConsoleViewImpl::onSlideGridButtonClick() {
-	this->controller->onSlideGridButton();
-}
-
 void PresenterConsoleViewImpl::onNotesButtonClick() {
 	this->controller->onNotesButton();
 }
@@ -135,14 +130,14 @@ void CurrentNextSlideConsoleViewImpl::setGeometry(int width, int height) {
 	this->height = height - PRESENTER_USEFUL_HEIGHT_DECREMENT;
 }
 
-void CurrentNextSlideConsoleViewImpl::setCurrentSlide(Slide slide) {
+void CurrentNextSlideConsoleViewImpl::setCurrentSlide(Slide *slide) {
 	QRect area = QRect(0,0,this->width * 0.6, this->height);
-	this->currentNextSlideUi.leftSlideFrame->setContent(slide.asImage(), slide.computeUsableArea(area));
+	this->currentNextSlideUi.leftSlideFrame->setContent(slide->asImage(), slide->computeUsableArea(area));
 }
 
-void CurrentNextSlideConsoleViewImpl::setNextSlide(Slide slide) {
+void CurrentNextSlideConsoleViewImpl::setNextSlide(Slide *slide) {
 	QRect area = QRect(0,0,this->width * 0.25, this->height - PRESENTER_USEFUL_HEIGHT_DECREMENT);
-	this->currentNextSlideUi.rightSlideFrame->setContent(slide.asImage(), slide.computeUsableArea(area));
+	this->currentNextSlideUi.rightSlideFrame->setContent(slide->asImage(), slide->computeUsableArea(area));
 }
 
 void CurrentNextSlideConsoleViewImpl::setController(CurrentNextSlideConsoleViewController * slide) {
@@ -166,14 +161,14 @@ void CurrentNextSlideNotesConsoleViewImpl::setGeometry(int width, int height) {
 	this->height = height - PRESENTER_USEFUL_HEIGHT_DECREMENT;
 }
 
-void CurrentNextSlideNotesConsoleViewImpl::setCurrentSlide(Slide slide) {
+void CurrentNextSlideNotesConsoleViewImpl::setCurrentSlide(Slide *slide) {
 	QRect area = QRect(0,0,this->width * 0.4, this->height * 0.5);
-	this->currentNextSlideNotesUi.currentSlideFrame->setContent(slide.asImage(), slide.computeUsableArea(area));
+	this->currentNextSlideNotesUi.currentSlideFrame->setContent(slide->asImage(), slide->computeUsableArea(area));
 }
 
-void CurrentNextSlideNotesConsoleViewImpl::setNextSlide(Slide slide) {
+void CurrentNextSlideNotesConsoleViewImpl::setNextSlide(Slide *slide) {
 	QRect area = QRect(0,0,this->width * 0.25, this->height * 0.5);
-	this->currentNextSlideNotesUi.nextSlideFrame->setContent(slide.asImage(), slide.computeUsableArea(area));
+	this->currentNextSlideNotesUi.nextSlideFrame->setContent(slide->asImage(), slide->computeUsableArea(area));
 }
 
 void CurrentNextSlideNotesConsoleViewImpl::setController(CurrentNextSlideNotesConsoleViewController * controller) {
@@ -207,100 +202,3 @@ void CurrentNextSlideNotesConsoleViewImpl::setNotesFontSize(int size) {
 	font.setWeight(75);
 	this->currentNextSlideNotesUi.notesLabel->setFont(font);
 }
-
-SlideGridConsoleViewImpl::SlideGridConsoleViewImpl(QWidget * parent) : Frame(parent) {
-	QWidget * content = new QWidget(this);
-	this->layout = new QGridLayout(content);
-	this->layout->setMargin(0);
-	this->layout->setSpacing(0);
-	content->setLayout(this->layout);
-	content->setStyleSheet("background-color: #2F3438;");
-	this->setContent(content);
-	this->slides = new QList<QPushButton*>();
-	this->selectedSlide = -1;
-	this->rows = this->cols = 0;
-}
-
-SlideGridConsoleViewImpl::~SlideGridConsoleViewImpl() {
-	this->deleteSlides();
-	delete this->layout;
-	delete this->slides;
-}
-
-void SlideGridConsoleViewImpl::deleteSlides() {
-	while (!this->slides->isEmpty()) {
-		QPushButton * firstSlide = this->slides->takeFirst();
-		this->layout->removeWidget(firstSlide);
-		delete firstSlide;
-	}
-}
-
-void SlideGridConsoleViewImpl::setTotalNumberOfSlides(int total) {
-	this->deleteSlides();
-
-	this->cols = ceil(sqrt((double)total));
-	this->rows = floor(sqrt((double)total));
-
-	if ((this->cols * this->rows) < total)
-		(this->rows)++;
-
-	QRect area =  QApplication::desktop()->screenGeometry(this);
-	area.setWidth((area.width() * PRESENTER_USEFUL_WIDTH_PERCENTAGE) / this->cols);
-	area.setHeight((area.height() - PRESENTER_USEFUL_HEIGHT_DECREMENT) / this->rows);
-
-	for (int i = 0 ; i < total ; i++) {
-		QPushButton * frame = new QPushButton();
-		frame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-		frame->setFlat(true);
-		frame->setFocusPolicy(Qt::NoFocus);
-		frame->setToolTip(QString("%1").arg(i+1));
-		connect(frame, SIGNAL(clicked()), this, SLOT(onSlideClick()));
-		this->slides->append(frame);
-		frame->setIcon(QIcon(QPixmap::fromImage(QImage(QString(":/presenter/pastlastslide.svg")).scaledToWidth(area.width(),Qt::SmoothTransformation))));
-	}
-
-	int totalDisplayed = 0;
-	for (int row = 0; row < this->rows ; row++) {
-		for (int col = 0 ; col  < this->cols ; col++, totalDisplayed++) {
-			if (totalDisplayed < total) {
-				this->layout->addWidget(this->slides->at(totalDisplayed),row,col,Qt::AlignCenter);
-			} else
-				return;
-		}
-	}
-}
-
-void SlideGridConsoleViewImpl::setGeometry(int width, int height) {
-	this->width = width;
-	this->height = height - PRESENTER_USEFUL_HEIGHT_DECREMENT;
-}
-
-void SlideGridConsoleViewImpl::setSlide(int slideNumber, Slide slide) {
-	QRect area =  QRect(0,0,((width * PRESENTER_USEFUL_WIDTH_PERCENTAGE) / this->cols),height / this->rows);
-	area = slide.computeUsableArea(QRect(0,0,area.width()-4,area.height()-4));
-
-	this->slides->at(slideNumber)->setIconSize(QSize(area.width(),area.height()));
-	this->slides->at(slideNumber)->setIcon(slide.asPixmap());
-}
-
-void SlideGridConsoleViewImpl::setCurrentSlide(int slideNumber) {
-}
-
-void SlideGridConsoleViewImpl::setController(SlideGridConsoleViewController *controller) {
-	this->controller = controller;
-}
-
-QWidget * SlideGridConsoleViewImpl::asWidget() {
-	return this;
-}
-
-void SlideGridConsoleViewImpl::onSlideClick() {
-	for (int i = 0 ; i < this->slides->size() ; i++) {
-		if (QObject::sender() == this->slides->at(i)) {
-			this->controller->onSelectSlide(i);
-			return;
-		}
-	}
-}
-
-

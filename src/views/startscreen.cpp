@@ -21,7 +21,7 @@
 StartScreenViewImpl::StartScreenViewImpl(QWidget *parent) : QWidget(parent), previewArea(0,0,200,200) {
 	ui.setupUi(this);
 
-	this->setSlidePreview(Slide(QImage(QString(":/presenter/pastlastslide.svg")), QRect()));
+	this->setSlidePreview(new Slide(QImage(QString(":/presenter/pastlastslide.svg")), QRect()));
 
 	connect(this->ui.startButton, SIGNAL(clicked()), this, SLOT(onStartButtonClick()));
 	connect(this->ui.quitButton, SIGNAL(clicked()), this, SLOT(onCancelButtonClick()));
@@ -115,13 +115,13 @@ void StartScreenViewImpl::setPdfTotalPages(int totalPages) {
 	this->ui.totalSlideNumberLabel->setText(QString("%1").arg(totalPages));
 }
 
-void StartScreenViewImpl::setSlidePreview(Slide slide) {
-	QRect area = slide.computeUsableArea(this->previewArea);
+void StartScreenViewImpl::setSlidePreview(Slide *slide) {
+	QRect area = slide->computeUsableArea(this->previewArea);
 
 	if (area.width() > area.height())
-		this->ui.previewLabel->setPixmap(QPixmap::fromImage(slide.asImage().scaledToWidth(area.width(), Qt::SmoothTransformation)));
+		this->ui.previewLabel->setPixmap(QPixmap::fromImage(slide->asImage().scaledToWidth(area.width(), Qt::SmoothTransformation)));
 	else
-		this->ui.previewLabel->setPixmap(QPixmap::fromImage(slide.asImage().scaledToHeight(area.height(), Qt::SmoothTransformation)));
+		this->ui.previewLabel->setPixmap(QPixmap::fromImage(slide->asImage().scaledToHeight(area.height(), Qt::SmoothTransformation)));
 }
 
 void StartScreenViewImpl::setCurrentSlideNumber(int currentSlide) {
